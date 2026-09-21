@@ -1,0 +1,12 @@
+{
+  "name": "kargo-mockup",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "KARGO functional mockup: full order-to-delivery flow, mobile-first, no backend.",
+  "scripts": {
+    "start": "node serve.js",
+    "seed": "node scripts/seed.js",
+    "test": "node --test \"test/*.test.js\""
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "_comment": "DEMO users only (role switcher). No passwords: real auth belongs to the backend.",
+  "users": [
+    {
+      "id": "usr_042",
+      "nombre": "Carla Mendoza (Falabella)",
+      "rol": "merchant",
+      "merchant_id": "mer_falabella"
+    },
+    {
+      "id": "usr_c01",
+      "nombre": "Andrés Fuentes",
+      "rol": "coordinador_logistico"
+    },
+    {
+      "id": "usr_d05",
+      "nombre": "Patricia Lagos",
+      "rol": "operador_despachador",
+      "operador_id": "op_transportes_sur"
+    },
+    {
+      "id": "usr_210",
+      "nombre": "Héctor Ramos",
+      "rol": "operador_conductor_recoleccion",
+      "operador_id": "op_transportes_sur"
+    },
+    {
+      "id": "usr_211",
+      "nombre": "Sergio Muñoz",
+      "rol": "operador_conductor_recoleccion",
+      "operador_id": "op_transportes_sur"
+    },
+    {
+      "id": "usr_305",
+      "nombre": "Camila Reyes",
+      "rol": "operador_encargado_bodega",
+      "operador_id": "op_transportes_sur"
+    },
+    {
+      "id": "usr_301",
+      "nombre": "Jorge Pino",
+      "rol": "operador_conductor_bus",
+      "operador_id": "op_transportes_sur"
+    },
+    {
+      "id": "usr_302",
+      "nombre": "Daniel Araya",
+      "rol": "operador_conductor_bus",
+      "operador_id": "op_transportes_sur"
+    },
+    {
+      "id": "usr_401",
+      "nombre": "Felipe Lira",
+      "rol": "operador_conductor_entrega",
+      "operador_id": "op_transportes_sur"
+    },
+    {
+      "id": "usr_d06",
+      "nombre": "Marcela Núñez",
+      "rol": "operador_despachador",
+      "operador_id": "op_andes_cargo"
+    },
+    {
+      "id": "usr_212",
+      "nombre": "Tomás Vera",
+      "rol": "operador_conductor_recoleccion",
+      "operador_id": "op_andes_cargo"
+    },
+    {
+      "id": "usr_306",
+      "nombre": "Elena Campos",
+      "rol": "operador_encargado_bodega",
+      "operador_id": "op_andes_cargo"
+    },
+    {
+      "id": "usr_303",
+      "nombre": "Raúl Godoy",
+      "rol": "operador_conductor_bus",
+      "operador_id": "op_andes_cargo"
+    },
+    {
+      "id": "usr_402",
+      "nombre": "Nicolás Paz",
+      "rol": "operador_conductor_entrega",
+      "operador_id": "op_andes_cargo"
+    }
+  ]
+}

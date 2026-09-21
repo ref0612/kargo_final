@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>graphify - graphify-out/graph.html</title>
+<script src="https://unpkg.com/vis-network@9.1.6/standalone/umd/vis-network.min.js"
+        integrity="sha384-Ux6phic9PEHJ38YtrijhkzyJ8yQlH8i/+buBR8s3mAZOJrP1gwyvAcIYl3GWtpX1"
+        crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0f0f1a; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; display: flex; height: 100vh; overflow: hidden; }
+  #graph { flex: 1; }
+  #sidebar { width: 280px; background: #1a1a2e; border-left: 1px solid #2a2a4e; display: flex; flex-direction: column; overflow: hidden; }
+  #search-wrap { padding: 12px; border-bottom: 1px solid #2a2a4e; }
+  #search { width: 100%; background: #0f0f1a; border: 1px solid #3a3a5e; color: #e0e0e0; padding: 7px 10px; border-radius: 6px; font-size: 13px; outline: none; }
+  #search:focus { border-color: #4E79A7; }
+  #search-results { max-height: 140px; overflow-y: auto; padding: 4px 12px; border-bottom: 1px solid #2a2a4e; display: none; }
+  .search-item { padding: 4px 6px; cursor: pointer; border-radius: 4px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .search-item:hover { background: #2a2a4e; }
+  #info-panel { padding: 14px; border-bottom: 1px solid #2a2a4e; min-height: 140px; }
+  #info-panel h3 { font-size: 13px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  #info-content { font-size: 13px; color: #ccc; line-height: 1.6; }
+  #info-content .field { margin-bottom: 5px; }
+  #info-content .field b { color: #e0e0e0; }
+  #info-content .empty { color: #555; font-style: italic; }
+  .neighbor-link { display: block; padding: 2px 6px; margin: 2px 0; border-radius: 3px; cursor: pointer; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 3px solid #333; }
+  .neighbor-link:hover { background: #2a2a4e; }
+  #neighbors-list { max-height: 160px; overflow-y: auto; margin-top: 4px; }
+  #legend-wrap { flex: 1; overflow-y: auto; padding: 12px; }
+  #legend-wrap h3 { font-size: 13px; color: #aaa; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .legend-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; border-radius: 4px; font-size: 12px; }
+  .legend-item:hover { background: #2a2a4e; padding-left: 4px; }
+  .legend-item.dimmed { opacity: 0.35; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .legend-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .legend-count { color: #666; font-size: 11px; }
+  #stats { padding: 10px 14px; border-top: 1px solid #2a2a4e; font-size: 11px; color: #555; }
+  #legend-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 4px 0; }
+  #legend-controls label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; color: #aaa; user-select: none; }
+  #legend-controls label:hover { color: #e0e0e0; }
+  .legend-cb, #select-all-cb { appearance: none; -webkit-appearance: none; width: 14px; height: 14px; border: 1.5px solid #3a3a5e; border-radius: 3px; background: #0f0f1a; cursor: pointer; position: relative; flex-shrink: 0; }
+  .legend-cb:checked, #select-all-cb:checked { background: #4E79A7; border-color: #4E79A7; }
+  .legend-cb:checked::after, #select-all-cb:checked::after { content: ''; position: absolute; left: 3.5px; top: 1px; width: 4px; height: 7px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  #select-all-cb:indeterminate { background: #4E79A7; border-color: #4E79A7; }
+  #select-all-cb:indeterminate::after { content: ''; position: absolute; left: 2px; top: 5px; width: 8px; height: 2px; background: #fff; border: none; transform: none; }
+</style>
+</head>
+<body>
+<div id="graph"></div>
+<div id="sidebar">
+  <div id="search-wrap">
+    <input id="search" type="text" placeholder="Search nodes..." autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+  <div id="info-panel">
+    <h3>Node Info</h3>
+    <div id="info-content"><span class="empty">Click a node to inspect it</span></div>
+  </div>
+  <div id="legend-wrap">
+    <h3>Communities</h3>
+    <div id="legend-controls">
+      <label><input type="checkbox" id="select-all-cb" checked onchange="toggleAllCommunities(!this.checked)">Select All</label>
+    </div>
+    <div id="legend"></div>
+  </div>
+  <div id="stats">61 nodes &middot; 102 edges &middot; 8 communities</div>
+</div>
+<script>
+const RAW_NODES = [{"id": "dec_offline_scan", "label": "Open: failed / offline scan exception flow", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Open: failed / offline scan exception flow", "community": 0, "community_name": "Scan and Signature Custody Rules", "source_file": "docs/05-open-decisions.md", "file_type": "concept", "degree": 1}, {"id": "dec_partial_delivery", "label": "Open: partial delivery handling", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Open: partial delivery handling", "community": 0, "community_name": "Scan and Signature Custody Rules", "source_file": "docs/05-open-decisions.md", "file_type": "concept", "degree": 1}, {"id": "merchant_simple_status", "label": "Merchant simplified 5-state status", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Merchant simplified 5-state status", "community": 0, "community_name": "Scan and Signature Custody Rules", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 1}, {"id": "step4_picked_up", "label": "4. Picked up at origin (scan + signature)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 31.8, "font": {"size": 12, "color": "#ffffff"}, "title": "4. Picked up at origin (scan + signature)", "community": 0, "community_name": "Scan and Signature Custody Rules", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 8}, {"id": "step5_wh1", "label": "5. Received at operator warehouse WH1 (scan)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 23.6, "font": {"size": 12, "color": "#ffffff"}, "title": "5. Received at operator warehouse WH1 (scan)", "community": 0, "community_name": "Scan and Signature Custody Rules", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 5}, {"id": "step6_assigned_transport", "label": "6. Assigned to bus / service", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "6. Assigned to bus / service", "community": 0, "community_name": "Scan and Signature Custody Rules", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 4}, {"id": "step7_loaded_bus", "label": "7. Loaded onto bus (scan)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 23.6, "font": {"size": 12, "color": "#ffffff"}, "title": "7. Loaded onto bus (scan)", "community": 0, "community_name": "Scan and Signature Custody Rules", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 5}, {"id": "step8_delivered", "label": "8. Delivered at destination (scan + signature)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 29.1, "font": {"size": 12, "color": "#ffffff"}, "title": "8. Delivered at destination (scan + signature)", "community": 0, "community_name": "Scan and Signature Custody Rules", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 7}, {"id": "warehouse_clerk", "label": "Operator Warehouse Clerk (WH1)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Operator Warehouse Clerk (WH1)", "community": 0, "community_name": "Scan and Signature Custody Rules", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 3}, {"id": "chain_of_custody", "label": "Chain of custody (8 steps)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 40.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Chain of custody (8 steps)", "community": 0, "community_name": "Scan and Signature Custody Rules", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "document", "degree": 11}, {"id": "rule_scan_timestamp_user", "label": "Rule: scan + timestamp + user at every hand-over", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 31.8, "font": {"size": 12, "color": "#ffffff"}, "title": "Rule: scan + timestamp + user at every hand-over", "community": 0, "community_name": "Scan and Signature Custody Rules", "source_file": "docs/01-system-overview.md", "file_type": "rationale", "degree": 8}, {"id": "rule_signature", "label": "Rule: e-signature only at pickup and delivery", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "Rule: e-signature only at pickup and delivery", "community": 0, "community_name": "Scan and Signature Custody Rules", "source_file": "docs/01-system-overview.md", "file_type": "rationale", "degree": 4}, {"id": "visual_id_check", "label": "Visual ID verification (RUT vs physical ID)", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "Visual ID verification (RUT vs physical ID)", "community": 0, "community_name": "Scan and Signature Custody Rules", "source_file": "docs/01-system-overview.md", "file_type": "rationale", "degree": 4}, {"id": "bus_driver", "label": "Bus Driver / Assistant", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Bus Driver / Assistant", "community": 1, "community_name": "Coordination and Operator Roles", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 2}, {"id": "dec_operator_multi", "label": "Open: one operator serves many merchants?", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Open: one operator serves many merchants?", "community": 1, "community_name": "Coordination and Operator Roles", "source_file": "docs/05-open-decisions.md", "file_type": "concept", "degree": 1}, {"id": "delivery_driver", "label": "Delivery Driver / Assistant", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Delivery Driver / Assistant", "community": 1, "community_name": "Coordination and Operator Roles", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 2}, {"id": "dispatcher", "label": "Dispatcher (operator)", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Dispatcher (operator)", "community": 1, "community_name": "Coordination and Operator Roles", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 2}, {"id": "logistics_coordinator", "label": "Logistics Coordinator", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Logistics Coordinator", "community": 1, "community_name": "Coordination and Operator Roles", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 3}, {"id": "pickup_driver", "label": "Pickup Driver / Assistant", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Pickup Driver / Assistant", "community": 1, "community_name": "Coordination and Operator Roles", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 3}, {"id": "step1_created", "label": "1. Created", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "1. Created", "community": 1, "community_name": "Coordination and Operator Roles", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 4}, {"id": "step2_assigned", "label": "2. Assigned to operator", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "2. Assigned to operator", "community": 1, "community_name": "Coordination and Operator Roles", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 4}, {"id": "step3_pickup_assigned", "label": "3. Pickup assigned (driver + vehicle)", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "3. Pickup assigned (driver + vehicle)", "community": 1, "community_name": "Coordination and Operator Roles", "source_file": "docs/02-roles-and-chain-of-custody.md", "file_type": "concept", "degree": 4}, {"id": "transport_operator", "label": "Transport Operator", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 31.8, "font": {"size": 12, "color": "#ffffff"}, "title": "Transport Operator", "community": 1, "community_name": "Coordination and Operator Roles", "source_file": "docs/01-system-overview.md", "file_type": "concept", "degree": 8}, {"id": "roadmap", "label": "Delivery roadmap (6 phases)", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "Delivery roadmap (6 phases)", "community": 1, "community_name": "Coordination and Operator Roles", "source_file": "docs/05-open-decisions.md", "file_type": "document", "degree": 4}, {"id": "ent_invoice", "label": "Entity: Invoice (ON HOLD)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Entity: Invoice (ON HOLD)", "community": 2, "community_name": "Product Scope and Principles", "source_file": "docs/04-data-model.md", "file_type": "concept", "degree": 3}, {"id": "merchant_role", "label": "Merchant (client)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "Merchant (client)", "community": 2, "community_name": "Product Scope and Principles", "source_file": "docs/01-system-overview.md", "file_type": "concept", "degree": 4}, {"id": "file_invoices", "label": "invoices.json", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "invoices.json", "community": 2, "community_name": "Product Scope and Principles", "source_file": "data/invoices.json", "file_type": "document", "degree": 1}, {"id": "kargo_platform", "label": "KARGO Platform", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 31.8, "font": {"size": 12, "color": "#ffffff"}, "title": "KARGO Platform", "community": 2, "community_name": "Product Scope and Principles", "source_file": "docs/01-system-overview.md", "file_type": "document", "degree": 8}, {"id": "ref_kargo_20", "label": "Reference app: kargo 2.0 (best process vision)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Reference app: kargo 2.0 (best process vision)", "community": 2, "community_name": "Product Scope and Principles", "source_file": "docs/01-system-overview.md", "file_type": "document", "degree": 2}, {"id": "ref_kargo_flow_2", "label": "Reference app: kargo-flow-2 (best UX)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Reference app: kargo-flow-2 (best UX)", "community": 2, "community_name": "Product Scope and Principles", "source_file": "docs/01-system-overview.md", "file_type": "document", "degree": 2}, {"id": "json_backend", "label": "JSON files as backend (prototype)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "JSON files as backend (prototype)", "community": 2, "community_name": "Product Scope and Principles", "source_file": "docs/01-system-overview.md", "file_type": "rationale", "degree": 1}, {"id": "monthly_billing", "label": "Monthly Consolidated Billing (ON HOLD)", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "Monthly Consolidated Billing (ON HOLD)", "community": 2, "community_name": "Product Scope and Principles", "source_file": "docs/01-system-overview.md", "file_type": "rationale", "degree": 4}, {"id": "principle_merchant_creates_only", "label": "Principle: Merchant only creates orders", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Principle: Merchant only creates orders", "community": 2, "community_name": "Product Scope and Principles", "source_file": "docs/01-system-overview.md", "file_type": "rationale", "degree": 3}, {"id": "principle_mobile_first", "label": "Principle: Mobile-first", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Principle: Mobile-first", "community": 2, "community_name": "Product Scope and Principles", "source_file": "docs/01-system-overview.md", "file_type": "rationale", "degree": 1}, {"id": "rebuild_decision", "label": "Decision: rebuild from scratch, best of both", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Decision: rebuild from scratch, best of both", "community": 2, "community_name": "Product Scope and Principles", "source_file": "docs/01-system-overview.md", "file_type": "rationale", "degree": 3}, {"id": "bulk_upload", "label": "Bulk CSV upload", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Bulk CSV upload", "community": 3, "community_name": "Merchant Order Wizard", "source_file": "docs/03-merchant-order-flow.md", "file_type": "concept", "degree": 1}, {"id": "dec_label_printing", "label": "Open: how are QR labels printed?", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Open: how are QR labels printed?", "community": 3, "community_name": "Merchant Order Wizard", "source_file": "docs/05-open-decisions.md", "file_type": "concept", "degree": 1}, {"id": "dec_returns", "label": "Open: returns and damaged goods", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Open: returns and damaged goods", "community": 3, "community_name": "Merchant Order Wizard", "source_file": "docs/05-open-decisions.md", "file_type": "concept", "degree": 1}, {"id": "merchant_portal", "label": "Merchant portal sections", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Merchant portal sections", "community": 3, "community_name": "Merchant Order Wizard", "source_file": "docs/03-merchant-order-flow.md", "file_type": "concept", "degree": 2}, {"id": "piece_code", "label": "Piece code / QR per package", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Piece code / QR per package", "community": 3, "community_name": "Merchant Order Wizard", "source_file": "docs/03-merchant-order-flow.md", "file_type": "concept", "degree": 3}, {"id": "wz_confirm", "label": "Confirmation: OT + package codes", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "Confirmation: OT + package codes", "community": 3, "community_name": "Merchant Order Wizard", "source_file": "docs/03-merchant-order-flow.md", "file_type": "concept", "degree": 4}, {"id": "wz_step1", "label": "Wizard 1: origin & destination", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Wizard 1: origin &amp; destination", "community": 3, "community_name": "Merchant Order Wizard", "source_file": "docs/03-merchant-order-flow.md", "file_type": "concept", "degree": 3}, {"id": "wz_step2", "label": "Wizard 2: authorized persons (min 2 per point)", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "Wizard 2: authorized persons (min 2 per point)", "community": 3, "community_name": "Merchant Order Wizard", "source_file": "docs/03-merchant-order-flow.md", "file_type": "concept", "degree": 4}, {"id": "wz_step3", "label": "Wizard 3: packages", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Wizard 3: packages", "community": 3, "community_name": "Merchant Order Wizard", "source_file": "docs/03-merchant-order-flow.md", "file_type": "concept", "degree": 3}, {"id": "wizard", "label": "Merchant order registration wizard", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 34.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Merchant order registration wizard", "community": 3, "community_name": "Merchant Order Wizard", "source_file": "docs/03-merchant-order-flow.md", "file_type": "document", "degree": 9}, {"id": "dec_sla", "label": "Open: SLA targets per route / service", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Open: SLA targets per route / service", "community": 4, "community_name": "Order and Role Data", "source_file": "docs/05-open-decisions.md", "file_type": "concept", "degree": 1}, {"id": "ent_order", "label": "Entity: Order (OT)", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 34.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Entity: Order (OT)", "community": 4, "community_name": "Order and Role Data", "source_file": "docs/04-data-model.md", "file_type": "concept", "degree": 9}, {"id": "ent_role", "label": "Entity: Role", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Entity: Role", "community": 4, "community_name": "Order and Role Data", "source_file": "docs/04-data-model.md", "file_type": "concept", "degree": 2}, {"id": "file_orders", "label": "orders.json", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "orders.json", "community": 4, "community_name": "Order and Role Data", "source_file": "data/orders.json", "file_type": "document", "degree": 1}, {"id": "file_roles", "label": "roles.json", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "roles.json", "community": 4, "community_name": "Order and Role Data", "source_file": "data/roles.json", "file_type": "document", "degree": 1}, {"id": "ent_event", "label": "Entity: Tracking Event (audit log)", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Entity: Tracking Event (audit log)", "community": 5, "community_name": "Package and Audit Trail Data", "source_file": "docs/04-data-model.md", "file_type": "concept", "degree": 3}, {"id": "ent_package", "label": "Entity: Package", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Entity: Package", "community": 5, "community_name": "Package and Audit Trail Data", "source_file": "docs/04-data-model.md", "file_type": "concept", "degree": 3}, {"id": "ent_scan", "label": "Entity: Scan record", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "Entity: Scan record", "community": 5, "community_name": "Package and Audit Trail Data", "source_file": "docs/04-data-model.md", "file_type": "concept", "degree": 4}, {"id": "file_packages", "label": "packages.json", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "packages.json", "community": 5, "community_name": "Package and Audit Trail Data", "source_file": "data/packages.json", "file_type": "document", "degree": 2}, {"id": "file_tracking_events", "label": "tracking_events.json", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "tracking_events.json", "community": 5, "community_name": "Package and Audit Trail Data", "source_file": "data/tracking_events.json", "file_type": "document", "degree": 1}, {"id": "ent_merchant", "label": "Entity: Merchant", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Entity: Merchant", "community": 6, "community_name": "Merchant and Warehouse Data", "source_file": "docs/04-data-model.md", "file_type": "concept", "degree": 3}, {"id": "ent_warehouse", "label": "Entity: Warehouse", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 18.2, "font": {"size": 12, "color": "#ffffff"}, "title": "Entity: Warehouse", "community": 6, "community_name": "Merchant and Warehouse Data", "source_file": "docs/04-data-model.md", "file_type": "concept", "degree": 3}, {"id": "origin_dropdown", "label": "Origin warehouse dropdown filtered by city", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "Origin warehouse dropdown filtered by city", "community": 6, "community_name": "Merchant and Warehouse Data", "source_file": "docs/03-merchant-order-flow.md", "file_type": "concept", "degree": 2}, {"id": "file_merchants", "label": "merchants.json", "color": {"background": "#B07AA1", "border": "#B07AA1", "highlight": {"background": "#ffffff", "border": "#B07AA1"}}, "size": 15.5, "font": {"size": 12, "color": "#ffffff"}, "title": "merchants.json", "community": 6, "community_name": "Merchant and Warehouse Data", "source_file": "data/merchants.json", "file_type": "document", "degree": 2}, {"id": "authorized_persons", "label": "Authorized persons (name, RUT, phone)", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 20.9, "font": {"size": 12, "color": "#ffffff"}, "title": "Authorized persons (name, RUT, phone)", "community": 7, "community_name": "Authorized Persons Verification", "source_file": "docs/03-merchant-order-flow.md", "file_type": "concept", "degree": 4}, {"id": "dec_auth_list", "label": "Open: authorized persons closed list vs free entry", "color": {"background": "#FF9DA7", "border": "#FF9DA7", "highlight": {"background": "#ffffff", "border": "#FF9DA7"}}, "size": 12.7, "font": {"size": 0, "color": "#ffffff"}, "title": "Open: authorized persons closed list vs free entry", "community": 7, "community_name": "Authorized Persons Verification", "source_file": "docs/05-open-decisions.md", "file_type": "concept", "degree": 1}];
+const RAW_EDGES = [{"from": "dec_offline_scan", "to": "rule_scan_timestamp_user", "label": "challenges", "title": "challenges [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "dec_partial_delivery", "to": "step8_delivered", "label": "affects", "title": "affects [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "merchant_simple_status", "to": "chain_of_custody", "label": "summarizes", "title": "summarizes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step4_picked_up", "to": "pickup_driver", "label": "performed_by", "title": "performed_by [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step4_picked_up", "to": "step5_wh1", "label": "precedes", "title": "precedes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step4_picked_up", "to": "rule_scan_timestamp_user", "label": "requires", "title": "requires [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step4_picked_up", "to": "rule_signature", "label": "requires", "title": "requires [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step4_picked_up", "to": "visual_id_check", "label": "requires", "title": "requires [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step5_wh1", "to": "warehouse_clerk", "label": "performed_by", "title": "performed_by [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step5_wh1", "to": "step6_assigned_transport", "label": "precedes", "title": "precedes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step5_wh1", "to": "rule_scan_timestamp_user", "label": "requires", "title": "requires [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step6_assigned_transport", "to": "warehouse_clerk", "label": "performed_by", "title": "performed_by [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step6_assigned_transport", "to": "step7_loaded_bus", "label": "precedes", "title": "precedes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step7_loaded_bus", "to": "bus_driver", "label": "performed_by", "title": "performed_by [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step7_loaded_bus", "to": "step8_delivered", "label": "precedes", "title": "precedes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step7_loaded_bus", "to": "rule_scan_timestamp_user", "label": "requires", "title": "requires [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step8_delivered", "to": "delivery_driver", "label": "performed_by", "title": "performed_by [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step8_delivered", "to": "rule_scan_timestamp_user", "label": "requires", "title": "requires [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step8_delivered", "to": "rule_signature", "label": "requires", "title": "requires [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step8_delivered", "to": "visual_id_check", "label": "requires", "title": "requires [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "chain_of_custody", "to": "step1_created", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "chain_of_custody", "to": "step2_assigned", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "chain_of_custody", "to": "step3_pickup_assigned", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "chain_of_custody", "to": "step4_picked_up", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "chain_of_custody", "to": "step5_wh1", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "chain_of_custody", "to": "step6_assigned_transport", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "chain_of_custody", "to": "step7_loaded_bus", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "chain_of_custody", "to": "step8_delivered", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "rule_scan_timestamp_user", "to": "rule_signature", "label": "extended_by", "title": "extended_by [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "rule_signature", "to": "visual_id_check", "label": "supported_by", "title": "supported_by [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "dec_operator_multi", "to": "transport_operator", "label": "affects", "title": "affects [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "logistics_coordinator", "to": "transport_operator", "label": "assigns_order_to", "title": "assigns_order_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step1_created", "to": "merchant_role", "label": "performed_by", "title": "performed_by [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step1_created", "to": "step2_assigned", "label": "precedes", "title": "precedes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step2_assigned", "to": "logistics_coordinator", "label": "performed_by", "title": "performed_by [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step2_assigned", "to": "step3_pickup_assigned", "label": "precedes", "title": "precedes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step3_pickup_assigned", "to": "dispatcher", "label": "performed_by", "title": "performed_by [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "step3_pickup_assigned", "to": "step4_picked_up", "label": "precedes", "title": "precedes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "transport_operator", "to": "bus_driver", "label": "includes", "title": "includes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "transport_operator", "to": "delivery_driver", "label": "includes", "title": "includes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "transport_operator", "to": "dispatcher", "label": "includes", "title": "includes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "transport_operator", "to": "pickup_driver", "label": "includes", "title": "includes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "transport_operator", "to": "warehouse_clerk", "label": "includes", "title": "includes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "roadmap", "to": "wizard", "label": "phase_1", "title": "phase_1 [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "roadmap", "to": "logistics_coordinator", "label": "phase_3", "title": "phase_3 [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "roadmap", "to": "monthly_billing", "label": "phase_6_last", "title": "phase_6_last [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "roadmap", "to": "pickup_driver", "label": "phase_4_scanning_app", "title": "phase_4_scanning_app [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "ent_invoice", "to": "monthly_billing", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_invoice", "to": "file_invoices", "label": "stored_in", "title": "stored_in [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "merchant_role", "to": "principle_merchant_creates_only", "label": "limited_by", "title": "limited_by [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "kargo_platform", "to": "monthly_billing", "label": "bills_via", "title": "bills_via [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "kargo_platform", "to": "transport_operator", "label": "coordinates", "title": "coordinates [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "kargo_platform", "to": "rule_scan_timestamp_user", "label": "enforces", "title": "enforces [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "kargo_platform", "to": "principle_merchant_creates_only", "label": "follows", "title": "follows [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "kargo_platform", "to": "principle_mobile_first", "label": "follows", "title": "follows [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "kargo_platform", "to": "json_backend", "label": "prototyped_on", "title": "prototyped_on [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "kargo_platform", "to": "merchant_role", "label": "serves", "title": "serves [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ref_kargo_20", "to": "chain_of_custody", "label": "inspired", "title": "inspired [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "ref_kargo_flow_2", "to": "wizard", "label": "inspired", "title": "inspired [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "monthly_billing", "to": "principle_merchant_creates_only", "label": "no_payment_at_order_creation", "title": "no_payment_at_order_creation [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "rebuild_decision", "to": "kargo_platform", "label": "produces", "title": "produces [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "rebuild_decision", "to": "ref_kargo_20", "label": "takes_process_from", "title": "takes_process_from [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "rebuild_decision", "to": "ref_kargo_flow_2", "label": "takes_ux_from", "title": "takes_ux_from [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "bulk_upload", "to": "wizard", "label": "fast_path_of", "title": "fast_path_of [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "dec_label_printing", "to": "piece_code", "label": "affects", "title": "affects [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "dec_returns", "to": "merchant_portal", "label": "affects", "title": "affects [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "merchant_portal", "to": "wizard", "label": "hosts", "title": "hosts [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "piece_code", "to": "step4_picked_up", "label": "scanned_at", "title": "scanned_at [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "wz_confirm", "to": "piece_code", "label": "generates", "title": "generates [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "wz_confirm", "to": "step1_created", "label": "results_in", "title": "results_in [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "wz_step1", "to": "wz_step2", "label": "precedes", "title": "precedes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "wz_step1", "to": "origin_dropdown", "label": "uses", "title": "uses [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "wz_step2", "to": "authorized_persons", "label": "captures", "title": "captures [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "wz_step2", "to": "wz_step3", "label": "precedes", "title": "precedes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "wz_step3", "to": "wz_confirm", "label": "precedes", "title": "precedes [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "wizard", "to": "wz_confirm", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "wizard", "to": "wz_step1", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "wizard", "to": "wz_step2", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "wizard", "to": "wz_step3", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "wizard", "to": "merchant_role", "label": "used_by", "title": "used_by [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "dec_sla", "to": "ent_order", "label": "affects", "title": "affects [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_order", "to": "ent_invoice", "label": "billed_in", "title": "billed_in [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_order", "to": "ent_package", "label": "has_many", "title": "has_many [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_order", "to": "authorized_persons", "label": "holds", "title": "holds [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_order", "to": "ent_event", "label": "logs", "title": "logs [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_order", "to": "file_orders", "label": "stored_in", "title": "stored_in [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_order", "to": "chain_of_custody", "label": "timeline_follows", "title": "timeline_follows [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "ent_role", "to": "ent_order", "label": "permissions_over", "title": "permissions_over [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_role", "to": "file_roles", "label": "stored_in", "title": "stored_in [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_event", "to": "file_tracking_events", "label": "stored_in", "title": "stored_in [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_event", "to": "ent_scan", "label": "source_of", "title": "source_of [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "ent_package", "to": "ent_scan", "label": "has_many", "title": "has_many [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_package", "to": "file_packages", "label": "stored_in", "title": "stored_in [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_scan", "to": "file_packages", "label": "stored_in", "title": "stored_in [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_scan", "to": "rule_scan_timestamp_user", "label": "records", "title": "records [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "ent_merchant", "to": "ent_order", "label": "has_many", "title": "has_many [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_merchant", "to": "ent_warehouse", "label": "has_many", "title": "has_many [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_merchant", "to": "file_merchants", "label": "stored_in", "title": "stored_in [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ent_warehouse", "to": "file_merchants", "label": "stored_in", "title": "stored_in [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "origin_dropdown", "to": "ent_warehouse", "label": "reads", "title": "reads [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "authorized_persons", "to": "visual_id_check", "label": "enables", "title": "enables [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "dec_auth_list", "to": "authorized_persons", "label": "affects", "title": "affects [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}];
+const LEGEND = [{"cid": 0, "color": "#4E79A7", "label": "Scan and Signature Custody Rules", "count": 13}, {"cid": 1, "color": "#F28E2B", "label": "Coordination and Operator Roles", "count": 11}, {"cid": 2, "color": "#E15759", "label": "Product Scope and Principles", "count": 11}, {"cid": 3, "color": "#76B7B2", "label": "Merchant Order Wizard", "count": 10}, {"cid": 4, "color": "#59A14F", "label": "Order and Role Data", "count": 5}, {"cid": 5, "color": "#EDC948", "label": "Package and Audit Trail Data", "count": 5}, {"cid": 6, "color": "#B07AA1", "label": "Merchant and Warehouse Data", "count": 4}, {"cid": 7, "color": "#FF9DA7", "label": "Authorized Persons Verification", "count": 2}];
+
+// HTML-escape helper — prevents XSS when injecting graph data into innerHTML
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Build vis datasets
+const nodesDS = new vis.DataSet(RAW_NODES.map(n => ({
+  id: n.id, label: n.label, color: n.color, size: n.size,
+  font: n.font, title: n.title,
+  _community: n.community, _community_name: n.community_name,
+  _source_file: n.source_file, _file_type: n.file_type, _degree: n.degree,
+})));
+
+const edgesDS = new vis.DataSet(RAW_EDGES.map((e, i) => ({
+  id: i, from: e.from, to: e.to,
+  label: '',
+  title: e.title,
+  dashes: e.dashes,
+  width: e.width,
+  color: e.color,
+  arrows: { to: { enabled: true, scaleFactor: 0.5 } },
+})));
+
+const container = document.getElementById('graph');
+const network = new vis.Network(container, { nodes: nodesDS, edges: edgesDS }, {
+  physics: {
+    enabled: true,
+    solver: 'forceAtlas2Based',
+    forceAtlas2Based: {
+      gravitationalConstant: -60,
+      centralGravity: 0.005,
+      springLength: 120,
+      springConstant: 0.08,
+      damping: 0.4,
+      avoidOverlap: 0.8,
+    },
+    stabilization: { iterations: 200, fit: true },
+  },
+  interaction: {
+    hover: true,
+    tooltipDelay: 100,
+    hideEdgesOnDrag: true,
+    navigationButtons: false,
+    keyboard: false,
+  },
+  nodes: { shape: 'dot', borderWidth: 1.5 },
+  edges: { smooth: { type: 'continuous', roundness: 0.2 }, selectionWidth: 3 },
+});
+
+network.once('stabilizationIterationsDone', () => {
+  network.setOptions({ physics: { enabled: false } });
+});
+
+function showInfo(nodeId) {
+  const n = nodesDS.get(nodeId);
+  if (!n) return;
+  const neighborIds = network.getConnectedNodes(nodeId);
+  const neighborItems = neighborIds.map(nid => {
+    const nb = nodesDS.get(nid);
+    const color = nb ? nb.color.background : '#555';
+    return `<span class="neighbor-link" style="border-left-color:${esc(color)}" data-nid="${esc(nid)}">${esc(nb ? nb.label : nid)}</span>`;
+  }).join('');
+  document.getElementById('info-content').innerHTML = `
+    <div class="field"><b>${esc(n.label)}</b></div>
+    <div class="field">Type: ${esc(n._file_type || 'unknown')}</div>
+    <div class="field">Community: ${esc(n._community_name)}</div>
+    <div class="field">Source: ${esc(n._source_file || '-')}</div>
+    <div class="field">Degree: ${n._degree}</div>
+    ${neighborIds.length ? `<div class="field" style="margin-top:8px;color:#aaa;font-size:11px">Neighbors (${neighborIds.length})</div><div id="neighbors-list">${neighborItems}</div>` : ''}
+  `;
+}
+
+function focusNode(nodeId) {
+  network.focus(nodeId, { scale: 1.4, animation: true });
+  network.selectNodes([nodeId]);
+  showInfo(nodeId);
+}
+
+// Neighbor links use a data attribute + one delegated listener rather than an
+// inline onclick. A node id/label sourced from a document or a scraped URL
+// (graphify add) can contain a double-quote; dropping the stringified id
+// unescaped into a quoted onclick both broke every link and allowed a hostile
+// source to inject an event handler into the local report (stored XSS, #1838).
+// esc() on data-nid keeps the value inside the attribute; the listener reads it
+// back verbatim. Bound to document so it survives the innerHTML rebuild that
+// recreates #neighbors-list on each showInfo().
+document.addEventListener('click', e => {
+  const el = e.target.closest('.neighbor-link');
+  if (el && el.dataset.nid !== undefined) focusNode(el.dataset.nid);
+});
+
+// Track hovered node — hover detection is more reliable than click params
+let hoveredNodeId = null;
+network.on('hoverNode', params => {
+  hoveredNodeId = params.node;
+  container.style.cursor = 'pointer';
+});
+network.on('blurNode', () => {
+  hoveredNodeId = null;
+  container.style.cursor = 'default';
+});
+container.addEventListener('click', () => {
+  if (hoveredNodeId !== null) {
+    showInfo(hoveredNodeId);
+    network.selectNodes([hoveredNodeId]);
+  }
+});
+network.on('click', params => {
+  if (params.nodes.length > 0) {
+    showInfo(params.nodes[0]);
+  } else if (hoveredNodeId === null) {
+    document.getElementById('info-content').innerHTML = '<span class="empty">Click a node to inspect it</span>';
+  }
+});
+
+const searchInput = document.getElementById('search');
+const searchResults = document.getElementById('search-results');
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  searchResults.innerHTML = '';
+  if (!q) { searchResults.style.display = 'none'; return; }
+  const matches = RAW_NODES.filter(n => n.label.toLowerCase().includes(q)).slice(0, 20);
+  if (!matches.length) { searchResults.style.display = 'none'; return; }
+  searchResults.style.display = 'block';
+  matches.forEach(n => {
+    const el = document.createElement('div');
+    el.className = 'search-item';
+    el.textContent = n.label;
+    el.style.borderLeft = `3px solid ${n.color.background}`;
+    el.style.paddingLeft = '8px';
+    el.onclick = () => {
+      network.focus(n.id, { scale: 1.5, animation: true });
+      network.selectNodes([n.id]);
+      showInfo(n.id);
+      searchResults.style.display = 'none';
+      searchInput.value = '';
+    };
+    searchResults.appendChild(el);
+  });
+});
+document.addEventListener('click', e => {
+  if (!searchResults.contains(e.target) && e.target !== searchInput)
+    searchResults.style.display = 'none';
+});
+
+const hiddenCommunities = new Set();
+
+const selectAllCb = document.getElementById('select-all-cb');
+
+function updateSelectAllState() {
+  const total = LEGEND.length;
+  const hidden = hiddenCommunities.size;
+  selectAllCb.checked = hidden === 0;
+  selectAllCb.indeterminate = hidden > 0 && hidden < total;
+}
+
+function toggleAllCommunities(hide) {
+  document.querySelectorAll('.legend-item').forEach(item => {
+    hide ? item.classList.add('dimmed') : item.classList.remove('dimmed');
+  });
+  document.querySelectorAll('.legend-cb').forEach(cb => {
+    cb.checked = !hide;
+  });
+  LEGEND.forEach(c => {
+    if (hide) hiddenCommunities.add(c.cid); else hiddenCommunities.delete(c.cid);
+  });
+  const updates = RAW_NODES.map(n => ({ id: n.id, hidden: hide }));
+  nodesDS.update(updates);
+  updateSelectAllState();
+}
+
+const legendEl = document.getElementById('legend');
+LEGEND.forEach(c => {
+  const item = document.createElement('div');
+  item.className = 'legend-item';
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.className = 'legend-cb';
+  cb.checked = true;
+  cb.addEventListener('change', (e) => {
+    e.stopPropagation();
+    if (cb.checked) {
+      hiddenCommunities.delete(c.cid);
+      item.classList.remove('dimmed');
+    } else {
+      hiddenCommunities.add(c.cid);
+      item.classList.add('dimmed');
+    }
+    const updates = RAW_NODES
+      .filter(n => n.community === c.cid)
+      .map(n => ({ id: n.id, hidden: !cb.checked }));
+    nodesDS.update(updates);
+    updateSelectAllState();
+  });
+  item.innerHTML = `<div class="legend-dot" style="background:${c.color}"></div>
+    <span class="legend-label">${c.label}</span>
+    <span class="legend-count">${c.count}</span>`;
+  item.prepend(cb);
+  item.onclick = (e) => {
+    if (e.target === cb) return;
+    cb.checked = !cb.checked;
+    cb.dispatchEvent(new Event('change'));
+  };
+  legendEl.appendChild(item);
+});
+</script>
+<script>
+// Render hyperedges as shaded regions
+const hyperedges = [{"id": "operator_roles", "label": "Transport Operator internal roles", "nodes": ["dispatcher", "pickup_driver", "warehouse_clerk", "bus_driver", "delivery_driver"], "relation": "form", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/02-roles-and-chain-of-custody.md"}, {"id": "scan_handover_steps", "label": "Hand-over steps requiring package scan", "nodes": ["step4_picked_up", "step5_wh1", "step7_loaded_bus", "step8_delivered"], "relation": "participate_in", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/02-roles-and-chain-of-custody.md"}, {"id": "signature_steps", "label": "Steps requiring signature + visual ID check", "nodes": ["step4_picked_up", "step8_delivered", "visual_id_check", "authorized_persons"], "relation": "participate_in", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/02-roles-and-chain-of-custody.md"}];
+// afterDrawing passes ctx already transformed to network coordinate space.
+// Draw node positions raw — no manual pan/zoom/DPR math needed.
+
+// Andrew's monotone chain. Returns the hull in counter-clockwise order, which
+// is what the perimeter must be traced in. Collinear and duplicate points
+// collapse to the extremes, so degenerate member sets render as a segment
+// rather than a zero-area crossed path.
+function convexHull(pts) {
+    const p = pts.slice().sort((a, b) => (a.x - b.x) || (a.y - b.y));
+    if (p.length < 3) return p;
+    const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+    const build = seq => {
+        const out = [];
+        for (const q of seq) {
+            while (out.length >= 2 && cross(out[out.length - 2], out[out.length - 1], q) <= 0) out.pop();
+            out.push(q);
+        }
+        out.pop();
+        return out;
+    };
+    const hull = build(p).concat(build(p.slice().reverse()));
+    return hull.length >= 3 ? hull : p;
+}
+network.on('afterDrawing', function(ctx) {
+    hyperedges.forEach(h => {
+        const positions = h.nodes
+            .map(nid => network.getPositions([nid])[nid])
+            .filter(p => p !== undefined);
+        if (positions.length < 2) return;
+        ctx.save();
+        ctx.globalAlpha = 0.12;
+        ctx.fillStyle = '#6366f1';
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        // Centroid and expanded hull in network coordinates.
+        // The perimeter must follow hull order, not h.nodes order: tracing the
+        // raw member order self-intersects whenever the layout does not happen
+        // to place members in angular order, filling as crossed wedges.
+        const cx = positions.reduce((s, p) => s + p.x, 0) / positions.length;
+        const cy = positions.reduce((s, p) => s + p.y, 0) / positions.length;
+        const hull = convexHull(positions);
+        const expanded = hull.map(p => ({
+            x: cx + (p.x - cx) * 1.15,
+            y: cy + (p.y - cy) * 1.15
+        }));
+        ctx.moveTo(expanded[0].x, expanded[0].y);
+        expanded.slice(1).forEach(p => ctx.lineTo(p.x, p.y));
+        ctx.closePath();
+        ctx.fill();
+        ctx.globalAlpha = 0.4;
+        ctx.stroke();
+        // Label
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = '#4f46e5';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(h.label, cx, cy - 5);
+        ctx.restore();
+    });
+});
+</script>
+</body>
+</html>

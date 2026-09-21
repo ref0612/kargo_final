@@ -1,0 +1,74 @@
+{
+  "_comment": "Every physical hand-over needs scan + timestamp + user. Only pickup (origin) and delivery (destination) also need a signature of an authorized person.",
+  "roles": [
+    {
+      "id": "merchant",
+      "nombre": "Merchant",
+      "nivel": "cliente",
+      "permisos": [
+        "crear_orden",
+        "ver_seguimiento",
+        "reportar_incidencia"
+      ],
+      "no_permitido": [
+        "asignar_operador",
+        "escanear_bultos",
+        "editar_operacion"
+      ]
+    },
+    {
+      "id": "coordinador_logistico",
+      "nombre": "Coordinador Logístico",
+      "nivel": "kargo",
+      "permisos": [
+        "ver_ordenes_pendientes",
+        "asignar_operador_transporte"
+      ]
+    },
+    {
+      "id": "operador_despachador",
+      "nombre": "Despachador (Operador de Transporte)",
+      "nivel": "operador",
+      "permisos": [
+        "recibir_asignacion",
+        "designar_conductor_recoleccion",
+        "designar_movil_recoleccion"
+      ]
+    },
+    {
+      "id": "operador_conductor_recoleccion",
+      "nombre": "Conductor / Auxiliar de Recolección",
+      "nivel": "operador",
+      "permisos": [
+        "escanear_bulto_recoleccion",
+        "capturar_firma_entrega"
+      ]
+    },
+    {
+      "id": "operador_encargado_bodega",
+      "nombre": "Encargado Bodega Operador (WH1)",
+      "nivel": "operador",
+      "permisos": [
+        "escanear_bulto_ingreso_bodega",
+        "asignar_bus_servicio"
+      ]
+    },
+    {
+      "id": "operador_conductor_bus",
+      "nombre": "Conductor / Auxiliar de Bus",
+      "nivel": "operador",
+      "permisos": [
+        "escanear_bulto_carga_bus"
+      ]
+    },
+    {
+      "id": "operador_conductor_entrega",
+      "nombre": "Conductor / Auxiliar de Entrega",
+      "nivel": "operador",
+      "permisos": [
+        "escanear_bulto_entrega",
+        "capturar_firma_recepcion"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,194 @@
+{
+  "events": [
+    {
+      "id": "evt_1001",
+      "order_id": "ot_00001",
+      "package_id": null,
+      "type": "orden_creada",
+      "actor_role": "merchant",
+      "actor_id": "usr_042",
+      "at": "2026-09-21T15:17:29.010Z",
+      "note": "OT-00001 creada - 3 bultos declarados"
+    },
+    {
+      "id": "evt_1002",
+      "order_id": "ot_00002",
+      "package_id": null,
+      "type": "orden_creada",
+      "actor_role": "merchant",
+      "actor_id": "usr_042",
+      "at": "2026-09-21T15:17:29.011Z",
+      "note": "OT-00002 creada - 2 bultos declarados"
+    },
+    {
+      "id": "evt_1003",
+      "order_id": "ot_00002",
+      "package_id": null,
+      "type": "orden_asignada_operador",
+      "actor_role": "coordinador_logistico",
+      "actor_id": "usr_c01",
+      "at": "2026-09-21T15:17:29.013Z",
+      "note": "Asignada a Transportes Sur Ltda."
+    },
+    {
+      "id": "evt_1004",
+      "order_id": "ot_00003",
+      "package_id": null,
+      "type": "orden_creada",
+      "actor_role": "merchant",
+      "actor_id": "usr_042",
+      "at": "2026-09-21T15:17:29.014Z",
+      "note": "OT-00003 creada - 4 bultos declarados"
+    },
+    {
+      "id": "evt_1005",
+      "order_id": "ot_00003",
+      "package_id": null,
+      "type": "orden_asignada_operador",
+      "actor_role": "coordinador_logistico",
+      "actor_id": "usr_c01",
+      "at": "2026-09-21T15:17:29.014Z",
+      "note": "Asignada a Transportes Sur Ltda."
+    },
+    {
+      "id": "evt_1006",
+      "order_id": "ot_00003",
+      "package_id": null,
+      "type": "recoleccion_asignada",
+      "actor_role": "operador_despachador",
+      "actor_id": "usr_d05",
+      "at": "2026-09-21T15:17:29.014Z",
+      "note": "Conductor usr_210, móvil FG-JI-98"
+    },
+    {
+      "id": "evt_1007",
+      "order_id": "ot_00004",
+      "package_id": null,
+      "type": "orden_creada",
+      "actor_role": "merchant",
+      "actor_id": "usr_042",
+      "at": "2026-09-21T15:17:29.015Z",
+      "note": "OT-00004 creada - 3 bultos declarados"
+    },
+    {
+      "id": "evt_1008",
+      "order_id": "ot_00004",
+      "package_id": null,
+      "type": "orden_asignada_operador",
+      "actor_role": "coordinador_logistico",
+      "actor_id": "usr_c01",
+      "at": "2026-09-21T15:17:29.015Z",
+      "note": "Asignada a Transportes Sur Ltda."
+    },
+    {
+      "id": "evt_1009",
+      "order_id": "ot_00004",
+      "package_id": null,
+      "type": "recoleccion_asignada",
+      "actor_role": "operador_despachador",
+      "actor_id": "usr_d05",
+      "at": "2026-09-21T15:17:29.015Z",
+      "note": "Conductor usr_211, móvil HK-LM-45"
+    },
+    {
+      "id": "evt_1010",
+      "order_id": "ot_00004",
+      "package_id": "pkg_00004_1",
+      "type": "bulto_escaneado_recoleccion",
+      "actor_role": "operador_conductor_recoleccion",
+      "actor_id": "usr_211",
+      "at": "2026-09-21T15:17:29.016Z",
+      "note": "KARGO-00004-001"
+    },
+    {
+      "id": "evt_1011",
+      "order_id": "ot_00004",
+      "package_id": "pkg_00004_2",
+      "type": "bulto_escaneado_recoleccion",
+      "actor_role": "operador_conductor_recoleccion",
+      "actor_id": "usr_211",
+      "at": "2026-09-21T15:17:29.016Z",
+      "note": "KARGO-00004-002"
+    },
+    {
+      "id": "evt_1012",
+      "order_id": "ot_00004",
+      "package_id": "pkg_00004_3",
+      "type": "bulto_escaneado_recoleccion",
+      "actor_role": "operador_conductor_recoleccion",
+      "actor_id": "usr_211",
+      "at": "2026-09-21T15:17:29.016Z",
+      "note": "KARGO-00004-003"
+    },
+    {
+      "id": "evt_1013",
+      "order_id": "ot_00004",
+      "package_id": null,
+      "type": "traspaso_recoleccion",
+      "actor_role": "operador_conductor_recoleccion",
+      "actor_id": "usr_211",
+      "at": "2026-09-21T15:17:29.017Z",
+      "note": "Firma capturada, RUT verificado visualmente"
+    },
+    {
+      "id": "evt_1014",
+      "order_id": "ot_00004",
+      "package_id": "pkg_00004_1",
+      "type": "bulto_escaneado_ingreso_bodega_op",
+      "actor_role": "operador_encargado_bodega",
+      "actor_id": "usr_305",
+      "at": "2026-09-21T15:17:29.017Z",
+      "note": "KARGO-00004-001"
+    },
+    {
+      "id": "evt_1015",
+      "order_id": "ot_00004",
+      "package_id": "pkg_00004_2",
+      "type": "bulto_escaneado_ingreso_bodega_op",
+      "actor_role": "operador_encargado_bodega",
+      "actor_id": "usr_305",
+      "at": "2026-09-21T15:17:29.017Z",
+      "note": "KARGO-00004-002"
+    },
+    {
+      "id": "evt_1016",
+      "order_id": "ot_00004",
+      "package_id": "pkg_00004_3",
+      "type": "bulto_escaneado_ingreso_bodega_op",
+      "actor_role": "operador_encargado_bodega",
+      "actor_id": "usr_305",
+      "at": "2026-09-21T15:17:29.017Z",
+      "note": "KARGO-00004-003"
+    },
+    {
+      "id": "evt_1017",
+      "order_id": "ot_00004",
+      "package_id": null,
+      "type": "traspaso_ingreso_bodega_op",
+      "actor_role": "operador_encargado_bodega",
+      "actor_id": "usr_305",
+      "at": "2026-09-21T15:17:29.017Z",
+      "note": "Traspaso confirmado"
+    },
+    {
+      "id": "evt_1018",
+      "order_id": "ot_00005",
+      "package_id": null,
+      "type": "orden_creada",
+      "actor_role": "merchant",
+      "actor_id": "usr_042",
+      "at": "2026-09-21T15:17:29.017Z",
+      "note": "OT-00005 creada - 2 bultos declarados"
+    },
+    {
+      "id": "evt_1019",
+      "order_id": "ot_00005",
+      "package_id": null,
+      "type": "orden_asignada_operador",
+      "actor_role": "coordinador_logistico",
+      "actor_id": "usr_c01",
+      "at": "2026-09-21T15:17:29.017Z",
+      "note": "Asignada a Andes Cargo S.A."
+    }
+  ]
+}

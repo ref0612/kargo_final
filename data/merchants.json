@@ -1,0 +1,123 @@
+{
+  "_comment": "B2B merchant account. bodegas feeds the origin dropdown (filtered by ciudad). contactos = default authorized persons (min 2), validated visually by crews against the RUT. Billing is monthly consolidated and ON HOLD.",
+  "merchants": [
+    {
+      "id": "mer_falabella",
+      "razon_social": "Falabella Retail S.A.",
+      "rut": "90.749.000-1",
+      "plan": "pro",
+      "facturacion": {
+        "modalidad": "mensual_consolidada",
+        "dia_cierre": 1,
+        "referencia_default": null
+      },
+      "bodegas": [
+        {
+          "id": "bod_scl_01",
+          "nombre": "CD Pudahuel",
+          "ciudad": "Santiago",
+          "es_origen_default": true,
+          "direccion": {
+            "region": "Metropolitana",
+            "ciudad": "Santiago",
+            "comuna": "Quilicura",
+            "direccion": "Av. Presidente Eduardo Frei Montalva 8301"
+          },
+          "contactos": [
+            {
+              "nombre": "Juan Pérez",
+              "rut": "12.345.678-5",
+              "telefono": "+56912345678",
+              "cargo": "Jefe de bodega"
+            },
+            {
+              "nombre": "Ana Rojas",
+              "rut": "13.876.543-1",
+              "telefono": "+56911223344",
+              "cargo": "Asistente de bodega"
+            }
+          ]
+        },
+        {
+          "id": "bod_scl_02",
+          "nombre": "CD Lo Aguirre",
+          "ciudad": "Santiago",
+          "es_origen_default": false,
+          "direccion": {
+            "region": "Metropolitana",
+            "ciudad": "Santiago",
+            "comuna": "Pudahuel",
+            "direccion": "Ruta 68 km 12"
+          },
+          "contactos": [
+            {
+              "nombre": "Luis Toro",
+              "rut": "11.222.333-9",
+              "telefono": "+56922334455",
+              "cargo": "Encargado"
+            },
+            {
+              "nombre": "Marta Silva",
+              "rut": "10.998.877-4",
+              "telefono": "+56933445566",
+              "cargo": "Supervisora"
+            }
+          ]
+        },
+        {
+          "id": "bod_tem_03",
+          "nombre": "CD Temuco",
+          "ciudad": "Temuco",
+          "es_origen_default": false,
+          "direccion": {
+            "region": "Araucanía",
+            "ciudad": "Temuco",
+            "comuna": "Temuco",
+            "direccion": "Manuel Montt 452"
+          },
+          "contactos": [
+            {
+              "nombre": "María González",
+              "rut": "14.987.654-5",
+              "telefono": "+56987654321",
+              "cargo": "Encargada de recepción"
+            },
+            {
+              "nombre": "Pedro Soto",
+              "rut": "15.234.567-4",
+              "telefono": "+56988997766",
+              "cargo": "Guardia de bodega"
+            }
+          ]
+        },
+        {
+          "id": "bod_con_04",
+          "nombre": "CD Concepción",
+          "ciudad": "Concepción",
+          "es_origen_default": false,
+          "direccion": {
+            "region": "Biobío",
+            "ciudad": "Concepción",
+            "comuna": "San Pedro de la Paz",
+            "direccion": "Av. Los Carrera 1500"
+          },
+          "contactos": [
+            {
+              "nombre": "Rosa Vega",
+              "rut": "9.876.543-3",
+              "telefono": "+56944556677",
+              "cargo": "Jefa de bodega"
+            },
+            {
+              "nombre": "Iván Cortés",
+              "rut": "16.543.210-K",
+              "telefono": "+56955667788",
+              "cargo": "Asistente"
+            }
+          ]
+        }
+      ],
+      "created_at": "2025-01-10T09:00:00.000Z"
+    }
+  ]
+}

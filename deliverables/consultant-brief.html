@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>KARGO — System Map and Process Specification</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@page { size: A4; margin: 16mm 15mm 16mm 15mm; }
+@page wide { size: A4 landscape; margin: 12mm 12mm 12mm 12mm; }
+:root{
+  --ink:#1A2420; --soft:#55625A; --line:#D3D9CE; --paper:#F3F4EF; --card:#FFFFFF;
+  --accent:#C1501F; --accent-soft:#F3E2D6; --good:#2E7D4F; --good-soft:#E3EFE7;
+  --warn:#9C7A15; --warn-soft:#F3ECD6; --bad:#B23A34; --bad-soft:#F4E2E0;
+}
+*{ box-sizing:border-box; }
+html{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+body{ margin:0; font-family:'IBM Plex Sans',Arial,sans-serif; font-size:10.5pt; line-height:1.5; color:var(--ink); }
+h1,h2,h3,h4{ font-family:'Archivo',Arial,sans-serif; margin:0; }
+.mono{ font-family:'IBM Plex Mono',Consolas,monospace; }
+p{ margin:0 0 8pt; }
+ul,ol{ margin:0 0 8pt; padding-left:16pt; }
+li{ margin-bottom:3pt; }
+
+.page{ page-break-after:always; break-after:page; }
+.page:last-child{ page-break-after:auto; break-after:auto; }
+.wide{ page:wide; }
+
+/* cover */
+.cover{ min-height:255mm; display:flex; flex-direction:column; justify-content:space-between; }
+.cover .band{ height:8pt; background:var(--accent); width:60pt; margin-bottom:18pt; }
+.eyebrow{ font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:.14em; font-size:8.5pt; color:var(--accent); font-weight:600; margin-bottom:10pt; }
+.cover h1{ font-size:34pt; line-height:1.05; font-weight:800; max-width:150mm; letter-spacing:-.01em; }
+.cover .dek{ font-size:13pt; color:var(--soft); max-width:140mm; margin-top:14pt; }
+.cover .meta{ border-top:1px solid var(--line); padding-top:12pt; display:grid; grid-template-columns:repeat(3,1fr); gap:14pt; font-size:9pt; color:var(--soft); }
+.cover .meta b{ display:block; color:var(--ink); font-size:10pt; margin-bottom:2pt; }
+.ask{ margin-top:26pt; border-left:4pt solid var(--accent); background:var(--paper); padding:12pt 14pt; max-width:150mm; }
+.ask h3{ font-size:11pt; margin-bottom:5pt; }
+
+/* section chrome */
+.sec-head{ display:flex; align-items:baseline; gap:10pt; border-bottom:1.5pt solid var(--ink); padding-bottom:5pt; margin-bottom:12pt; }
+.sec-head .n{ font-family:'IBM Plex Mono',monospace; color:var(--accent); font-weight:600; font-size:11pt; }
+.sec-head h2{ font-size:19pt; font-weight:700; }
+h3{ font-size:12pt; margin:12pt 0 5pt; }
+.lede{ color:var(--soft); font-size:11pt; max-width:165mm; }
+
+/* tables */
+table{ border-collapse:collapse; width:100%; font-size:9.3pt; margin:6pt 0 10pt; }
+th,td{ text-align:left; vertical-align:top; padding:5pt 7pt; border-bottom:.7pt solid var(--line); }
+th{ font-family:'IBM Plex Mono',monospace; font-size:7.6pt; text-transform:uppercase; letter-spacing:.06em; color:var(--soft); background:var(--paper); border-bottom:1pt solid var(--ink); }
+tr{ break-inside:avoid; }
+td.k{ font-weight:600; white-space:nowrap; }
+
+.tag{ display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:7.6pt; font-weight:600; padding:1pt 6pt; border-radius:8pt; margin-right:3pt; white-space:nowrap; }
+.tag.scan{ background:var(--good-soft); color:var(--good); }
+.tag.sign{ background:var(--bad-soft); color:var(--bad); }
+.tag.ts{ background:var(--warn-soft); color:var(--warn); }
+.tag.hold{ background:var(--warn-soft); color:var(--warn); }
+
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12pt; }
+.card{ border:.8pt solid var(--line); border-radius:4pt; padding:9pt 11pt; background:var(--card); break-inside:avoid; }
+.card h4{ font-size:10.5pt; margin-bottom:4pt; }
+.card ul{ margin:0; font-size:9.5pt; }
+.callout{ border-left:3pt solid var(--accent); background:var(--paper); padding:8pt 11pt; margin:8pt 0 10pt; break-inside:avoid; }
+
+.qgrid{ display:grid; grid-template-columns:1fr; gap:7pt; counter-reset:q; }
+.q{ border:.8pt solid var(--line); border-radius:4pt; padding:8pt 11pt 8pt 34pt; position:relative; break-inside:avoid; }
+.q::before{ counter-increment:q; content:counter(q); position:absolute; left:10pt; top:7pt; font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--accent); font-size:11pt; }
+.q b{ font-family:'Archivo',Arial,sans-serif; }
+.q .why{ display:block; color:var(--soft); font-size:9pt; margin-top:2pt; }
+
+figure{ margin:0; }
+figcaption{ font-size:8.5pt; color:var(--soft); margin-top:4pt; }
+svg text{ font-family:'IBM Plex Sans',Arial,sans-serif; }
+.clusters{ display:grid; grid-template-columns:repeat(4,1fr); gap:8pt; }
+.cl{ position:relative; border:.8pt solid var(--line); border-top:3pt solid var(--accent); border-radius:3pt; padding:8pt 10pt; background:var(--card); }
+.cl.data{ border-top-color:var(--good); }
+.cl h4{ font-size:10pt; margin:0 0 3pt; padding-right:22pt; }
+.cl p{ font-size:8.6pt; color:var(--soft); margin:0; }
+.cl .cn{ position:absolute; right:8pt; top:6pt; font-family:'IBM Plex Mono',monospace; font-size:9pt; font-weight:600; color:var(--soft); }
+.foot{ font-size:8pt; color:var(--soft); border-top:.7pt solid var(--line); padding-top:6pt; margin-top:12pt; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="page cover">
+  <div>
+    <div class="band"></div>
+    <div class="eyebrow">System map · process specification · pre-build review</div>
+    <h1>KARGO — B2B warehouse-to-warehouse freight, mapped end to end</h1>
+    <p class="dek">Actors, chain of custody, order registration flow and data model of a chain-of-custody freight platform, prepared for an external logistics review before development starts.</p>
+    <div class="ask">
+      <h3>What we are asking of the consultant</h3>
+      <p>The digital flow is defined. What is <b>not</b> validated is the operational reality behind it. Section 8 lists seven questions where a logistics practitioner's judgement decides how the system must behave (failed scans, partial deliveries, label production, SLAs, returns, multi-client operators). Sections 2–7 are the context you need to answer them.</p>
+    </div>
+  </div>
+  <div class="meta">
+    <div><b>Document date</b>21 September 2026</div>
+    <div><b>Status</b>Design phase — no code written yet</div>
+    <div><b>Market</b>Chile · intercity bus line-haul</div>
+  </div>
+</section>
+
+<!-- ============ 1 EXECUTIVE SUMMARY ============ -->
+<section class="page">
+  <div class="sec-head"><span class="n">01</span><h2>Executive summary</h2></div>
+  <p class="lede">KARGO coordinates freight between a client's own warehouses. A <b>Merchant</b> creates an order; a <b>Logistics Coordinator</b> assigns it to a <b>Transport Operator</b>, which collects, consolidates, line-hauls by intercity bus and delivers to the destination warehouse.</p>
+
+  <div class="grid2" style="margin-top:10pt">
+    <div class="card"><h4>The business model</h4>
+      <ul>
+        <li>B2B only, warehouse to warehouse, one client account per relationship.</li>
+        <li>No payment at order creation. Billing is consolidated monthly per client.</li>
+        <li><span class="tag hold">ON HOLD</span> The billing calculation basis has not been communicated yet and is parked to the end of the project.</li>
+      </ul></div>
+    <div class="card"><h4>The core design idea</h4>
+      <ul>
+        <li>Every physical hand-over of a package is a <b>control point</b>.</li>
+        <li>Each control point records <b>who</b>, <b>when</b> (date + time) and a <b>scan of every package</b>.</li>
+        <li>Pickup and final delivery additionally capture an <b>electronic signature</b> from a pre-registered authorized person.</li>
+      </ul></div>
+    <div class="card"><h4>Scope of the first release</h4>
+      <ul>
+        <li>Merchant creates orders and tracks them (read-only) — from a phone.</li>
+        <li>Coordinator assigns; operator crews execute with a mobile scanning app.</li>
+        <li>Backend is simulated with static JSON files for the prototype.</li>
+      </ul></div>
+    <div class="card"><h4>How the two reference apps informed this</h4>
+      <ul>
+        <li><b>kargo-flow-2</b>: strong visuals, working mobile order form, but no package data.</li>
+        <li><b>kargo 2.0</b>: strong process vision (multi-role, per-package manifest, event feed) but a demo simulation, not mobile-usable.</li>
+        <li>Decision: rebuild, combining the best of both.</li>
+      </ul></div>
+  </div>
+
+  <h3>Design rules that govern every screen</h3>
+  <ol>
+    <li>The Merchant <b>only creates</b> orders. It never assigns carriers, scans, or manages operations.</li>
+    <li>Mobile first — every role must be able to work from a phone.</li>
+    <li>Every hand-over: scan of each package + timestamp + responsible user, with no exceptions.</li>
+    <li>Identity verification is <b>visual only</b>: the Merchant registers at least two authorized persons per handover point (name, RUT, phone); the operator compares the RUT with the physical ID.</li>
+    <li>Registration must take the fewest possible taps — it is the highest-frequency action in the system.</li>
+  </ol>
+</section>
+
+<!-- ============ 2 ACTORS ============ -->
+<section class="page">
+  <div class="sec-head"><span class="n">02</span><h2>Actors and organizational levels</h2></div>
+  <p class="lede">Three organizational levels and seven roles. The Merchant deliberately sees none of the operational complexity below the first step.</p>
+
+  <table>
+    <tr><th>Role</th><th>Level</th><th>Responsibility</th><th>Scans</th><th>Signs</th></tr>
+    <tr><td class="k">Merchant</td><td>Client</td><td>Creates the order: warehouses, authorized persons, packages. Read-only tracking afterwards.</td><td>—</td><td>—</td></tr>
+    <tr><td class="k">Logistics Coordinator</td><td>Kargo</td><td>Receives created orders; assigns each to a Transport Operator.</td><td>—</td><td>—</td></tr>
+    <tr><td class="k">Dispatcher</td><td>Operator</td><td>Receives the assignment; designates the pickup driver and vehicle.</td><td>—</td><td>—</td></tr>
+    <tr><td class="k">Pickup Driver / Assistant</td><td>Operator</td><td>Collects at the origin warehouse.</td><td>Every package</td><td>Yes (origin)</td></tr>
+    <tr><td class="k">Operator Warehouse Clerk (WH1)</td><td>Operator</td><td>Receives at the operator's warehouse; assigns the load to a bus / service.</td><td>Every package</td><td>—</td></tr>
+    <tr><td class="k">Bus Driver / Assistant</td><td>Operator</td><td>Confirms loading of each package onto the bus.</td><td>Every package</td><td>—</td></tr>
+    <tr><td class="k">Delivery Driver / Assistant</td><td>Operator</td><td>Delivers to the destination warehouse.</td><td>Every package</td><td>Yes (destination)</td></tr>
+  </table>
+
+  <div class="callout"><b>Merchant-facing status is intentionally simplified:</b> Created → Assigned → Pickup in progress → In transit → Delivered. The eight internal steps (next section) exist in the back office and in the operator app only.</div>
+
+  <h3>What each level is not allowed to do</h3>
+  <ul>
+    <li><b>Merchant</b> cannot assign an operator, scan packages, or edit operational data.</li>
+    <li><b>Operator crews</b> cannot create or modify the order's commercial data (warehouses, package declaration).</li>
+    <li>No role can alter a timestamp or delete a scan; corrections are new, attributed events.</li>
+  </ul>
+</section>
+
+<!-- ============ 3 CHAIN OF CUSTODY (landscape) ============ -->
+<section class="page wide">
+  <div class="sec-head"><span class="n">03</span><h2>Chain of custody — eight steps, four control points</h2></div>
+  <figure>
+  <svg viewBox="0 0 1120 470" width="100%" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#55625A"/></marker>
+    </defs>
+    <!-- lanes -->
+    <g font-size="11" fill="#1A2420">
+      <rect x="0" y="10"  width="1120" height="76" fill="#F3F4EF"/>
+      <rect x="0" y="86"  width="1120" height="76" fill="#FFFFFF"/>
+      <rect x="0" y="162" width="1120" height="76" fill="#F3F4EF"/>
+      <rect x="0" y="238" width="1120" height="76" fill="#FFFFFF"/>
+      <rect x="0" y="314" width="1120" height="76" fill="#F3F4EF"/>
+      <line x1="118" y1="10" x2="118" y2="390" stroke="#D3D9CE"/>
+      <text x="10" y="52"  font-weight="700">Merchant</text><text x="10" y="66" fill="#55625A" font-size="9">client</text>
+      <text x="10" y="128" font-weight="700">Logistics</text><text x="10" y="142" font-weight="700">Coordinator</text>
+      <text x="10" y="204" font-weight="700">Operator</text><text x="10" y="218" fill="#55625A" font-size="9">dispatcher</text>
+      <text x="10" y="280" font-weight="700">Operator</text><text x="10" y="294" fill="#55625A" font-size="9">warehouse clerk</text>
+      <text x="10" y="356" font-weight="700">Operator</text><text x="10" y="370" fill="#55625A" font-size="9">field crews</text>
+    </g>
+    <!-- step boxes: x positions -->
+    <g font-size="10">
+      <!-- 1 -->
+      <rect x="132" y="24" width="112" height="48" rx="4" fill="#fff" stroke="#1A2420"/>
+      <circle cx="132" cy="24" r="10" fill="#C1501F"/><text x="132" y="28" text-anchor="middle" fill="#fff" font-weight="700">1</text>
+      <text x="188" y="45" text-anchor="middle" font-weight="600">Created</text><text x="188" y="59" text-anchor="middle" fill="#55625A" font-size="9">order + packages</text>
+      <!-- 2 -->
+      <rect x="252" y="100" width="112" height="48" rx="4" fill="#fff" stroke="#1A2420"/>
+      <circle cx="252" cy="100" r="10" fill="#C1501F"/><text x="252" y="104" text-anchor="middle" fill="#fff" font-weight="700">2</text>
+      <text x="308" y="121" text-anchor="middle" font-weight="600">Assigned to</text><text x="308" y="135" text-anchor="middle" font-weight="600">operator</text>
+      <!-- 3 -->
+      <rect x="372" y="176" width="112" height="48" rx="4" fill="#fff" stroke="#1A2420"/>
+      <circle cx="372" cy="176" r="10" fill="#C1501F"/><text x="372" y="180" text-anchor="middle" fill="#fff" font-weight="700">3</text>
+      <text x="428" y="197" text-anchor="middle" font-weight="600">Pickup assigned</text><text x="428" y="211" text-anchor="middle" fill="#55625A" font-size="9">driver + vehicle</text>
+      <!-- 4 -->
+      <rect x="492" y="328" width="112" height="48" rx="4" fill="#fff" stroke="#C1501F" stroke-width="2"/>
+      <circle cx="492" cy="328" r="10" fill="#C1501F"/><text x="492" y="332" text-anchor="middle" fill="#fff" font-weight="700">4</text>
+      <text x="548" y="349" text-anchor="middle" font-weight="600">Picked up</text><text x="548" y="363" text-anchor="middle" fill="#55625A" font-size="9">at origin</text>
+      <!-- 5 -->
+      <rect x="612" y="252" width="112" height="48" rx="4" fill="#fff" stroke="#C1501F" stroke-width="2"/>
+      <circle cx="612" cy="252" r="10" fill="#C1501F"/><text x="612" y="256" text-anchor="middle" fill="#fff" font-weight="700">5</text>
+      <text x="668" y="273" text-anchor="middle" font-weight="600">Received at</text><text x="668" y="287" text-anchor="middle" font-weight="600">operator WH1</text>
+      <!-- 6 -->
+      <rect x="732" y="252" width="112" height="48" rx="4" fill="#fff" stroke="#1A2420"/>
+      <circle cx="732" cy="252" r="10" fill="#C1501F"/><text x="732" y="256" text-anchor="middle" fill="#fff" font-weight="700">6</text>
+      <text x="788" y="273" text-anchor="middle" font-weight="600">Assigned to</text><text x="788" y="287" text-anchor="middle" font-weight="600">bus / service</text>
+      <!-- 7 -->
+      <rect x="852" y="328" width="112" height="48" rx="4" fill="#fff" stroke="#C1501F" stroke-width="2"/>
+      <circle cx="852" cy="328" r="10" fill="#C1501F"/><text x="852" y="332" text-anchor="middle" fill="#fff" font-weight="700">7</text>
+      <text x="908" y="349" text-anchor="middle" font-weight="600">Loaded onto</text><text x="908" y="363" text-anchor="middle" font-weight="600">bus</text>
+      <!-- 8 -->
+      <rect x="972" y="328" width="112" height="48" rx="4" fill="#fff" stroke="#C1501F" stroke-width="2"/>
+      <circle cx="972" cy="328" r="10" fill="#C1501F"/><text x="972" y="332" text-anchor="middle" fill="#fff" font-weight="700">8</text>
+      <text x="1028" y="349" text-anchor="middle" font-weight="600">Delivered at</text><text x="1028" y="363" text-anchor="middle" font-weight="600">destination</text>
+    </g>
+    <!-- arrows -->
+    <g stroke="#55625A" stroke-width="1.4" fill="none" marker-end="url(#ar)">
+      <path d="M244,48 L252,48 L252,100"/>
+      <path d="M364,124 L372,124 L372,176"/>
+      <path d="M484,200 L560,200 L560,328" />
+      <path d="M604,352 L668,352 L668,300"/>
+      <path d="M724,276 L732,276"/>
+      <path d="M844,276 L908,276 L908,328"/>
+      <path d="M964,352 L972,352"/>
+    </g>
+    <!-- badges legend under each control step -->
+    <g font-size="9" font-weight="700">
+      <rect x="500" y="382" width="42" height="14" rx="7" fill="#E3EFE7"/><text x="521" y="392" text-anchor="middle" fill="#2E7D4F">SCAN</text>
+      <rect x="546" y="382" width="42" height="14" rx="7" fill="#F4E2E0"/><text x="567" y="392" text-anchor="middle" fill="#B23A34">SIGN</text>
+      <rect x="640" y="302" width="42" height="14" rx="7" fill="#E3EFE7"/><text x="661" y="312" text-anchor="middle" fill="#2E7D4F">SCAN</text>
+      <rect x="880" y="382" width="42" height="14" rx="7" fill="#E3EFE7"/><text x="901" y="392" text-anchor="middle" fill="#2E7D4F">SCAN</text>
+      <rect x="1000" y="382" width="42" height="14" rx="7" fill="#E3EFE7"/><text x="1021" y="392" text-anchor="middle" fill="#2E7D4F">SCAN</text>
+      <rect x="1046" y="382" width="42" height="14" rx="7" fill="#F4E2E0"/><text x="1067" y="392" text-anchor="middle" fill="#B23A34">SIGN</text>
+    </g>
+    <text x="0" y="424" font-size="10" fill="#55625A">Orange-outlined boxes are physical hand-overs (steps 4, 5, 7, 8). Every step also stores the acting user and a date-time stamp.</text>
+    <text x="0" y="440" font-size="10" fill="#55625A">SIGN = electronic signature of a pre-registered authorized person, RUT compared visually to physical ID (steps 4 and 8 only).</text>
+    <text x="0" y="456" font-size="10" fill="#55625A">The Merchant sees only a five-state summary of this chain.</text>
+  </svg>
+  <figcaption>Swimlane view of an order from creation to closure at the destination warehouse.</figcaption>
+  </figure>
+</section>
+
+<!-- ============ 4 CONTROL POINTS ============ -->
+<section class="page">
+  <div class="sec-head"><span class="n">04</span><h2>Control points and captured evidence</h2></div>
+  <p class="lede">What the system records at each step. This is the audit trail that will settle disputes ("24 of 25 packages arrived") and, later, support the monthly invoice.</p>
+  <table>
+    <tr><th>#</th><th>Step</th><th>Actor</th><th>Evidence captured</th></tr>
+    <tr><td class="mono">1</td><td class="k">Created</td><td>Merchant</td><td><span class="tag ts">USER + TIME</span> Origin/destination, ≥2 authorized persons per point, package declaration. One printable code per package is generated.</td></tr>
+    <tr><td class="mono">2</td><td class="k">Assigned to operator</td><td>Coordinator</td><td><span class="tag ts">USER + TIME</span> Operator id.</td></tr>
+    <tr><td class="mono">3</td><td class="k">Pickup assigned</td><td>Dispatcher</td><td><span class="tag ts">USER + TIME</span> Driver id and vehicle plate.</td></tr>
+    <tr><td class="mono">4</td><td class="k">Picked up</td><td>Pickup crew</td><td><span class="tag scan">SCAN / PACKAGE</span><span class="tag sign">SIGNATURE</span><span class="tag ts">USER + TIME</span> Person handing over is one of the pre-registered authorized persons; RUT visually checked.</td></tr>
+    <tr><td class="mono">5</td><td class="k">Received at operator WH1</td><td>Warehouse clerk</td><td><span class="tag scan">SCAN / PACKAGE</span><span class="tag ts">USER + TIME</span></td></tr>
+    <tr><td class="mono">6</td><td class="k">Assigned to bus / service</td><td>Warehouse clerk</td><td><span class="tag ts">USER + TIME</span> Bus plate, service name.</td></tr>
+    <tr><td class="mono">7</td><td class="k">Loaded onto bus</td><td>Bus crew</td><td><span class="tag scan">SCAN / PACKAGE</span><span class="tag ts">USER + TIME</span> Bus driver id.</td></tr>
+    <tr><td class="mono">8</td><td class="k">Delivered</td><td>Delivery crew</td><td><span class="tag scan">SCAN / PACKAGE</span><span class="tag sign">SIGNATURE</span><span class="tag ts">USER + TIME</span> Receiver is one of the pre-registered authorized persons; RUT visually checked. Order closed at destination.</td></tr>
+  </table>
+
+  <h3>Metrics that this design makes computable for free</h3>
+  <p>Because every hand-over is timestamped and attributed, the following can be derived without extra data capture. These are <b>candidate</b> indicators offered for the consultant to confirm or replace:</p>
+  <div class="grid2">
+    <div class="card"><h4>Time-based</h4><ul>
+      <li>Creation → assignment (coordinator responsiveness)</li>
+      <li>Assignment → pickup (operator lead time)</li>
+      <li>Dwell time at operator WH1 (step 5 → step 7)</li>
+      <li>End-to-end lead time vs. SLA</li></ul></div>
+    <div class="card"><h4>Integrity-based</h4><ul>
+      <li>Scan completeness per control point (packages scanned ÷ packages declared)</li>
+      <li>Partial delivery rate and where the gap first appears</li>
+      <li>Handovers by person / crew (accountability)</li>
+      <li>Forced-manual registrations vs. real scans</li></ul></div>
+  </div>
+</section>
+
+<!-- ============ 5 MERCHANT FLOW ============ -->
+<section class="page">
+  <div class="sec-head"><span class="n">05</span><h2>Merchant order registration flow</h2></div>
+  <p class="lede">A three-step, phone-first wizard. The Merchant's work ends at confirmation; everything in section 3 happens afterwards.</p>
+
+  <svg viewBox="0 0 700 150" width="100%" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#55625A"/></marker></defs>
+    <g font-size="10.5">
+      <rect x="2" y="10" width="150" height="120" rx="6" fill="#fff" stroke="#1A2420"/>
+      <circle cx="20" cy="28" r="10" fill="#C1501F"/><text x="20" y="32" text-anchor="middle" fill="#fff" font-weight="700">1</text>
+      <text x="36" y="32" font-weight="700">Origin &amp; destination</text>
+      <text x="12" y="54" fill="#55625A">Auto-set if only one</text><text x="12" y="68" fill="#55625A">warehouse; else city → list</text>
+      <text x="12" y="88" fill="#55625A">Destination: pick or create</text><text x="12" y="102" fill="#55625A">a registered warehouse</text>
+
+      <rect x="182" y="10" width="150" height="120" rx="6" fill="#fff" stroke="#1A2420"/>
+      <circle cx="200" cy="28" r="10" fill="#C1501F"/><text x="200" y="32" text-anchor="middle" fill="#fff" font-weight="700">2</text>
+      <text x="216" y="32" font-weight="700">Authorized persons</text>
+      <text x="192" y="54" fill="#55625A">Min. 2 at origin, 2 at dest.</text><text x="192" y="68" fill="#55625A">Name · RUT · phone</text>
+      <text x="192" y="88" fill="#55625A">Pre-filled from warehouse,</text><text x="192" y="102" fill="#55625A">editable per order</text>
+
+      <rect x="362" y="10" width="150" height="120" rx="6" fill="#fff" stroke="#1A2420"/>
+      <circle cx="380" cy="28" r="10" fill="#C1501F"/><text x="380" y="32" text-anchor="middle" fill="#fff" font-weight="700">3</text>
+      <text x="396" y="32" font-weight="700">Packages</text>
+      <text x="372" y="54" fill="#55625A">Add package (repeatable)</text><text x="372" y="68" fill="#55625A">Weight · content · value</text>
+      <text x="372" y="88" fill="#55625A">Duplicate previous with</text><text x="372" y="102" fill="#55625A">one tap; min. 1 package</text>
+
+      <rect x="542" y="10" width="150" height="120" rx="6" fill="#F3E2D6" stroke="#C1501F"/>
+      <text x="556" y="32" font-weight="700">Confirmation</text>
+      <text x="552" y="54" fill="#55625A">Order (OT) generated</text><text x="552" y="68" fill="#55625A">One code / QR per package</text>
+      <text x="552" y="88" fill="#55625A">Status: Created, waiting</text><text x="552" y="102" fill="#55625A">for the Coordinator</text>
+    </g>
+    <g stroke="#55625A" stroke-width="1.4" fill="none" marker-end="url(#ar2)">
+      <path d="M153,70 L181,70"/><path d="M333,70 L361,70"/><path d="M513,70 L541,70"/>
+    </g>
+  </svg>
+
+  <h3>Rules that shape the flow</h3>
+  <ul>
+    <li><b>No scan or photo is required from the Merchant.</b> The mandatory scans (and signature) are performed later by operator crews at each hand-over.</li>
+    <li><b>The only identity check is visual.</b> The Merchant supplies the authorized persons; the crew member checks the physical ID against the RUT on screen.</li>
+    <li><b>Warehouses are registered once</b> per Merchant account and reused. Most clients will have a single warehouse, in which case origin selection disappears; the model supports many, filtered by city.</li>
+    <li><b>High-volume path:</b> Create → Bulk upload (CSV template, origin fixed per account, row-level error preview before confirmation).</li>
+    <li><b>No payment step.</b> Billing is monthly and consolidated.</li>
+  </ul>
+
+  <h3>Merchant portal sections</h3>
+  <table>
+    <tr><th>Section</th><th>Purpose</th></tr>
+    <tr><td class="k">Home</td><td>Daily indicators: active, delivered, incidents; shortcut to register a shipment.</td></tr>
+    <tr><td class="k">Orders</td><td>List, search, filter by the five-state summary status.</td></tr>
+    <tr><td class="k">Tracking</td><td>Order detail: simplified timeline, per-package status, signatures once captured.</td></tr>
+    <tr><td class="k">Incidents / Returns</td><td>Reports and return requests linked to a specific package.</td></tr>
+    <tr><td class="k">Documents</td><td>Manifests and package labels (PDF).</td></tr>
+    <tr><td class="k">Account</td><td>Registered warehouses (with city), default authorized persons.</td></tr>
+    <tr><td class="k">Billing <span class="tag hold">ON HOLD</span></td><td>Monthly consolidated view — to be defined.</td></tr>
+  </table>
+</section>
+
+<!-- ============ 6 DATA MODEL (landscape) ============ -->
+<section class="page wide">
+  <div class="sec-head"><span class="n">06</span><h2>Data model</h2></div>
+  <figure>
+  <svg viewBox="0 0 1120 400" width="100%" xmlns="http://www.w3.org/2000/svg">
+    <g font-size="10.5">
+      <!-- entities -->
+      <g>
+        <rect x="20" y="30" width="170" height="92" rx="4" fill="#fff" stroke="#1A2420"/><rect x="20" y="30" width="170" height="22" rx="4" fill="#1A2420"/>
+        <text x="30" y="46" fill="#fff" font-weight="700">Merchant</text>
+        <text x="30" y="70" fill="#55625A">legal name · RUT · plan</text><text x="30" y="86" fill="#55625A">billing mode (monthly)</text><text x="30" y="102" fill="#55625A">users</text>
+      </g>
+      <g>
+        <rect x="20" y="220" width="190" height="120" rx="4" fill="#fff" stroke="#1A2420"/><rect x="20" y="220" width="190" height="22" rx="4" fill="#1A2420"/>
+        <text x="30" y="236" fill="#fff" font-weight="700">Warehouse</text>
+        <text x="30" y="260" fill="#55625A">name · city · address</text><text x="30" y="276" fill="#55625A">is default origin?</text>
+        <text x="30" y="292" fill="#55625A">default authorized persons</text><text x="30" y="308" fill="#55625A">(name · RUT · phone) ≥ 2</text>
+      </g>
+      <g>
+        <rect x="290" y="120" width="230" height="170" rx="4" fill="#F3E2D6" stroke="#C1501F" stroke-width="2"/><rect x="290" y="120" width="230" height="22" rx="4" fill="#C1501F"/>
+        <text x="300" y="136" fill="#fff" font-weight="700">Order (OT)</text>
+        <text x="300" y="160" fill="#1A2420">origin / destination warehouse</text><text x="300" y="176" fill="#1A2420">authorized persons (per point)</text>
+        <text x="300" y="192" fill="#1A2420">client reference · package total</text><text x="300" y="208" fill="#1A2420">operation: coordinator, operator,</text>
+        <text x="300" y="224" fill="#1A2420">pickup crew + vehicle, WH1, bus</text><text x="300" y="240" fill="#1A2420">handoff: signature at origin / dest.</text>
+        <text x="300" y="256" fill="#1A2420">timeline (step, time, actor role)</text><text x="300" y="272" fill="#1A2420">billing period (empty — on hold)</text>
+      </g>
+      <g>
+        <rect x="610" y="30" width="200" height="110" rx="4" fill="#fff" stroke="#1A2420"/><rect x="610" y="30" width="200" height="22" rx="4" fill="#1A2420"/>
+        <text x="620" y="46" fill="#fff" font-weight="700">Package</text>
+        <text x="620" y="70" fill="#55625A">piece code (label / QR)</text><text x="620" y="86" fill="#55625A">weight · content · value</text>
+        <text x="620" y="102" fill="#55625A">status</text><text x="620" y="118" fill="#55625A">scan history →</text>
+      </g>
+      <g>
+        <rect x="880" y="30" width="220" height="110" rx="4" fill="#fff" stroke="#2E7D4F" stroke-width="2"/><rect x="880" y="30" width="220" height="22" rx="4" fill="#2E7D4F"/>
+        <text x="890" y="46" fill="#fff" font-weight="700">Scan record</text>
+        <text x="890" y="70" fill="#55625A">checkpoint · date-time</text><text x="890" y="86" fill="#55625A">user id · user role</text>
+        <text x="890" y="102" fill="#55625A">signature (pickup, delivery only)</text>
+      </g>
+      <g>
+        <rect x="610" y="220" width="200" height="110" rx="4" fill="#fff" stroke="#1A2420"/><rect x="610" y="220" width="200" height="22" rx="4" fill="#1A2420"/>
+        <text x="620" y="236" fill="#fff" font-weight="700">Tracking event (audit log)</text>
+        <text x="620" y="260" fill="#55625A">append-only, whole chain</text><text x="620" y="276" fill="#55625A">order · package · type</text>
+        <text x="620" y="292" fill="#55625A">actor · date-time · note</text><text x="620" y="308" fill="#55625A">source of timeline + scans</text>
+      </g>
+      <g>
+        <rect x="880" y="220" width="220" height="110" rx="4" fill="#fff" stroke="#1A2420"/><rect x="880" y="220" width="220" height="22" rx="4" fill="#1A2420"/>
+        <text x="890" y="236" fill="#fff" font-weight="700">Role / User</text>
+        <text x="890" y="260" fill="#55625A">level: client · Kargo · operator</text><text x="890" y="276" fill="#55625A">7 roles with explicit permission</text>
+        <text x="890" y="292" fill="#55625A">and prohibition lists</text>
+      </g>
+      <g>
+        <rect x="290" y="330" width="230" height="56" rx="4" fill="#F3ECD6" stroke="#9C7A15" stroke-dasharray="5 3"/>
+        <text x="300" y="352" font-weight="700" fill="#9C7A15">Invoice — ON HOLD</text><text x="300" y="368" fill="#55625A">monthly, per client; basis undefined</text>
+      </g>
+    </g>
+    <!-- relations -->
+    <g stroke="#55625A" stroke-width="1.3" fill="none">
+      <path d="M105,122 L105,220"/><text x="110" y="176" font-size="9" fill="#55625A" stroke="none">1 : n</text>
+      <path d="M190,76 L250,76 L250,180 L290,180"/><text x="196" y="70" font-size="9" fill="#55625A" stroke="none">1 : n orders</text>
+      <path d="M210,280 L250,280 L250,210 L290,210"/><text x="214" y="274" font-size="9" fill="#55625A" stroke="none">origin / dest.</text>
+      <path d="M520,160 L610,90"/><text x="548" y="112" font-size="9" fill="#55625A" stroke="none">1 : n</text>
+      <path d="M810,85 L880,85"/><text x="826" y="78" font-size="9" fill="#55625A" stroke="none">1 : n</text>
+      <path d="M520,250 L610,270"/><text x="548" y="252" font-size="9" fill="#55625A" stroke="none">1 : n</text>
+      <path d="M810,275 L880,275"/><text x="822" y="268" font-size="9" fill="#55625A" stroke="none">acts as</text>
+      <path d="M405,290 L405,330" stroke-dasharray="4 3"/><text x="412" y="314" font-size="9" fill="#55625A" stroke="none">n : 1 (period)</text>
+    </g>
+  </svg>
+  <figcaption>Entity view. In the prototype each entity is a static JSON file (merchants, orders, packages, tracking_events, roles, invoices) acting as the contract for the development team.</figcaption>
+  </figure>
+
+  <div class="grid2" style="margin-top:8pt">
+    <div class="card"><h4>Design choices worth reviewing</h4><ul>
+      <li>The order timeline and each package's scan history are <b>derived views</b> of an append-only event log.</li>
+      <li>State is never overwritten; corrections are new attributed events.</li></ul></div>
+    <div class="card"><h4>Why per-package identity</h4><ul>
+      <li>An order can contain 1 to 40+ packages.</li>
+      <li>Scanning each one makes "which package is missing, and where did it disappear?" answerable from data.</li></ul></div>
+  </div>
+</section>
+
+<!-- ============ 7 KNOWLEDGE GRAPH (landscape) ============ -->
+<section class="page wide">
+  <div class="sec-head"><span class="n">07</span><h2>System knowledge map</h2></div>
+  <p style="max-width:250mm;font-size:9.5pt;color:var(--soft)">Automatically derived from the specification documents and data files: 61 concepts, 102 relationships, grouped into 8 clusters by connectivity (number = concepts in the cluster; green = data model). Used to check that nothing in the design is disconnected. The full interactive graph accompanies this document (graph.html).</p>
+  <div class="clusters">
+    <div class="cl"><span class="cn">13</span><h4>Scan and signature custody rules</h4><p>Chain of custody · pickup and delivery steps · scan + timestamp + user rule · visual ID check</p></div>
+    <div class="cl"><span class="cn">11</span><h4>Coordination and operator roles</h4><p>Transport Operator · Coordinator · Dispatcher · crews · steps 1–3, 6</p></div>
+    <div class="cl"><span class="cn">11</span><h4>Product scope and principles</h4><p>KARGO platform · Merchant · mobile-first · merchant only creates · billing (on hold)</p></div>
+    <div class="cl"><span class="cn">10</span><h4>Merchant order wizard</h4><p>Wizard steps · confirmation · package code / QR · bulk upload · portal sections</p></div>
+    <div class="cl data"><span class="cn">5</span><h4>Order and role data</h4><p>Order entity · Role entity · orders.json · roles.json</p></div>
+    <div class="cl data"><span class="cn">5</span><h4>Package and audit-trail data</h4><p>Package · Scan record · Tracking event · packages / tracking_events.json</p></div>
+    <div class="cl data"><span class="cn">4</span><h4>Merchant and warehouse data</h4><p>Merchant · Warehouse · origin dropdown by city · merchants.json</p></div>
+    <div class="cl"><span class="cn">2</span><h4>Authorized persons verification</h4><p>Authorized persons (name, RUT, phone) · open question: closed list vs free entry</p></div>
+  </div>
+  <div class="grid2" style="margin-top:8pt">
+    <div class="card"><h4>Strongest links between clusters</h4><ul>
+      <li>Custody rules ↔ Operator roles — <b>8 links</b> (the heart of the system)</li>
+      <li>Operator roles ↔ Product scope — 3</li>
+      <li>Order data ↔ Package / audit data — 2</li>
+      <li>Order wizard ↔ Operator roles — 2 (creation feeds the chain)</li></ul></div>
+    <div class="card"><h4>What the map revealed</h4><ul>
+      <li>The design is coherent: the scan rule ties together roles, steps and data.</li>
+      <li>9 concepts are weakly connected — nearly all are the <b>open operational questions</b> of section 8. These are the least-specified areas of the system.</li></ul></div>
+  </div>
+</section>
+
+<!-- ============ 8 QUESTIONS ============ -->
+<section class="page">
+  <div class="sec-head"><span class="n">08</span><h2>Questions for the logistics consultant</h2></div>
+  <p class="lede">The digital flow is specified. These seven points depend on operational experience, and each one changes what the software must do.</p>
+  <div class="qgrid">
+    <div class="q"><b>Failed or impossible scans.</b> What is the accepted procedure when there is no signal, the label is damaged or the device fails?
+      <span class="why">Proposal on the table: a manual forced registration with a mandatory reason code, flagged for review. Is that acceptable, and who reviews it?</span></div>
+    <div class="q"><b>Partial deliveries.</b> If 24 of 25 packages are scanned at destination, when is an order "closed", who is notified, and how does it affect the SLA clock?
+      <span class="why">Determines the incident workflow and the closure rule for step 8.</span></div>
+    <div class="q"><b>Label production.</b> Portable thermal printer at the client's warehouse, or labels printed in an office beforehand?
+      <span class="why">Affects hardware budget and how quickly a package can be tied to its order.</span></div>
+    <div class="q"><b>Authorized persons.</b> Closed list per warehouse or free entry per order? How many are really needed for a warehouse that is staffed by one person?
+      <span class="why">Two persons minimum is the current rule; it is the only identity control in the system.</span></div>
+    <div class="q"><b>Operator model.</b> Does one Transport Operator serve several clients, or are operators dedicated? Can the Coordinator re-assign an order after pickup?
+      <span class="why">Changes operator modeling and whether operators need their own coordinator view.</span></div>
+    <div class="q"><b>Service levels.</b> Which SLA targets apply per route and per service type (standard / express), and where does the clock start and stop?
+      <span class="why">The timestamps to compute it already exist; the targets do not.</span></div>
+    <div class="q"><b>Returns and damaged goods.</b> What evidence (photos at each scan?), what liability boundary between operator and client, and what return flow?
+      <span class="why">Photo capture is currently only implied at scan time; it may need to be explicit at every control point.</span></div>
+  </div>
+
+  <div class="callout" style="margin-top:10pt"><b>Deliberately out of scope for this review:</b> billing. The monthly consolidated invoice exists in the model as an empty placeholder, and its calculation basis (per package, per order, per weight or fixed contract rate) is pending information from the business. It will be designed last and does not block any other phase.</div>
+</section>
+
+<!-- ============ 9 ROADMAP ============ -->
+<section class="page">
+  <div class="sec-head"><span class="n">09</span><h2>Proposed delivery sequence</h2></div>
+  <table>
+    <tr><th>Phase</th><th>Deliverable</th><th>Why in this order</th></tr>
+    <tr><td class="mono">1</td><td class="k">Merchant registration wizard + order list (mobile-first, JSON backend)</td><td>Highest-frequency action; validates the data captured at creation.</td></tr>
+    <tr><td class="mono">2</td><td class="k">Simplified tracking view + per-package status</td><td>What a client asks for first once orders exist.</td></tr>
+    <tr><td class="mono">3</td><td class="k">Logistics Coordinator portal: pending orders, assign to operator</td><td>Closes the first hand-over of the chain.</td></tr>
+    <tr><td class="mono">4</td><td class="k">Operator mobile scanning app for the four crew roles (camera scan, signature at pickup and delivery)</td><td>Core of traceability; without it there is no proof of hand-over.</td></tr>
+    <tr><td class="mono">5</td><td class="k">Bulk CSV upload, incidents, returns</td><td>High-volume clients and exception handling.</td></tr>
+    <tr><td class="mono">6</td><td class="k">Documents, reports / SLA, billing <span class="tag hold">ON HOLD</span></td><td>Used occasionally; billing awaits business definition.</td></tr>
+  </table>
+  <div class="foot">KARGO system map · prepared for external logistics review · design phase, no production code. Companion files: specification documents (docs/), JSON data contract (data/), interactive knowledge graph (graphify-out/graph.html).</div>
+</section>
+
+</body>
+</html>

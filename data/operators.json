@@ -1,0 +1,47 @@
+{
+  "operators": [
+    {
+      "id": "op_transportes_sur",
+      "nombre": "Transportes Sur Ltda.",
+      "vehiculos": [
+        {
+          "patente": "FG-JI-98",
+          "tipo": "Camión 3/4"
+        },
+        {
+          "patente": "HK-LM-45",
+          "tipo": "Furgón"
+        }
+      ],
+      "servicios": [
+        {
+          "id": "srv_sur_1",
+          "bus_patente": "AB-CD-12",
+          "servicio": "Interurbano Sur"
+        },
+        {
+          "id": "srv_sur_2",
+          "bus_patente": "CD-EF-34",
+          "servicio": "Expreso Araucanía"
+        }
+      ]
+    },
+    {
+      "id": "op_andes_cargo",
+      "nombre": "Andes Cargo S.A.",
+      "vehiculos": [
+        {
+          "patente": "RT-YU-11",
+          "tipo": "Camión 3/4"
+        }
+      ],
+      "servicios": [
+        {
+          "id": "srv_andes_1",
+          "bus_patente": "PL-OK-77",
+          "servicio": "Andes Norte"
+        }
+      ]
+    }
+  ]
+}
