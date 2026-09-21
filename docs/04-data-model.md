@@ -1,6 +1,6 @@
 # Data Model (JSON files acting as backend)
 
-Files live in `data/`. They simulate database tables and are the contract for the development team.
+Files live in `web/data/`. They simulate database tables and are the contract for the development team.
 
 ## merchants.json — entity Merchant
 Fields: id, legal name, RUT, plan, billing mode (monthly consolidated), list of Warehouses. Each Warehouse has id, name, city (used by the origin dropdown filter), address, default authorized contacts (name, RUT, role, phone).

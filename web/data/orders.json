@@ -5,7 +5,7 @@
       "merchant_id": "mer_falabella",
       "status": "creada",
       "created_by": "usr_042",
-      "created_at": "2026-09-21T15:17:29.007Z",
+      "created_at": "2026-09-21T18:36:41.609Z",
       "bodega_origen": {
         "id": "bod_scl_01",
         "nombre": "CD Pudahuel",
@@ -102,7 +102,7 @@
       "timeline": [
         {
           "step": "creada",
-          "at": "2026-09-21T15:17:29.007Z",
+          "at": "2026-09-21T18:36:41.609Z",
           "actor_role": "merchant",
           "actor_id": "usr_042"
         }
@@ -113,7 +113,7 @@
       "merchant_id": "mer_falabella",
       "status": "asignada_operador",
       "created_by": "usr_042",
-      "created_at": "2026-09-21T15:17:29.011Z",
+      "created_at": "2026-09-21T18:36:41.610Z",
       "bodega_origen": {
         "id": "bod_scl_01",
         "nombre": "CD Pudahuel",
@@ -171,7 +171,7 @@
       "operacion": {
         "coordinador_id": "usr_c01",
         "operador_id": "op_transportes_sur",
-        "asignado_operador_at": "2026-09-21T15:17:29.012Z",
+        "asignado_operador_at": "2026-09-21T18:36:41.610Z",
         "recoleccion": {
           "conductor_id": null,
           "movil_patente": null,
@@ -209,13 +209,13 @@
       "timeline": [
         {
           "step": "creada",
-          "at": "2026-09-21T15:17:29.011Z",
+          "at": "2026-09-21T18:36:41.610Z",
           "actor_role": "merchant",
           "actor_id": "usr_042"
         },
         {
           "step": "asignada_operador",
-          "at": "2026-09-21T15:17:29.013Z",
+          "at": "2026-09-21T18:36:41.610Z",
           "actor_role": "coordinador_logistico",
           "actor_id": "usr_c01"
         }
@@ -226,7 +226,7 @@
       "merchant_id": "mer_falabella",
       "status": "recoleccion_asignada",
       "created_by": "usr_042",
-      "created_at": "2026-09-21T15:17:29.013Z",
+      "created_at": "2026-09-21T18:36:41.610Z",
       "bodega_origen": {
         "id": "bod_scl_01",
         "nombre": "CD Pudahuel",
@@ -286,11 +286,11 @@
       "operacion": {
         "coordinador_id": "usr_c01",
         "operador_id": "op_transportes_sur",
-        "asignado_operador_at": "2026-09-21T15:17:29.014Z",
+        "asignado_operador_at": "2026-09-21T18:36:41.610Z",
         "recoleccion": {
           "conductor_id": "usr_210",
           "movil_patente": "FG-JI-98",
-          "asignado_at": "2026-09-21T15:17:29.014Z",
+          "asignado_at": "2026-09-21T18:36:41.610Z",
           "completada_at": null
         },
         "bodega_operador": {
@@ -324,19 +324,19 @@
       "timeline": [
         {
           "step": "creada",
-          "at": "2026-09-21T15:17:29.013Z",
+          "at": "2026-09-21T18:36:41.610Z",
           "actor_role": "merchant",
           "actor_id": "usr_042"
         },
         {
           "step": "asignada_operador",
-          "at": "2026-09-21T15:17:29.014Z",
+          "at": "2026-09-21T18:36:41.610Z",
           "actor_role": "coordinador_logistico",
           "actor_id": "usr_c01"
         },
         {
           "step": "recoleccion_asignada",
-          "at": "2026-09-21T15:17:29.014Z",
+          "at": "2026-09-21T18:36:41.610Z",
           "actor_role": "operador_despachador",
           "actor_id": "usr_d05"
         }
@@ -347,7 +347,7 @@
       "merchant_id": "mer_falabella",
       "status": "en_bodega_operador",
       "created_by": "usr_042",
-      "created_at": "2026-09-21T15:17:29.015Z",
+      "created_at": "2026-09-21T18:36:41.610Z",
       "bodega_origen": {
         "id": "bod_con_04",
         "nombre": "CD Concepción",
@@ -406,16 +406,16 @@
       "operacion": {
         "coordinador_id": "usr_c01",
         "operador_id": "op_transportes_sur",
-        "asignado_operador_at": "2026-09-21T15:17:29.015Z",
+        "asignado_operador_at": "2026-09-21T18:36:41.610Z",
         "recoleccion": {
           "conductor_id": "usr_211",
           "movil_patente": "HK-LM-45",
-          "asignado_at": "2026-09-21T15:17:29.015Z",
-          "completada_at": "2026-09-21T15:17:29.017Z"
+          "asignado_at": "2026-09-21T18:36:41.610Z",
+          "completada_at": "2026-09-21T18:36:41.611Z"
         },
         "bodega_operador": {
           "id": "wh_op_transportes_sur",
-          "ingreso_at": "2026-09-21T15:17:29.017Z"
+          "ingreso_at": "2026-09-21T18:36:41.611Z"
         },
         "transporte": {
           "bus_patente": null,
@@ -432,7 +432,7 @@
           "persona_autorizada": "Rosa Vega (9.876.543-3)",
           "escaneado_por": "usr_211",
           "firma_url": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22120%22%3E%3Cpath%20d%3D%22M20%2080%20C50%2010%2070%20110%20100%2050%20S150%2020%20170%2070%20220%2090%20280%2030%22%20fill%3D%22none%22%20stroke%3D%22%231a2420%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E",
-          "at": "2026-09-21T15:17:29.017Z"
+          "at": "2026-09-21T18:36:41.611Z"
         },
         "recepcion": {
           "persona_autorizada": null,
@@ -444,31 +444,31 @@
       "timeline": [
         {
           "step": "creada",
-          "at": "2026-09-21T15:17:29.015Z",
+          "at": "2026-09-21T18:36:41.610Z",
           "actor_role": "merchant",
           "actor_id": "usr_042"
         },
         {
           "step": "asignada_operador",
-          "at": "2026-09-21T15:17:29.015Z",
+          "at": "2026-09-21T18:36:41.610Z",
           "actor_role": "coordinador_logistico",
           "actor_id": "usr_c01"
         },
         {
           "step": "recoleccion_asignada",
-          "at": "2026-09-21T15:17:29.015Z",
+          "at": "2026-09-21T18:36:41.610Z",
           "actor_role": "operador_despachador",
           "actor_id": "usr_d05"
         },
         {
           "step": "recolectada",
-          "at": "2026-09-21T15:17:29.017Z",
+          "at": "2026-09-21T18:36:41.611Z",
           "actor_role": "operador_conductor_recoleccion",
           "actor_id": "usr_211"
         },
         {
           "step": "en_bodega_operador",
-          "at": "2026-09-21T15:17:29.017Z",
+          "at": "2026-09-21T18:36:41.611Z",
           "actor_role": "operador_encargado_bodega",
           "actor_id": "usr_305"
         }
@@ -479,7 +479,7 @@
       "merchant_id": "mer_falabella",
       "status": "asignada_operador",
       "created_by": "usr_042",
-      "created_at": "2026-09-21T15:17:29.017Z",
+      "created_at": "2026-09-21T18:36:41.611Z",
       "bodega_origen": {
         "id": "bod_scl_02",
         "nombre": "CD Lo Aguirre",
@@ -537,7 +537,7 @@
       "operacion": {
         "coordinador_id": "usr_c01",
         "operador_id": "op_andes_cargo",
-        "asignado_operador_at": "2026-09-21T15:17:29.017Z",
+        "asignado_operador_at": "2026-09-21T18:36:41.611Z",
         "recoleccion": {
           "conductor_id": null,
           "movil_patente": null,
@@ -575,13 +575,13 @@
       "timeline": [
         {
           "step": "creada",
-          "at": "2026-09-21T15:17:29.017Z",
+          "at": "2026-09-21T18:36:41.611Z",
           "actor_role": "merchant",
           "actor_id": "usr_042"
         },
         {
           "step": "asignada_operador",
-          "at": "2026-09-21T15:17:29.017Z",
+          "at": "2026-09-21T18:36:41.611Z",
           "actor_role": "coordinador_logistico",
           "actor_id": "usr_c01"
         }

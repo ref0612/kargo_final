@@ -1,4 +1,4 @@
-// KARGO mockup UI. Vanilla JS, no build. State = web/store.js rules over data/*.json, persisted in localStorage.
+// KARGO mockup UI. Vanilla JS, no build. State = web/store.js rules over web/data/*.json, persisted in localStorage.
 // Two independent toggles: language (ES/EN) and view (mobile frame / desktop). Same DOM, layout switched by body[data-view].
 // ponytail: full re-render on every action (fine at demo scale); Code 39 barcode instead of QR; window.prompt for manual-scan reason.
 import { createStore, HttpError, rutValid, FILES, CP } from './store.js';
@@ -53,7 +53,7 @@ let S, me, W = null, NB = null, sigDrawn = false, query = '', filter = 'all', la
 async function loadDb(reset) {
   if (!reset) { try { const s = load('db'); if (s) return JSON.parse(s); } catch { /* ignore */ } }
   const db = {};
-  await Promise.all(Object.entries(FILES).map(async ([n, [f]]) => { db[n] = await (await fetch('/data/' + f)).json(); }));
+  await Promise.all(Object.entries(FILES).map(async ([n, [f]]) => { db[n] = await (await fetch('data/' + f)).json(); }));
   return db;
 }
 const persist = () => { try { localStorage.setItem(LS.db, JSON.stringify(S.db)); } catch { toast(t('err.save'), 'err'); } };

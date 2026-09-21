@@ -7,7 +7,7 @@
       "type": "orden_creada",
       "actor_role": "merchant",
       "actor_id": "usr_042",
-      "at": "2026-09-21T15:17:29.010Z",
+      "at": "2026-09-21T18:36:41.610Z",
       "note": "OT-00001 creada - 3 bultos declarados"
     },
     {
@@ -17,7 +17,7 @@
       "type": "orden_creada",
       "actor_role": "merchant",
       "actor_id": "usr_042",
-      "at": "2026-09-21T15:17:29.011Z",
+      "at": "2026-09-21T18:36:41.610Z",
       "note": "OT-00002 creada - 2 bultos declarados"
     },
     {
@@ -27,7 +27,7 @@
       "type": "orden_asignada_operador",
       "actor_role": "coordinador_logistico",
       "actor_id": "usr_c01",
-      "at": "2026-09-21T15:17:29.013Z",
+      "at": "2026-09-21T18:36:41.610Z",
       "note": "Asignada a Transportes Sur Ltda."
     },
     {
@@ -37,7 +37,7 @@
       "type": "orden_creada",
       "actor_role": "merchant",
       "actor_id": "usr_042",
-      "at": "2026-09-21T15:17:29.014Z",
+      "at": "2026-09-21T18:36:41.610Z",
       "note": "OT-00003 creada - 4 bultos declarados"
     },
     {
@@ -47,7 +47,7 @@
       "type": "orden_asignada_operador",
       "actor_role": "coordinador_logistico",
       "actor_id": "usr_c01",
-      "at": "2026-09-21T15:17:29.014Z",
+      "at": "2026-09-21T18:36:41.610Z",
       "note": "Asignada a Transportes Sur Ltda."
     },
     {
@@ -57,7 +57,7 @@
       "type": "recoleccion_asignada",
       "actor_role": "operador_despachador",
       "actor_id": "usr_d05",
-      "at": "2026-09-21T15:17:29.014Z",
+      "at": "2026-09-21T18:36:41.610Z",
       "note": "Conductor usr_210, móvil FG-JI-98"
     },
     {
@@ -67,7 +67,7 @@
       "type": "orden_creada",
       "actor_role": "merchant",
       "actor_id": "usr_042",
-      "at": "2026-09-21T15:17:29.015Z",
+      "at": "2026-09-21T18:36:41.610Z",
       "note": "OT-00004 creada - 3 bultos declarados"
     },
     {
@@ -77,7 +77,7 @@
       "type": "orden_asignada_operador",
       "actor_role": "coordinador_logistico",
       "actor_id": "usr_c01",
-      "at": "2026-09-21T15:17:29.015Z",
+      "at": "2026-09-21T18:36:41.610Z",
       "note": "Asignada a Transportes Sur Ltda."
     },
     {
@@ -87,7 +87,7 @@
       "type": "recoleccion_asignada",
       "actor_role": "operador_despachador",
       "actor_id": "usr_d05",
-      "at": "2026-09-21T15:17:29.015Z",
+      "at": "2026-09-21T18:36:41.610Z",
       "note": "Conductor usr_211, móvil HK-LM-45"
     },
     {
@@ -97,7 +97,7 @@
       "type": "bulto_escaneado_recoleccion",
       "actor_role": "operador_conductor_recoleccion",
       "actor_id": "usr_211",
-      "at": "2026-09-21T15:17:29.016Z",
+      "at": "2026-09-21T18:36:41.610Z",
       "note": "KARGO-00004-001"
     },
     {
@@ -107,7 +107,7 @@
       "type": "bulto_escaneado_recoleccion",
       "actor_role": "operador_conductor_recoleccion",
       "actor_id": "usr_211",
-      "at": "2026-09-21T15:17:29.016Z",
+      "at": "2026-09-21T18:36:41.610Z",
       "note": "KARGO-00004-002"
     },
     {
@@ -117,7 +117,7 @@
       "type": "bulto_escaneado_recoleccion",
       "actor_role": "operador_conductor_recoleccion",
       "actor_id": "usr_211",
-      "at": "2026-09-21T15:17:29.016Z",
+      "at": "2026-09-21T18:36:41.611Z",
       "note": "KARGO-00004-003"
     },
     {
@@ -127,7 +127,7 @@
       "type": "traspaso_recoleccion",
       "actor_role": "operador_conductor_recoleccion",
       "actor_id": "usr_211",
-      "at": "2026-09-21T15:17:29.017Z",
+      "at": "2026-09-21T18:36:41.611Z",
       "note": "Firma capturada, RUT verificado visualmente"
     },
     {
@@ -137,7 +137,7 @@
       "type": "bulto_escaneado_ingreso_bodega_op",
       "actor_role": "operador_encargado_bodega",
       "actor_id": "usr_305",
-      "at": "2026-09-21T15:17:29.017Z",
+      "at": "2026-09-21T18:36:41.611Z",
       "note": "KARGO-00004-001"
     },
     {
@@ -147,7 +147,7 @@
       "type": "bulto_escaneado_ingreso_bodega_op",
       "actor_role": "operador_encargado_bodega",
       "actor_id": "usr_305",
-      "at": "2026-09-21T15:17:29.017Z",
+      "at": "2026-09-21T18:36:41.611Z",
       "note": "KARGO-00004-002"
     },
     {
@@ -157,7 +157,7 @@
       "type": "bulto_escaneado_ingreso_bodega_op",
       "actor_role": "operador_encargado_bodega",
       "actor_id": "usr_305",
-      "at": "2026-09-21T15:17:29.017Z",
+      "at": "2026-09-21T18:36:41.611Z",
       "note": "KARGO-00004-003"
     },
     {
@@ -167,7 +167,7 @@
       "type": "traspaso_ingreso_bodega_op",
       "actor_role": "operador_encargado_bodega",
       "actor_id": "usr_305",
-      "at": "2026-09-21T15:17:29.017Z",
+      "at": "2026-09-21T18:36:41.611Z",
       "note": "Traspaso confirmado"
     },
     {
@@ -177,7 +177,7 @@
       "type": "orden_creada",
       "actor_role": "merchant",
       "actor_id": "usr_042",
-      "at": "2026-09-21T15:17:29.017Z",
+      "at": "2026-09-21T18:36:41.611Z",
       "note": "OT-00005 creada - 2 bultos declarados"
     },
     {
@@ -187,7 +187,7 @@
       "type": "orden_asignada_operador",
       "actor_role": "coordinador_logistico",
       "actor_id": "usr_c01",
-      "at": "2026-09-21T15:17:29.017Z",
+      "at": "2026-09-21T18:36:41.611Z",
       "note": "Asignada a Andes Cargo S.A."
     }
   ]

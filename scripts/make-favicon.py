@@ -1,5 +1,5 @@
 """Generates favicon.ico (64x64 PNG inside an ICO, no dependencies): KARGO mark = orange diamond on navy tile.
-Usage: python scripts/make-favicon.py   (writes web/favicon.ico and ./favicon.ico)"""
+Usage: python scripts/make-favicon.py   (writes web/favicon.ico)"""
 import math, struct, zlib
 from pathlib import Path
 
@@ -33,6 +33,6 @@ png = b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', N, N, 8, 6, 
 ico = struct.pack('<HHH', 0, 1, 1) + struct.pack('<BBBBHHII', N, N, 0, 0, 1, 32, len(png), 22) + png
 
 root = Path(__file__).resolve().parent.parent
-for p in (root / 'web' / 'favicon.ico', root / 'favicon.ico'):
+for p in (root / 'web' / 'favicon.ico',):
     p.write_bytes(ico)
     print('wrote', p, len(ico), 'bytes')

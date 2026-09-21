@@ -1,4 +1,4 @@
-// Domain rules of the KARGO mockup, as plain functions over in-memory collections (same shape as data/*.json).
+// Domain rules of the KARGO mockup, as plain functions over in-memory collections (same shape as web/data/*.json).
 // This runs IN THE BROWSER for the demo. It is NOT a backend: it is the executable spec of the rules
 // (state machine, permissions, validations) that the real backend must enforce server-side.
 // ponytail: no auth, no concurrency, everything in memory; persistence is whatever `persist(names)` does (localStorage in the app).

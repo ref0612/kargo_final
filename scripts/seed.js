@@ -1,11 +1,11 @@
-// Regenerates data/*.json: base master data + a demo scenario run through the REAL domain rules (web/store.js),
+// Regenerates web/data/*.json: base master data + a demo scenario run through the REAL domain rules (web/store.js),
 // so the seeded orders are consistent by construction. Usage: npm run seed
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createStore, rutDV, rutFormat, FILES } from '../web/store.js';
 
-const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'data');
+const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'web', 'data');
 const rut = (body) => rutFormat(body + rutDV(String(body)));
 const persona = (nombre, body, tel, cargo = '') => ({ nombre, rut: rut(body), telefono: tel, cargo });
 const dir_ = (region, ciudad, comuna, direccion) => ({ region, ciudad, comuna, direccion });
@@ -110,4 +110,4 @@ const o5 = mk('bod_scl_02', 'bod_tem_03', 2, { referencia_cliente: 'OC-48295' })
 S.assign(u('usr_c01'), o5.id, { operador_id: 'op_andes_cargo' });
 
 writeAll();
-console.log(`Seeded ${db.orders.orders.length} orders, ${db.packages.packages.length} packages, ${db.events.events.length} events into data/`);
+console.log(`Seeded ${db.orders.orders.length} orders, ${db.packages.packages.length} packages, ${db.events.events.length} events into web/data/`);

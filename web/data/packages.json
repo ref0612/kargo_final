@@ -103,14 +103,14 @@
           "checkpoint": "recoleccion",
           "actor_id": "usr_211",
           "actor_role": "operador_conductor_recoleccion",
-          "at": "2026-09-21T15:17:29.015Z",
+          "at": "2026-09-21T18:36:41.610Z",
           "firma_url": "ref:handoff.entrega"
         },
         {
           "checkpoint": "ingreso_bodega_op",
           "actor_id": "usr_305",
           "actor_role": "operador_encargado_bodega",
-          "at": "2026-09-21T15:17:29.017Z",
+          "at": "2026-09-21T18:36:41.611Z",
           "firma_url": null
         }
       ]
@@ -128,14 +128,14 @@
           "checkpoint": "recoleccion",
           "actor_id": "usr_211",
           "actor_role": "operador_conductor_recoleccion",
-          "at": "2026-09-21T15:17:29.016Z",
+          "at": "2026-09-21T18:36:41.610Z",
           "firma_url": "ref:handoff.entrega"
         },
         {
           "checkpoint": "ingreso_bodega_op",
           "actor_id": "usr_305",
           "actor_role": "operador_encargado_bodega",
-          "at": "2026-09-21T15:17:29.017Z",
+          "at": "2026-09-21T18:36:41.611Z",
           "firma_url": null
         }
       ]
@@ -153,14 +153,14 @@
           "checkpoint": "recoleccion",
           "actor_id": "usr_211",
           "actor_role": "operador_conductor_recoleccion",
-          "at": "2026-09-21T15:17:29.016Z",
+          "at": "2026-09-21T18:36:41.611Z",
           "firma_url": "ref:handoff.entrega"
         },
         {
           "checkpoint": "ingreso_bodega_op",
           "actor_id": "usr_305",
           "actor_role": "operador_encargado_bodega",
-          "at": "2026-09-21T15:17:29.017Z",
+          "at": "2026-09-21T18:36:41.611Z",
           "firma_url": null
         }
       ]

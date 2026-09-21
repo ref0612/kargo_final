@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createStore, rutValid, FILES } from '../web/store.js';
 
-const data = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'data');
+const data = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'web', 'data');
 const fresh = () => {
   const db = {};
   for (const [n, [f]] of Object.entries(FILES)) db[n] = JSON.parse(fs.readFileSync(path.join(data, f), 'utf8'));

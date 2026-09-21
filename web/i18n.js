@@ -1,4 +1,4 @@
-// ES/EN dictionary. t('key', {vars}). Data coming from data/*.json (bodega names, contacts) stays as-is: it is mock master data.
+// ES/EN dictionary. t('key', {vars}). Data coming from web/data/*.json (bodega names, contacts) stays as-is: it is mock master data.
 // Domain errors/notes thrown by store.js are Spanish; tErr()/tNote() translate them for display (the store stays the tested source).
 const ES = {
   'demo.viewAs': 'Ver como', 'demo.reset': 'Reiniciar demo', 'demo.resetConfirm': '¿Volver a los datos iniciales de la demo?',
