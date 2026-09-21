@@ -1,33 +1,40 @@
-# Roles and Chain of Custody
+# Roles and Chain of Custody (v2, after the consultant review)
 
 ## Organizational levels
-1. **Merchant** (client level)
-2. **Logistics Coordinator** (Kargo level)
-3. **Transport Operator** (carrier level) with several internal roles
+1. **Client**: Merchant
+2. **Kargo**: Coordinator / Control Tower (includes the KAM and the network admin), Audit / Reconciliation, Finance
+3. **Transport Operator** (carrier) with internal roles
 
 ## Roles
-| Role | Level | Responsibility |
-|---|---|---|
-| Merchant | Client | Creates the order (warehouses, authorized persons, packages). Read-only tracking afterwards. |
-| Logistics Coordinator | Kargo | Receives the created order and assigns it to a Transport Operator. |
-| Dispatcher | Operator | Receives the assignment; designates the driver and the vehicle for pickup. |
-| Pickup Driver / Assistant | Operator | Goes to the origin warehouse, scans every package, captures the electronic signature of the person handing over. |
-| Operator Warehouse Clerk (WH1) | Operator | Scans every package on entry to the operator warehouse; assigns the load to a bus / service. |
-| Bus Driver / Assistant | Operator | Confirms loading of every package onto the bus by scanning. |
-| Delivery Driver / Assistant | Operator | At destination scans every package and captures the digital signature of the person receiving. |
+| Role | Level | Responsibility | Scans | Signs |
+|---|---|---|---|---|
+| Merchant | Client | Creates the order, prints and sticks the labels. Read-only tracking. | — | — |
+| Coordinator / Control Tower | Kargo | Assigns orders to an operator (choosing the last-mile modality), watches the KPIs, registers merchants (KAM), imports operators from Konnect, resolves incidents. | — | — |
+| Audit / Reconciliation | Kargo | Read-only over everything: counts per checkpoint, incident cases, event log. Can close a case with a note. | — | — |
+| Finance | Kargo | Read-only: shipments by client and period, CSV export. No prices yet. | — | — |
+| Dispatcher | Operator | Accepts or rejects the assignment, designates pickup driver + vehicle, designates the last-mile driver. | — | — |
+| Pickup Driver | Operator | At the merchant warehouse: may adjust the box count (reason required) and print new labels, scans every package, gets the signature. | Every package | Yes (origin) |
+| Warehouse Clerk (WH1) | Operator | Scans origin hub intake, assigns the bus (timetable suggestion, 2 h window), scans destination hub intake, and for "recipient pickup" marks ready and delivers (scan + signature). | Every package | Yes (only in recipient pickup) |
+| Bus Driver / Assistant | Operator | Scans loading onto the bus. Unloading is NOT scanned (out of scope). | Every package | — |
+| Last-mile Driver | Operator | Delivers to the destination warehouse when the modality is "by the operator". | Every package | Yes (destination) |
 
-## Chain of custody (8 steps)
-1. **Created** — Merchant. Registers origin/destination warehouses, authorized persons, packages.
-2. **Assigned to operator** — Logistics Coordinator. Timestamp + user.
-3. **Pickup assigned** — Dispatcher. Designates driver + vehicle. Timestamp + user.
-4. **Picked up at origin** — Pickup Driver. SCAN per package + ELECTRONIC SIGNATURE of authorized person (RUT visually validated).
-5. **Received at operator warehouse (WH1)** — Warehouse Clerk. SCAN per package.
-6. **Assigned to transport** — Warehouse Clerk. Assigns the load to a bus/service. Timestamp + user.
-7. **Loaded onto bus** — Bus Driver. SCAN per package.
-8. **Delivered at destination** — Delivery Driver. SCAN per package + DIGITAL SIGNATURE of authorized person (RUT visually validated). Closes the order at the destination warehouse.
+## Chain of custody (11 internal states; the last-mile step depends on the modality)
+1. **creada** — Merchant.
+2. **asignada_operador** — Coordinator picks the operator and the last-mile modality (`operador` | `retiro`).
+3. **aceptada** — Dispatcher accepts (or rejects with a reason: the order returns to `creada`).
+4. **recoleccion_asignada** — Dispatcher designates driver + vehicle.
+5. **recolectada** — Pickup driver: count adjustment if needed, SCAN per package + SIGNATURE of an authorized person (RUT visually checked).
+6. **en_bodega_operador** — Clerk: SCAN per package (origin hub).
+7. **asignada_transporte** — Clerk assigns bus/service and departure. If the departure is more than 2 h after the assignment: SLA risk.
+8. **cargada_bus** — Bus driver: SCAN per package. Loaded within 2 h of assignment? -> `ventana_ok`.
+9. **en_bodega_destino** — Clerk: SCAN per package (destination hub).
+10. **ultima_milla_asignada** (modality `operador`) or **lista_retiro** (modality `retiro`).
+11. **entregada** — Last-mile driver (or clerk, in pickup) SCAN per package + SIGNATURE of an authorized person at destination.
 
-## Merchant-facing simplified status
-Created -> Assigned -> Pickup in progress -> In transit -> Delivered. The eight internal steps are hidden from the Merchant.
+Merchant-facing simplified status (5): Created → Assigned → Pickup → In transit → Delivered.
 
-## Rule
-Steps 4, 5, 7 and 8 are physical hand-overs: scan of each package + timestamp + user are mandatory with no exceptions. Steps 4 and 8 additionally require a signature.
+## Rules
+- Every physical hand-over: scan of each package + timestamp + user. Only pickup and final delivery also need a signature.
+- Identity verification is visual only: at least 2 authorized persons per point (name, RUT, phone).
+- The pickup driver CAN change the box count, always with a reason; the difference is stored (`conteo`) and an open "count" incident is created. The signature stays mandatory.
+- The bus assignment is manual, with a suggestion of the next service from the operator timetable.

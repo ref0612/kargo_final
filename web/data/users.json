@@ -8,9 +8,25 @@
       "merchant_id": "mer_falabella"
     },
     {
+      "id": "usr_043",
+      "nombre": "Tomás Ibarra (Ripley)",
+      "rol": "merchant",
+      "merchant_id": "mer_ripley"
+    },
+    {
       "id": "usr_c01",
       "nombre": "Andrés Fuentes",
       "rol": "coordinador_logistico"
+    },
+    {
+      "id": "usr_a01",
+      "nombre": "Valentina Rojas",
+      "rol": "auditor"
+    },
+    {
+      "id": "usr_f01",
+      "nombre": "Diego Salas",
+      "rol": "finanzas"
     },
     {
       "id": "usr_d05",

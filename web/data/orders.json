@@ -3,9 +3,9 @@
     {
       "id": "ot_00001",
       "merchant_id": "mer_falabella",
-      "status": "creada",
+      "status": "entregada",
       "created_by": "usr_042",
-      "created_at": "2026-09-21T18:36:41.609Z",
+      "created_at": "2026-09-20T09:16:52.703Z",
       "bodega_origen": {
         "id": "bod_scl_01",
         "nombre": "CD Pudahuel",
@@ -13,115 +13,8 @@
           "region": "Metropolitana",
           "ciudad": "Santiago",
           "comuna": "Quilicura",
-          "direccion": "Av. Presidente Eduardo Frei Montalva 8301"
-        }
-      },
-      "bodega_destino": {
-        "id": "bod_tem_03",
-        "nombre": "CD Temuco",
-        "direccion": {
-          "region": "Araucanía",
-          "ciudad": "Temuco",
-          "comuna": "Temuco",
-          "direccion": "Manuel Montt 452"
-        }
-      },
-      "personas_autorizadas": {
-        "origen": [
-          {
-            "nombre": "Juan Pérez",
-            "rut": "12.345.678-5",
-            "telefono": "+56912345678"
-          },
-          {
-            "nombre": "Ana Rojas",
-            "rut": "13.876.543-1",
-            "telefono": "+56911223344"
-          }
-        ],
-        "destino": [
-          {
-            "nombre": "María González",
-            "rut": "14.987.654-5",
-            "telefono": "+56987654321"
-          },
-          {
-            "nombre": "Pedro Soto",
-            "rut": "15.234.567-4",
-            "telefono": "+56988997766"
-          }
-        ]
-      },
-      "referencia_cliente": "OC-48290",
-      "facturable": true,
-      "periodo_facturacion": null,
-      "packages": [
-        "pkg_00001_1",
-        "pkg_00001_2",
-        "pkg_00001_3"
-      ],
-      "bultos_total": 3,
-      "operacion": {
-        "coordinador_id": null,
-        "operador_id": null,
-        "asignado_operador_at": null,
-        "recoleccion": {
-          "conductor_id": null,
-          "movil_patente": null,
-          "asignado_at": null,
-          "completada_at": null
-        },
-        "bodega_operador": {
-          "id": null,
-          "ingreso_at": null
-        },
-        "transporte": {
-          "bus_patente": null,
-          "servicio": null,
-          "conductor_id": null,
-          "cargado_at": null
-        },
-        "entrega": {
-          "completada_at": null
-        }
-      },
-      "handoff": {
-        "entrega": {
-          "persona_autorizada": null,
-          "escaneado_por": null,
-          "firma_url": null,
-          "at": null
-        },
-        "recepcion": {
-          "persona_autorizada": null,
-          "escaneado_por": null,
-          "firma_url": null,
-          "at": null
-        }
-      },
-      "timeline": [
-        {
-          "step": "creada",
-          "at": "2026-09-21T18:36:41.609Z",
-          "actor_role": "merchant",
-          "actor_id": "usr_042"
-        }
-      ]
-    },
-    {
-      "id": "ot_00002",
-      "merchant_id": "mer_falabella",
-      "status": "asignada_operador",
-      "created_by": "usr_042",
-      "created_at": "2026-09-21T18:36:41.610Z",
-      "bodega_origen": {
-        "id": "bod_scl_01",
-        "nombre": "CD Pudahuel",
-        "direccion": {
-          "region": "Metropolitana",
-          "ciudad": "Santiago",
-          "comuna": "Quilicura",
-          "direccion": "Av. Presidente Eduardo Frei Montalva 8301"
+          "direccion": "Av. Presidente Eduardo Frei Montalva 8301",
+          "codigo_postal": "8730000"
         }
       },
       "bodega_destino": {
@@ -131,7 +24,8 @@
           "region": "Biobío",
           "ciudad": "Concepción",
           "comuna": "San Pedro de la Paz",
-          "direccion": "Av. Los Carrera 1500"
+          "direccion": "Av. Los Carrera 1500",
+          "codigo_postal": "4030000"
         }
       },
       "personas_autorizadas": {
@@ -160,73 +54,362 @@
           }
         ]
       },
-      "referencia_cliente": "OC-48291",
+      "referencia_cliente": "OC-48270",
+      "mpo": "MPO-770",
+      "facturable": true,
+      "periodo_facturacion": null,
+      "packages": [
+        "pkg_00001_1",
+        "pkg_00001_2",
+        "pkg_00001_3",
+        "pkg_00001_4"
+      ],
+      "bultos_declarados": 3,
+      "bultos_total": 4,
+      "conteo": {
+        "declarados": 3,
+        "recolectados": 4,
+        "diferencia": 1,
+        "motivo": "El merchant entregó una caja extra que no estaba declarada",
+        "por": "usr_210",
+        "at": "2026-09-20T10:31:52.703Z"
+      },
+      "operacion": {
+        "coordinador_id": "usr_c01",
+        "operador_id": "op_transportes_sur",
+        "asignado_operador_at": "2026-09-20T09:36:52.703Z",
+        "aceptacion": {
+          "estado": "aceptada",
+          "at": "2026-09-20T09:48:52.703Z",
+          "rechazos": []
+        },
+        "recoleccion": {
+          "conductor_id": "usr_210",
+          "movil_patente": "FG-JI-98",
+          "asignado_at": "2026-09-20T09:56:52.703Z",
+          "completada_at": "2026-09-20T10:31:52.703Z"
+        },
+        "bodega_operador": {
+          "id": "wh_op_transportes_sur",
+          "ingreso_at": "2026-09-20T11:31:52.703Z"
+        },
+        "transporte": {
+          "servicio_id": "srv_sur_3",
+          "bus_patente": "EF-GH-56",
+          "servicio": "Costa Sur",
+          "salida": "12:30",
+          "salida_at": "2026-09-20T15:30:00.000Z",
+          "asignado_at": "2026-09-20T11:56:52.703Z",
+          "conductor_id": "usr_301",
+          "cargado_at": "2026-09-20T12:41:52.703Z",
+          "riesgo_sla": true,
+          "ventana_ok": true
+        },
+        "bodega_destino_operador": {
+          "ingreso_at": "2026-09-20T18:41:52.703Z"
+        },
+        "ultima_milla": {
+          "modalidad": "operador",
+          "conductor_id": "usr_401",
+          "movil_patente": "JK-LM-01",
+          "asignado_at": "2026-09-20T19:11:52.703Z",
+          "punto_retiro": null,
+          "lista_at": null
+        },
+        "entrega": {
+          "completada_at": "2026-09-20T20:01:52.703Z"
+        }
+      },
+      "handoff": {
+        "entrega": {
+          "persona_autorizada": "Juan Pérez (12.345.678-5)",
+          "escaneado_por": "usr_210",
+          "firma_url": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22120%22%3E%3Cpath%20d%3D%22M20%2080%20C50%2010%2070%20110%20100%2050%20S150%2020%20170%2070%20220%2090%20280%2030%22%20fill%3D%22none%22%20stroke%3D%22%231a2420%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E",
+          "at": "2026-09-20T10:31:52.703Z"
+        },
+        "recepcion": {
+          "persona_autorizada": "Iván Cortés (16.543.210-K)",
+          "escaneado_por": "usr_401",
+          "firma_url": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22120%22%3E%3Cpath%20d%3D%22M20%2080%20C50%2010%2070%20110%20100%2050%20S150%2020%20170%2070%20220%2090%20280%2030%22%20fill%3D%22none%22%20stroke%3D%22%231a2420%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E",
+          "at": "2026-09-20T20:01:52.703Z"
+        }
+      },
+      "timeline": [
+        {
+          "step": "creada",
+          "at": "2026-09-20T09:16:52.703Z",
+          "actor_role": "merchant",
+          "actor_id": "usr_042"
+        },
+        {
+          "step": "asignada_operador",
+          "at": "2026-09-20T09:36:52.703Z",
+          "actor_role": "coordinador_logistico",
+          "actor_id": "usr_c01"
+        },
+        {
+          "step": "aceptada",
+          "at": "2026-09-20T09:48:52.703Z",
+          "actor_role": "operador_despachador",
+          "actor_id": "usr_d05"
+        },
+        {
+          "step": "recoleccion_asignada",
+          "at": "2026-09-20T09:56:52.703Z",
+          "actor_role": "operador_despachador",
+          "actor_id": "usr_d05"
+        },
+        {
+          "step": "recolectada",
+          "at": "2026-09-20T10:31:52.703Z",
+          "actor_role": "operador_conductor_recoleccion",
+          "actor_id": "usr_210"
+        },
+        {
+          "step": "en_bodega_operador",
+          "at": "2026-09-20T11:31:52.703Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        },
+        {
+          "step": "asignada_transporte",
+          "at": "2026-09-20T11:56:52.703Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        },
+        {
+          "step": "cargada_bus",
+          "at": "2026-09-20T12:41:52.703Z",
+          "actor_role": "operador_conductor_bus",
+          "actor_id": "usr_301"
+        },
+        {
+          "step": "en_bodega_destino",
+          "at": "2026-09-20T18:41:52.703Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        },
+        {
+          "step": "ultima_milla_asignada",
+          "at": "2026-09-20T19:11:52.703Z",
+          "actor_role": "operador_despachador",
+          "actor_id": "usr_d05"
+        },
+        {
+          "step": "entregada",
+          "at": "2026-09-20T20:01:52.703Z",
+          "actor_role": "operador_conductor_entrega",
+          "actor_id": "usr_401"
+        }
+      ]
+    },
+    {
+      "id": "ot_00002",
+      "merchant_id": "mer_ripley",
+      "status": "entregada",
+      "created_by": "usr_043",
+      "created_at": "2026-09-20T15:16:52.707Z",
+      "bodega_origen": {
+        "id": "bod_rip_02",
+        "nombre": "Tienda Temuco",
+        "direccion": {
+          "region": "Araucanía",
+          "ciudad": "Temuco",
+          "comuna": "Temuco",
+          "direccion": "Av. Alemania 671",
+          "codigo_postal": "4780000"
+        }
+      },
+      "bodega_destino": {
+        "id": "bod_rip_01",
+        "nombre": "CD Renca",
+        "direccion": {
+          "region": "Metropolitana",
+          "ciudad": "Santiago",
+          "comuna": "Renca",
+          "direccion": "Av. Presidente Balmaceda 2300",
+          "codigo_postal": "8640000"
+        }
+      },
+      "personas_autorizadas": {
+        "origen": [
+          {
+            "nombre": "Gabriela Núñez",
+            "rut": "16.333.444-5",
+            "telefono": "+56977005566"
+          },
+          {
+            "nombre": "Rodrigo Mena",
+            "rut": "15.444.555-2",
+            "telefono": "+56977007788"
+          }
+        ],
+        "destino": [
+          {
+            "nombre": "Carolina Vidal",
+            "rut": "15.111.222-6",
+            "telefono": "+56977001122"
+          },
+          {
+            "nombre": "Esteban Lara",
+            "rut": "14.222.333-3",
+            "telefono": "+56977003344"
+          }
+        ]
+      },
+      "referencia_cliente": "PO-9932",
+      "mpo": "MPO-802",
       "facturable": true,
       "periodo_facturacion": null,
       "packages": [
         "pkg_00002_1",
         "pkg_00002_2"
       ],
+      "bultos_declarados": 2,
       "bultos_total": 2,
+      "conteo": {
+        "declarados": 2,
+        "recolectados": 2,
+        "diferencia": 0,
+        "motivo": null,
+        "por": null,
+        "at": null
+      },
       "operacion": {
         "coordinador_id": "usr_c01",
         "operador_id": "op_transportes_sur",
-        "asignado_operador_at": "2026-09-21T18:36:41.610Z",
+        "asignado_operador_at": "2026-09-20T15:31:52.707Z",
+        "aceptacion": {
+          "estado": "aceptada",
+          "at": "2026-09-20T15:43:52.707Z",
+          "rechazos": []
+        },
         "recoleccion": {
+          "conductor_id": "usr_211",
+          "movil_patente": "HK-LM-45",
+          "asignado_at": "2026-09-20T15:51:52.707Z",
+          "completada_at": "2026-09-20T16:26:52.707Z"
+        },
+        "bodega_operador": {
+          "id": "wh_op_transportes_sur",
+          "ingreso_at": "2026-09-20T17:16:52.707Z"
+        },
+        "transporte": {
+          "servicio_id": "srv_sur_5",
+          "bus_patente": "IJ-KL-90",
+          "servicio": "Retorno Araucanía",
+          "salida": "15:00",
+          "salida_at": "2026-09-20T18:00:00.000Z",
+          "asignado_at": "2026-09-20T17:36:52.707Z",
+          "conductor_id": "usr_302",
+          "cargado_at": "2026-09-20T18:26:52.707Z",
+          "riesgo_sla": false,
+          "ventana_ok": true
+        },
+        "bodega_destino_operador": {
+          "ingreso_at": "2026-09-21T01:26:52.707Z"
+        },
+        "ultima_milla": {
+          "modalidad": "retiro",
           "conductor_id": null,
           "movil_patente": null,
           "asignado_at": null,
-          "completada_at": null
-        },
-        "bodega_operador": {
-          "id": null,
-          "ingreso_at": null
-        },
-        "transporte": {
-          "bus_patente": null,
-          "servicio": null,
-          "conductor_id": null,
-          "cargado_at": null
+          "punto_retiro": "Terminal Alameda · Of. Encomiendas Sur",
+          "lista_at": "2026-09-21T01:46:52.707Z"
         },
         "entrega": {
-          "completada_at": null
+          "completada_at": "2026-09-21T03:16:52.707Z"
         }
       },
       "handoff": {
         "entrega": {
-          "persona_autorizada": null,
-          "escaneado_por": null,
-          "firma_url": null,
-          "at": null
+          "persona_autorizada": "Gabriela Núñez (16.333.444-5)",
+          "escaneado_por": "usr_211",
+          "firma_url": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22120%22%3E%3Cpath%20d%3D%22M20%2080%20C50%2010%2070%20110%20100%2050%20S150%2020%20170%2070%20220%2090%20280%2030%22%20fill%3D%22none%22%20stroke%3D%22%231a2420%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E",
+          "at": "2026-09-20T16:26:52.707Z"
         },
         "recepcion": {
-          "persona_autorizada": null,
-          "escaneado_por": null,
-          "firma_url": null,
-          "at": null
+          "persona_autorizada": "Carolina Vidal (15.111.222-6)",
+          "escaneado_por": "usr_305",
+          "firma_url": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22120%22%3E%3Cpath%20d%3D%22M20%2080%20C50%2010%2070%20110%20100%2050%20S150%2020%20170%2070%20220%2090%20280%2030%22%20fill%3D%22none%22%20stroke%3D%22%231a2420%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E",
+          "at": "2026-09-21T03:16:52.707Z"
         }
       },
       "timeline": [
         {
           "step": "creada",
-          "at": "2026-09-21T18:36:41.610Z",
+          "at": "2026-09-20T15:16:52.707Z",
           "actor_role": "merchant",
-          "actor_id": "usr_042"
+          "actor_id": "usr_043"
         },
         {
           "step": "asignada_operador",
-          "at": "2026-09-21T18:36:41.610Z",
+          "at": "2026-09-20T15:31:52.707Z",
           "actor_role": "coordinador_logistico",
           "actor_id": "usr_c01"
+        },
+        {
+          "step": "aceptada",
+          "at": "2026-09-20T15:43:52.707Z",
+          "actor_role": "operador_despachador",
+          "actor_id": "usr_d05"
+        },
+        {
+          "step": "recoleccion_asignada",
+          "at": "2026-09-20T15:51:52.707Z",
+          "actor_role": "operador_despachador",
+          "actor_id": "usr_d05"
+        },
+        {
+          "step": "recolectada",
+          "at": "2026-09-20T16:26:52.707Z",
+          "actor_role": "operador_conductor_recoleccion",
+          "actor_id": "usr_211"
+        },
+        {
+          "step": "en_bodega_operador",
+          "at": "2026-09-20T17:16:52.707Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        },
+        {
+          "step": "asignada_transporte",
+          "at": "2026-09-20T17:36:52.707Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        },
+        {
+          "step": "cargada_bus",
+          "at": "2026-09-20T18:26:52.707Z",
+          "actor_role": "operador_conductor_bus",
+          "actor_id": "usr_302"
+        },
+        {
+          "step": "en_bodega_destino",
+          "at": "2026-09-21T01:26:52.707Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        },
+        {
+          "step": "lista_retiro",
+          "at": "2026-09-21T01:46:52.707Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        },
+        {
+          "step": "entregada",
+          "at": "2026-09-21T03:16:52.707Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
         }
       ]
     },
     {
       "id": "ot_00003",
       "merchant_id": "mer_falabella",
-      "status": "recoleccion_asignada",
+      "status": "cargada_bus",
       "created_by": "usr_042",
-      "created_at": "2026-09-21T18:36:41.610Z",
+      "created_at": "2026-09-20T23:16:52.708Z",
       "bodega_origen": {
         "id": "bod_scl_01",
         "nombre": "CD Pudahuel",
@@ -234,7 +417,8 @@
           "region": "Metropolitana",
           "ciudad": "Santiago",
           "comuna": "Quilicura",
-          "direccion": "Av. Presidente Eduardo Frei Montalva 8301"
+          "direccion": "Av. Presidente Eduardo Frei Montalva 8301",
+          "codigo_postal": "8730000"
         }
       },
       "bodega_destino": {
@@ -244,7 +428,8 @@
           "region": "Araucanía",
           "ciudad": "Temuco",
           "comuna": "Temuco",
-          "direccion": "Manuel Montt 452"
+          "direccion": "Manuel Montt 452",
+          "codigo_postal": "4780000"
         }
       },
       "personas_autorizadas": {
@@ -273,35 +458,65 @@
           }
         ]
       },
-      "referencia_cliente": "OC-48292",
+      "referencia_cliente": "OC-48281",
+      "mpo": "MPO-771",
       "facturable": true,
       "periodo_facturacion": null,
       "packages": [
         "pkg_00003_1",
-        "pkg_00003_2",
-        "pkg_00003_3",
-        "pkg_00003_4"
+        "pkg_00003_2"
       ],
-      "bultos_total": 4,
+      "bultos_declarados": 2,
+      "bultos_total": 2,
+      "conteo": {
+        "declarados": 2,
+        "recolectados": 2,
+        "diferencia": 0,
+        "motivo": null,
+        "por": null,
+        "at": null
+      },
       "operacion": {
         "coordinador_id": "usr_c01",
         "operador_id": "op_transportes_sur",
-        "asignado_operador_at": "2026-09-21T18:36:41.610Z",
+        "asignado_operador_at": "2026-09-20T23:26:52.708Z",
+        "aceptacion": {
+          "estado": "aceptada",
+          "at": "2026-09-20T23:38:52.708Z",
+          "rechazos": []
+        },
         "recoleccion": {
           "conductor_id": "usr_210",
           "movil_patente": "FG-JI-98",
-          "asignado_at": "2026-09-21T18:36:41.610Z",
-          "completada_at": null
+          "asignado_at": "2026-09-20T23:46:52.708Z",
+          "completada_at": "2026-09-21T00:21:52.708Z"
         },
         "bodega_operador": {
-          "id": null,
-          "ingreso_at": null
+          "id": "wh_op_transportes_sur",
+          "ingreso_at": "2026-09-21T01:06:52.708Z"
         },
         "transporte": {
-          "bus_patente": null,
-          "servicio": null,
+          "servicio_id": "srv_sur_1",
+          "bus_patente": "AB-CD-12",
+          "servicio": "Interurbano Sur",
+          "salida": "07:00",
+          "salida_at": "2026-09-21T10:00:00.000Z",
+          "asignado_at": "2026-09-21T01:26:52.708Z",
+          "conductor_id": "usr_301",
+          "cargado_at": "2026-09-21T02:06:52.708Z",
+          "riesgo_sla": true,
+          "ventana_ok": true
+        },
+        "bodega_destino_operador": {
+          "ingreso_at": null
+        },
+        "ultima_milla": {
+          "modalidad": "operador",
           "conductor_id": null,
-          "cargado_at": null
+          "movil_patente": null,
+          "asignado_at": null,
+          "punto_retiro": null,
+          "lista_at": null
         },
         "entrega": {
           "completada_at": null
@@ -309,10 +524,10 @@
       },
       "handoff": {
         "entrega": {
-          "persona_autorizada": null,
-          "escaneado_por": null,
-          "firma_url": null,
-          "at": null
+          "persona_autorizada": "Juan Pérez (12.345.678-5)",
+          "escaneado_por": "usr_210",
+          "firma_url": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22120%22%3E%3Cpath%20d%3D%22M20%2080%20C50%2010%2070%20110%20100%2050%20S150%2020%20170%2070%20220%2090%20280%2030%22%20fill%3D%22none%22%20stroke%3D%22%231a2420%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E",
+          "at": "2026-09-21T00:21:52.708Z"
         },
         "recepcion": {
           "persona_autorizada": null,
@@ -324,30 +539,60 @@
       "timeline": [
         {
           "step": "creada",
-          "at": "2026-09-21T18:36:41.610Z",
+          "at": "2026-09-20T23:16:52.708Z",
           "actor_role": "merchant",
           "actor_id": "usr_042"
         },
         {
           "step": "asignada_operador",
-          "at": "2026-09-21T18:36:41.610Z",
+          "at": "2026-09-20T23:26:52.708Z",
           "actor_role": "coordinador_logistico",
           "actor_id": "usr_c01"
         },
         {
-          "step": "recoleccion_asignada",
-          "at": "2026-09-21T18:36:41.610Z",
+          "step": "aceptada",
+          "at": "2026-09-20T23:38:52.708Z",
           "actor_role": "operador_despachador",
           "actor_id": "usr_d05"
+        },
+        {
+          "step": "recoleccion_asignada",
+          "at": "2026-09-20T23:46:52.708Z",
+          "actor_role": "operador_despachador",
+          "actor_id": "usr_d05"
+        },
+        {
+          "step": "recolectada",
+          "at": "2026-09-21T00:21:52.708Z",
+          "actor_role": "operador_conductor_recoleccion",
+          "actor_id": "usr_210"
+        },
+        {
+          "step": "en_bodega_operador",
+          "at": "2026-09-21T01:06:52.708Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        },
+        {
+          "step": "asignada_transporte",
+          "at": "2026-09-21T01:26:52.708Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        },
+        {
+          "step": "cargada_bus",
+          "at": "2026-09-21T02:06:52.708Z",
+          "actor_role": "operador_conductor_bus",
+          "actor_id": "usr_301"
         }
       ]
     },
     {
       "id": "ot_00004",
       "merchant_id": "mer_falabella",
-      "status": "en_bodega_operador",
+      "status": "asignada_transporte",
       "created_by": "usr_042",
-      "created_at": "2026-09-21T18:36:41.610Z",
+      "created_at": "2026-09-21T09:16:52.709Z",
       "bodega_origen": {
         "id": "bod_con_04",
         "nombre": "CD Concepción",
@@ -355,7 +600,8 @@
           "region": "Biobío",
           "ciudad": "Concepción",
           "comuna": "San Pedro de la Paz",
-          "direccion": "Av. Los Carrera 1500"
+          "direccion": "Av. Los Carrera 1500",
+          "codigo_postal": "4030000"
         }
       },
       "bodega_destino": {
@@ -365,7 +611,375 @@
           "region": "Metropolitana",
           "ciudad": "Santiago",
           "comuna": "Quilicura",
-          "direccion": "Av. Presidente Eduardo Frei Montalva 8301"
+          "direccion": "Av. Presidente Eduardo Frei Montalva 8301",
+          "codigo_postal": "8730000"
+        }
+      },
+      "personas_autorizadas": {
+        "origen": [
+          {
+            "nombre": "Rosa Vega",
+            "rut": "9.876.543-3",
+            "telefono": "+56944556677"
+          },
+          {
+            "nombre": "Iván Cortés",
+            "rut": "16.543.210-K",
+            "telefono": "+56955667788"
+          }
+        ],
+        "destino": [
+          {
+            "nombre": "Juan Pérez",
+            "rut": "12.345.678-5",
+            "telefono": "+56912345678"
+          },
+          {
+            "nombre": "Ana Rojas",
+            "rut": "13.876.543-1",
+            "telefono": "+56911223344"
+          }
+        ]
+      },
+      "referencia_cliente": "OC-48285",
+      "mpo": null,
+      "facturable": true,
+      "periodo_facturacion": null,
+      "packages": [
+        "pkg_00004_1",
+        "pkg_00004_2"
+      ],
+      "bultos_declarados": 2,
+      "bultos_total": 2,
+      "conteo": {
+        "declarados": 2,
+        "recolectados": 2,
+        "diferencia": 0,
+        "motivo": null,
+        "por": null,
+        "at": null
+      },
+      "operacion": {
+        "coordinador_id": "usr_c01",
+        "operador_id": "op_transportes_sur",
+        "asignado_operador_at": "2026-09-21T09:26:52.709Z",
+        "aceptacion": {
+          "estado": "aceptada",
+          "at": "2026-09-21T09:38:52.709Z",
+          "rechazos": []
+        },
+        "recoleccion": {
+          "conductor_id": "usr_211",
+          "movil_patente": "HK-LM-45",
+          "asignado_at": "2026-09-21T09:46:52.709Z",
+          "completada_at": "2026-09-21T10:21:52.709Z"
+        },
+        "bodega_operador": {
+          "id": "wh_op_transportes_sur",
+          "ingreso_at": "2026-09-21T11:01:52.709Z"
+        },
+        "transporte": {
+          "servicio_id": "srv_sur_4",
+          "bus_patente": "GH-IJ-78",
+          "servicio": "Retorno Norte",
+          "salida": "08:00",
+          "salida_at": "2026-09-22T11:00:00.000Z",
+          "asignado_at": "2026-09-21T11:16:52.709Z",
+          "conductor_id": "usr_302",
+          "cargado_at": null,
+          "riesgo_sla": true,
+          "ventana_ok": null
+        },
+        "bodega_destino_operador": {
+          "ingreso_at": null
+        },
+        "ultima_milla": {
+          "modalidad": "operador",
+          "conductor_id": null,
+          "movil_patente": null,
+          "asignado_at": null,
+          "punto_retiro": null,
+          "lista_at": null
+        },
+        "entrega": {
+          "completada_at": null
+        }
+      },
+      "handoff": {
+        "entrega": {
+          "persona_autorizada": "Rosa Vega (9.876.543-3)",
+          "escaneado_por": "usr_211",
+          "firma_url": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22120%22%3E%3Cpath%20d%3D%22M20%2080%20C50%2010%2070%20110%20100%2050%20S150%2020%20170%2070%20220%2090%20280%2030%22%20fill%3D%22none%22%20stroke%3D%22%231a2420%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E",
+          "at": "2026-09-21T10:21:52.709Z"
+        },
+        "recepcion": {
+          "persona_autorizada": null,
+          "escaneado_por": null,
+          "firma_url": null,
+          "at": null
+        }
+      },
+      "timeline": [
+        {
+          "step": "creada",
+          "at": "2026-09-21T09:16:52.709Z",
+          "actor_role": "merchant",
+          "actor_id": "usr_042"
+        },
+        {
+          "step": "asignada_operador",
+          "at": "2026-09-21T09:26:52.709Z",
+          "actor_role": "coordinador_logistico",
+          "actor_id": "usr_c01"
+        },
+        {
+          "step": "aceptada",
+          "at": "2026-09-21T09:38:52.709Z",
+          "actor_role": "operador_despachador",
+          "actor_id": "usr_d05"
+        },
+        {
+          "step": "recoleccion_asignada",
+          "at": "2026-09-21T09:46:52.709Z",
+          "actor_role": "operador_despachador",
+          "actor_id": "usr_d05"
+        },
+        {
+          "step": "recolectada",
+          "at": "2026-09-21T10:21:52.709Z",
+          "actor_role": "operador_conductor_recoleccion",
+          "actor_id": "usr_211"
+        },
+        {
+          "step": "en_bodega_operador",
+          "at": "2026-09-21T11:01:52.709Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        },
+        {
+          "step": "asignada_transporte",
+          "at": "2026-09-21T11:16:52.709Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        }
+      ]
+    },
+    {
+      "id": "ot_00005",
+      "merchant_id": "mer_ripley",
+      "status": "en_bodega_destino",
+      "created_by": "usr_043",
+      "created_at": "2026-09-20T19:16:52.709Z",
+      "bodega_origen": {
+        "id": "bod_rip_01",
+        "nombre": "CD Renca",
+        "direccion": {
+          "region": "Metropolitana",
+          "ciudad": "Santiago",
+          "comuna": "Renca",
+          "direccion": "Av. Presidente Balmaceda 2300",
+          "codigo_postal": "8640000"
+        }
+      },
+      "bodega_destino": {
+        "id": "bod_rip_02",
+        "nombre": "Tienda Temuco",
+        "direccion": {
+          "region": "Araucanía",
+          "ciudad": "Temuco",
+          "comuna": "Temuco",
+          "direccion": "Av. Alemania 671",
+          "codigo_postal": "4780000"
+        }
+      },
+      "personas_autorizadas": {
+        "origen": [
+          {
+            "nombre": "Carolina Vidal",
+            "rut": "15.111.222-6",
+            "telefono": "+56977001122"
+          },
+          {
+            "nombre": "Esteban Lara",
+            "rut": "14.222.333-3",
+            "telefono": "+56977003344"
+          }
+        ],
+        "destino": [
+          {
+            "nombre": "Gabriela Núñez",
+            "rut": "16.333.444-5",
+            "telefono": "+56977005566"
+          },
+          {
+            "nombre": "Rodrigo Mena",
+            "rut": "15.444.555-2",
+            "telefono": "+56977007788"
+          }
+        ]
+      },
+      "referencia_cliente": "PO-9940",
+      "mpo": null,
+      "facturable": true,
+      "periodo_facturacion": null,
+      "packages": [
+        "pkg_00005_1",
+        "pkg_00005_2",
+        "pkg_00005_3"
+      ],
+      "bultos_declarados": 3,
+      "bultos_total": 3,
+      "conteo": {
+        "declarados": 3,
+        "recolectados": 3,
+        "diferencia": 0,
+        "motivo": null,
+        "por": null,
+        "at": null
+      },
+      "operacion": {
+        "coordinador_id": "usr_c01",
+        "operador_id": "op_transportes_sur",
+        "asignado_operador_at": "2026-09-20T19:26:52.709Z",
+        "aceptacion": {
+          "estado": "aceptada",
+          "at": "2026-09-20T19:38:52.709Z",
+          "rechazos": []
+        },
+        "recoleccion": {
+          "conductor_id": "usr_210",
+          "movil_patente": "FG-JI-98",
+          "asignado_at": "2026-09-20T19:46:52.709Z",
+          "completada_at": "2026-09-20T20:21:52.709Z"
+        },
+        "bodega_operador": {
+          "id": "wh_op_transportes_sur",
+          "ingreso_at": "2026-09-20T21:06:52.709Z"
+        },
+        "transporte": {
+          "servicio_id": "srv_sur_1",
+          "bus_patente": "AB-CD-12",
+          "servicio": "Interurbano Sur",
+          "salida": "19:30",
+          "salida_at": "2026-09-20T22:30:00.000Z",
+          "asignado_at": "2026-09-20T21:26:52.709Z",
+          "conductor_id": "usr_301",
+          "cargado_at": "2026-09-20T22:06:52.709Z",
+          "riesgo_sla": false,
+          "ventana_ok": true
+        },
+        "bodega_destino_operador": {
+          "ingreso_at": "2026-09-21T06:06:52.709Z"
+        },
+        "ultima_milla": {
+          "modalidad": "retiro",
+          "conductor_id": null,
+          "movil_patente": null,
+          "asignado_at": null,
+          "punto_retiro": null,
+          "lista_at": null
+        },
+        "entrega": {
+          "completada_at": null
+        }
+      },
+      "handoff": {
+        "entrega": {
+          "persona_autorizada": "Carolina Vidal (15.111.222-6)",
+          "escaneado_por": "usr_210",
+          "firma_url": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22120%22%3E%3Cpath%20d%3D%22M20%2080%20C50%2010%2070%20110%20100%2050%20S150%2020%20170%2070%20220%2090%20280%2030%22%20fill%3D%22none%22%20stroke%3D%22%231a2420%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E",
+          "at": "2026-09-20T20:21:52.709Z"
+        },
+        "recepcion": {
+          "persona_autorizada": null,
+          "escaneado_por": null,
+          "firma_url": null,
+          "at": null
+        }
+      },
+      "timeline": [
+        {
+          "step": "creada",
+          "at": "2026-09-20T19:16:52.709Z",
+          "actor_role": "merchant",
+          "actor_id": "usr_043"
+        },
+        {
+          "step": "asignada_operador",
+          "at": "2026-09-20T19:26:52.709Z",
+          "actor_role": "coordinador_logistico",
+          "actor_id": "usr_c01"
+        },
+        {
+          "step": "aceptada",
+          "at": "2026-09-20T19:38:52.709Z",
+          "actor_role": "operador_despachador",
+          "actor_id": "usr_d05"
+        },
+        {
+          "step": "recoleccion_asignada",
+          "at": "2026-09-20T19:46:52.709Z",
+          "actor_role": "operador_despachador",
+          "actor_id": "usr_d05"
+        },
+        {
+          "step": "recolectada",
+          "at": "2026-09-20T20:21:52.709Z",
+          "actor_role": "operador_conductor_recoleccion",
+          "actor_id": "usr_210"
+        },
+        {
+          "step": "en_bodega_operador",
+          "at": "2026-09-20T21:06:52.709Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        },
+        {
+          "step": "asignada_transporte",
+          "at": "2026-09-20T21:26:52.709Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        },
+        {
+          "step": "cargada_bus",
+          "at": "2026-09-20T22:06:52.709Z",
+          "actor_role": "operador_conductor_bus",
+          "actor_id": "usr_301"
+        },
+        {
+          "step": "en_bodega_destino",
+          "at": "2026-09-21T06:06:52.709Z",
+          "actor_role": "operador_encargado_bodega",
+          "actor_id": "usr_305"
+        }
+      ]
+    },
+    {
+      "id": "ot_00006",
+      "merchant_id": "mer_falabella",
+      "status": "en_bodega_operador",
+      "created_by": "usr_042",
+      "created_at": "2026-09-21T13:16:52.710Z",
+      "bodega_origen": {
+        "id": "bod_con_04",
+        "nombre": "CD Concepción",
+        "direccion": {
+          "region": "Biobío",
+          "ciudad": "Concepción",
+          "comuna": "San Pedro de la Paz",
+          "direccion": "Av. Los Carrera 1500",
+          "codigo_postal": "4030000"
+        }
+      },
+      "bodega_destino": {
+        "id": "bod_scl_01",
+        "nombre": "CD Pudahuel",
+        "direccion": {
+          "region": "Metropolitana",
+          "ciudad": "Santiago",
+          "comuna": "Quilicura",
+          "direccion": "Av. Presidente Eduardo Frei Montalva 8301",
+          "codigo_postal": "8730000"
         }
       },
       "personas_autorizadas": {
@@ -395,33 +1009,65 @@
         ]
       },
       "referencia_cliente": "OC-48280",
+      "mpo": null,
       "facturable": true,
       "periodo_facturacion": null,
       "packages": [
-        "pkg_00004_1",
-        "pkg_00004_2",
-        "pkg_00004_3"
+        "pkg_00006_1",
+        "pkg_00006_2",
+        "pkg_00006_3"
       ],
+      "bultos_declarados": 3,
       "bultos_total": 3,
+      "conteo": {
+        "declarados": 3,
+        "recolectados": 3,
+        "diferencia": 0,
+        "motivo": null,
+        "por": null,
+        "at": null
+      },
       "operacion": {
         "coordinador_id": "usr_c01",
         "operador_id": "op_transportes_sur",
-        "asignado_operador_at": "2026-09-21T18:36:41.610Z",
+        "asignado_operador_at": "2026-09-21T13:26:52.710Z",
+        "aceptacion": {
+          "estado": "aceptada",
+          "at": "2026-09-21T13:38:52.710Z",
+          "rechazos": []
+        },
         "recoleccion": {
           "conductor_id": "usr_211",
           "movil_patente": "HK-LM-45",
-          "asignado_at": "2026-09-21T18:36:41.610Z",
-          "completada_at": "2026-09-21T18:36:41.611Z"
+          "asignado_at": "2026-09-21T13:46:52.710Z",
+          "completada_at": "2026-09-21T14:21:52.710Z"
         },
         "bodega_operador": {
           "id": "wh_op_transportes_sur",
-          "ingreso_at": "2026-09-21T18:36:41.611Z"
+          "ingreso_at": "2026-09-21T15:01:52.710Z"
         },
         "transporte": {
+          "servicio_id": null,
           "bus_patente": null,
           "servicio": null,
+          "salida": null,
+          "salida_at": null,
+          "asignado_at": null,
           "conductor_id": null,
-          "cargado_at": null
+          "cargado_at": null,
+          "riesgo_sla": false,
+          "ventana_ok": null
+        },
+        "bodega_destino_operador": {
+          "ingreso_at": null
+        },
+        "ultima_milla": {
+          "modalidad": "operador",
+          "conductor_id": null,
+          "movil_patente": null,
+          "asignado_at": null,
+          "punto_retiro": null,
+          "lista_at": null
         },
         "entrega": {
           "completada_at": null
@@ -432,7 +1078,7 @@
           "persona_autorizada": "Rosa Vega (9.876.543-3)",
           "escaneado_por": "usr_211",
           "firma_url": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22120%22%3E%3Cpath%20d%3D%22M20%2080%20C50%2010%2070%20110%20100%2050%20S150%2020%20170%2070%20220%2090%20280%2030%22%20fill%3D%22none%22%20stroke%3D%22%231a2420%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E",
-          "at": "2026-09-21T18:36:41.611Z"
+          "at": "2026-09-21T14:21:52.710Z"
         },
         "recepcion": {
           "persona_autorizada": null,
@@ -444,50 +1090,57 @@
       "timeline": [
         {
           "step": "creada",
-          "at": "2026-09-21T18:36:41.610Z",
+          "at": "2026-09-21T13:16:52.710Z",
           "actor_role": "merchant",
           "actor_id": "usr_042"
         },
         {
           "step": "asignada_operador",
-          "at": "2026-09-21T18:36:41.610Z",
+          "at": "2026-09-21T13:26:52.710Z",
           "actor_role": "coordinador_logistico",
           "actor_id": "usr_c01"
         },
         {
+          "step": "aceptada",
+          "at": "2026-09-21T13:38:52.710Z",
+          "actor_role": "operador_despachador",
+          "actor_id": "usr_d05"
+        },
+        {
           "step": "recoleccion_asignada",
-          "at": "2026-09-21T18:36:41.610Z",
+          "at": "2026-09-21T13:46:52.710Z",
           "actor_role": "operador_despachador",
           "actor_id": "usr_d05"
         },
         {
           "step": "recolectada",
-          "at": "2026-09-21T18:36:41.611Z",
+          "at": "2026-09-21T14:21:52.710Z",
           "actor_role": "operador_conductor_recoleccion",
           "actor_id": "usr_211"
         },
         {
           "step": "en_bodega_operador",
-          "at": "2026-09-21T18:36:41.611Z",
+          "at": "2026-09-21T15:01:52.710Z",
           "actor_role": "operador_encargado_bodega",
           "actor_id": "usr_305"
         }
       ]
     },
     {
-      "id": "ot_00005",
+      "id": "ot_00007",
       "merchant_id": "mer_falabella",
-      "status": "asignada_operador",
+      "status": "recoleccion_asignada",
       "created_by": "usr_042",
-      "created_at": "2026-09-21T18:36:41.611Z",
+      "created_at": "2026-09-21T15:16:52.710Z",
       "bodega_origen": {
-        "id": "bod_scl_02",
-        "nombre": "CD Lo Aguirre",
+        "id": "bod_scl_01",
+        "nombre": "CD Pudahuel",
         "direccion": {
           "region": "Metropolitana",
           "ciudad": "Santiago",
-          "comuna": "Pudahuel",
-          "direccion": "Ruta 68 km 12"
+          "comuna": "Quilicura",
+          "direccion": "Av. Presidente Eduardo Frei Montalva 8301",
+          "codigo_postal": "8730000"
         }
       },
       "bodega_destino": {
@@ -497,7 +1150,316 @@
           "region": "Araucanía",
           "ciudad": "Temuco",
           "comuna": "Temuco",
-          "direccion": "Manuel Montt 452"
+          "direccion": "Manuel Montt 452",
+          "codigo_postal": "4780000"
+        }
+      },
+      "personas_autorizadas": {
+        "origen": [
+          {
+            "nombre": "Juan Pérez",
+            "rut": "12.345.678-5",
+            "telefono": "+56912345678"
+          },
+          {
+            "nombre": "Ana Rojas",
+            "rut": "13.876.543-1",
+            "telefono": "+56911223344"
+          }
+        ],
+        "destino": [
+          {
+            "nombre": "María González",
+            "rut": "14.987.654-5",
+            "telefono": "+56987654321"
+          },
+          {
+            "nombre": "Pedro Soto",
+            "rut": "15.234.567-4",
+            "telefono": "+56988997766"
+          }
+        ]
+      },
+      "referencia_cliente": "OC-48292",
+      "mpo": "MPO-771",
+      "facturable": true,
+      "periodo_facturacion": null,
+      "packages": [
+        "pkg_00007_1",
+        "pkg_00007_2",
+        "pkg_00007_3",
+        "pkg_00007_4"
+      ],
+      "bultos_declarados": 4,
+      "bultos_total": 4,
+      "conteo": {
+        "declarados": 4,
+        "recolectados": null,
+        "diferencia": 0,
+        "motivo": null,
+        "por": null,
+        "at": null
+      },
+      "operacion": {
+        "coordinador_id": "usr_c01",
+        "operador_id": "op_transportes_sur",
+        "asignado_operador_at": "2026-09-21T15:26:52.710Z",
+        "aceptacion": {
+          "estado": "aceptada",
+          "at": "2026-09-21T15:38:52.710Z",
+          "rechazos": []
+        },
+        "recoleccion": {
+          "conductor_id": "usr_210",
+          "movil_patente": "FG-JI-98",
+          "asignado_at": "2026-09-21T15:46:52.710Z",
+          "completada_at": null
+        },
+        "bodega_operador": {
+          "id": null,
+          "ingreso_at": null
+        },
+        "transporte": {
+          "servicio_id": null,
+          "bus_patente": null,
+          "servicio": null,
+          "salida": null,
+          "salida_at": null,
+          "asignado_at": null,
+          "conductor_id": null,
+          "cargado_at": null,
+          "riesgo_sla": false,
+          "ventana_ok": null
+        },
+        "bodega_destino_operador": {
+          "ingreso_at": null
+        },
+        "ultima_milla": {
+          "modalidad": "operador",
+          "conductor_id": null,
+          "movil_patente": null,
+          "asignado_at": null,
+          "punto_retiro": null,
+          "lista_at": null
+        },
+        "entrega": {
+          "completada_at": null
+        }
+      },
+      "handoff": {
+        "entrega": {
+          "persona_autorizada": null,
+          "escaneado_por": null,
+          "firma_url": null,
+          "at": null
+        },
+        "recepcion": {
+          "persona_autorizada": null,
+          "escaneado_por": null,
+          "firma_url": null,
+          "at": null
+        }
+      },
+      "timeline": [
+        {
+          "step": "creada",
+          "at": "2026-09-21T15:16:52.710Z",
+          "actor_role": "merchant",
+          "actor_id": "usr_042"
+        },
+        {
+          "step": "asignada_operador",
+          "at": "2026-09-21T15:26:52.710Z",
+          "actor_role": "coordinador_logistico",
+          "actor_id": "usr_c01"
+        },
+        {
+          "step": "aceptada",
+          "at": "2026-09-21T15:38:52.710Z",
+          "actor_role": "operador_despachador",
+          "actor_id": "usr_d05"
+        },
+        {
+          "step": "recoleccion_asignada",
+          "at": "2026-09-21T15:46:52.710Z",
+          "actor_role": "operador_despachador",
+          "actor_id": "usr_d05"
+        }
+      ]
+    },
+    {
+      "id": "ot_00008",
+      "merchant_id": "mer_falabella",
+      "status": "asignada_operador",
+      "created_by": "usr_042",
+      "created_at": "2026-09-21T17:16:52.710Z",
+      "bodega_origen": {
+        "id": "bod_scl_01",
+        "nombre": "CD Pudahuel",
+        "direccion": {
+          "region": "Metropolitana",
+          "ciudad": "Santiago",
+          "comuna": "Quilicura",
+          "direccion": "Av. Presidente Eduardo Frei Montalva 8301",
+          "codigo_postal": "8730000"
+        }
+      },
+      "bodega_destino": {
+        "id": "bod_con_04",
+        "nombre": "CD Concepción",
+        "direccion": {
+          "region": "Biobío",
+          "ciudad": "Concepción",
+          "comuna": "San Pedro de la Paz",
+          "direccion": "Av. Los Carrera 1500",
+          "codigo_postal": "4030000"
+        }
+      },
+      "personas_autorizadas": {
+        "origen": [
+          {
+            "nombre": "Juan Pérez",
+            "rut": "12.345.678-5",
+            "telefono": "+56912345678"
+          },
+          {
+            "nombre": "Ana Rojas",
+            "rut": "13.876.543-1",
+            "telefono": "+56911223344"
+          }
+        ],
+        "destino": [
+          {
+            "nombre": "Rosa Vega",
+            "rut": "9.876.543-3",
+            "telefono": "+56944556677"
+          },
+          {
+            "nombre": "Iván Cortés",
+            "rut": "16.543.210-K",
+            "telefono": "+56955667788"
+          }
+        ]
+      },
+      "referencia_cliente": "OC-48291",
+      "mpo": null,
+      "facturable": true,
+      "periodo_facturacion": null,
+      "packages": [
+        "pkg_00008_1",
+        "pkg_00008_2"
+      ],
+      "bultos_declarados": 2,
+      "bultos_total": 2,
+      "conteo": {
+        "declarados": 2,
+        "recolectados": null,
+        "diferencia": 0,
+        "motivo": null,
+        "por": null,
+        "at": null
+      },
+      "operacion": {
+        "coordinador_id": "usr_c01",
+        "operador_id": "op_transportes_sur",
+        "asignado_operador_at": "2026-09-21T17:26:52.710Z",
+        "aceptacion": {
+          "estado": "pendiente",
+          "at": null,
+          "rechazos": []
+        },
+        "recoleccion": {
+          "conductor_id": null,
+          "movil_patente": null,
+          "asignado_at": null,
+          "completada_at": null
+        },
+        "bodega_operador": {
+          "id": null,
+          "ingreso_at": null
+        },
+        "transporte": {
+          "servicio_id": null,
+          "bus_patente": null,
+          "servicio": null,
+          "salida": null,
+          "salida_at": null,
+          "asignado_at": null,
+          "conductor_id": null,
+          "cargado_at": null,
+          "riesgo_sla": false,
+          "ventana_ok": null
+        },
+        "bodega_destino_operador": {
+          "ingreso_at": null
+        },
+        "ultima_milla": {
+          "modalidad": "operador",
+          "conductor_id": null,
+          "movil_patente": null,
+          "asignado_at": null,
+          "punto_retiro": null,
+          "lista_at": null
+        },
+        "entrega": {
+          "completada_at": null
+        }
+      },
+      "handoff": {
+        "entrega": {
+          "persona_autorizada": null,
+          "escaneado_por": null,
+          "firma_url": null,
+          "at": null
+        },
+        "recepcion": {
+          "persona_autorizada": null,
+          "escaneado_por": null,
+          "firma_url": null,
+          "at": null
+        }
+      },
+      "timeline": [
+        {
+          "step": "creada",
+          "at": "2026-09-21T17:16:52.710Z",
+          "actor_role": "merchant",
+          "actor_id": "usr_042"
+        },
+        {
+          "step": "asignada_operador",
+          "at": "2026-09-21T17:26:52.710Z",
+          "actor_role": "coordinador_logistico",
+          "actor_id": "usr_c01"
+        }
+      ]
+    },
+    {
+      "id": "ot_00009",
+      "merchant_id": "mer_falabella",
+      "status": "asignada_operador",
+      "created_by": "usr_042",
+      "created_at": "2026-09-21T17:46:52.710Z",
+      "bodega_origen": {
+        "id": "bod_scl_02",
+        "nombre": "CD Lo Aguirre",
+        "direccion": {
+          "region": "Metropolitana",
+          "ciudad": "Santiago",
+          "comuna": "Pudahuel",
+          "direccion": "Ruta 68 km 12",
+          "codigo_postal": "9020000"
+        }
+      },
+      "bodega_destino": {
+        "id": "bod_tem_03",
+        "nombre": "CD Temuco",
+        "direccion": {
+          "region": "Araucanía",
+          "ciudad": "Temuco",
+          "comuna": "Temuco",
+          "direccion": "Manuel Montt 452",
+          "codigo_postal": "4780000"
         }
       },
       "personas_autorizadas": {
@@ -527,17 +1489,32 @@
         ]
       },
       "referencia_cliente": "OC-48295",
+      "mpo": null,
       "facturable": true,
       "periodo_facturacion": null,
       "packages": [
-        "pkg_00005_1",
-        "pkg_00005_2"
+        "pkg_00009_1",
+        "pkg_00009_2"
       ],
+      "bultos_declarados": 2,
       "bultos_total": 2,
+      "conteo": {
+        "declarados": 2,
+        "recolectados": null,
+        "diferencia": 0,
+        "motivo": null,
+        "por": null,
+        "at": null
+      },
       "operacion": {
         "coordinador_id": "usr_c01",
         "operador_id": "op_andes_cargo",
-        "asignado_operador_at": "2026-09-21T18:36:41.611Z",
+        "asignado_operador_at": "2026-09-21T17:56:52.710Z",
+        "aceptacion": {
+          "estado": "pendiente",
+          "at": null,
+          "rechazos": []
+        },
         "recoleccion": {
           "conductor_id": null,
           "movil_patente": null,
@@ -549,10 +1526,27 @@
           "ingreso_at": null
         },
         "transporte": {
+          "servicio_id": null,
           "bus_patente": null,
           "servicio": null,
+          "salida": null,
+          "salida_at": null,
+          "asignado_at": null,
           "conductor_id": null,
-          "cargado_at": null
+          "cargado_at": null,
+          "riesgo_sla": false,
+          "ventana_ok": null
+        },
+        "bodega_destino_operador": {
+          "ingreso_at": null
+        },
+        "ultima_milla": {
+          "modalidad": "operador",
+          "conductor_id": null,
+          "movil_patente": null,
+          "asignado_at": null,
+          "punto_retiro": null,
+          "lista_at": null
         },
         "entrega": {
           "completada_at": null
@@ -575,15 +1569,157 @@
       "timeline": [
         {
           "step": "creada",
-          "at": "2026-09-21T18:36:41.611Z",
+          "at": "2026-09-21T17:46:52.710Z",
           "actor_role": "merchant",
           "actor_id": "usr_042"
         },
         {
           "step": "asignada_operador",
-          "at": "2026-09-21T18:36:41.611Z",
+          "at": "2026-09-21T17:56:52.710Z",
           "actor_role": "coordinador_logistico",
           "actor_id": "usr_c01"
+        }
+      ]
+    },
+    {
+      "id": "ot_00010",
+      "merchant_id": "mer_falabella",
+      "status": "creada",
+      "created_by": "usr_042",
+      "created_at": "2026-09-21T20:16:52.710Z",
+      "bodega_origen": {
+        "id": "bod_scl_01",
+        "nombre": "CD Pudahuel",
+        "direccion": {
+          "region": "Metropolitana",
+          "ciudad": "Santiago",
+          "comuna": "Quilicura",
+          "direccion": "Av. Presidente Eduardo Frei Montalva 8301",
+          "codigo_postal": "8730000"
+        }
+      },
+      "bodega_destino": {
+        "id": "bod_tem_03",
+        "nombre": "CD Temuco",
+        "direccion": {
+          "region": "Araucanía",
+          "ciudad": "Temuco",
+          "comuna": "Temuco",
+          "direccion": "Manuel Montt 452",
+          "codigo_postal": "4780000"
+        }
+      },
+      "personas_autorizadas": {
+        "origen": [
+          {
+            "nombre": "Juan Pérez",
+            "rut": "12.345.678-5",
+            "telefono": "+56912345678"
+          },
+          {
+            "nombre": "Ana Rojas",
+            "rut": "13.876.543-1",
+            "telefono": "+56911223344"
+          }
+        ],
+        "destino": [
+          {
+            "nombre": "María González",
+            "rut": "14.987.654-5",
+            "telefono": "+56987654321"
+          },
+          {
+            "nombre": "Pedro Soto",
+            "rut": "15.234.567-4",
+            "telefono": "+56988997766"
+          }
+        ]
+      },
+      "referencia_cliente": "OC-48290",
+      "mpo": "MPO-771",
+      "facturable": true,
+      "periodo_facturacion": null,
+      "packages": [
+        "pkg_00010_1",
+        "pkg_00010_2",
+        "pkg_00010_3"
+      ],
+      "bultos_declarados": 3,
+      "bultos_total": 3,
+      "conteo": {
+        "declarados": 3,
+        "recolectados": null,
+        "diferencia": 0,
+        "motivo": null,
+        "por": null,
+        "at": null
+      },
+      "operacion": {
+        "coordinador_id": null,
+        "operador_id": null,
+        "asignado_operador_at": null,
+        "aceptacion": {
+          "estado": null,
+          "at": null,
+          "rechazos": []
+        },
+        "recoleccion": {
+          "conductor_id": null,
+          "movil_patente": null,
+          "asignado_at": null,
+          "completada_at": null
+        },
+        "bodega_operador": {
+          "id": null,
+          "ingreso_at": null
+        },
+        "transporte": {
+          "servicio_id": null,
+          "bus_patente": null,
+          "servicio": null,
+          "salida": null,
+          "salida_at": null,
+          "asignado_at": null,
+          "conductor_id": null,
+          "cargado_at": null,
+          "riesgo_sla": false,
+          "ventana_ok": null
+        },
+        "bodega_destino_operador": {
+          "ingreso_at": null
+        },
+        "ultima_milla": {
+          "modalidad": "operador",
+          "conductor_id": null,
+          "movil_patente": null,
+          "asignado_at": null,
+          "punto_retiro": null,
+          "lista_at": null
+        },
+        "entrega": {
+          "completada_at": null
+        }
+      },
+      "handoff": {
+        "entrega": {
+          "persona_autorizada": null,
+          "escaneado_por": null,
+          "firma_url": null,
+          "at": null
+        },
+        "recepcion": {
+          "persona_autorizada": null,
+          "escaneado_por": null,
+          "firma_url": null,
+          "at": null
+        }
+      },
+      "timeline": [
+        {
+          "step": "creada",
+          "at": "2026-09-21T20:16:52.710Z",
+          "actor_role": "merchant",
+          "actor_id": "usr_042"
         }
       ]
     }

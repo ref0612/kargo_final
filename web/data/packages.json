@@ -7,8 +7,44 @@
       "descripcion": "Ropa",
       "peso_kg": 3,
       "valor_declarado_clp": 30000,
-      "status": "pendiente",
-      "scan_history": []
+      "status": "entregado",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_210",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-20T10:31:52.703Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-20T11:31:52.703Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "carga_bus",
+          "actor_id": "usr_301",
+          "actor_role": "operador_conductor_bus",
+          "at": "2026-09-20T12:41:52.703Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "ingreso_bodega_destino",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-20T18:41:52.703Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "entrega",
+          "actor_id": "usr_401",
+          "actor_role": "operador_conductor_entrega",
+          "at": "2026-09-20T20:01:52.703Z",
+          "firma_url": "ref:handoff.recepcion"
+        }
+      ]
     },
     {
       "id": "pkg_00001_2",
@@ -17,8 +53,44 @@
       "descripcion": "Calzado",
       "peso_kg": 4,
       "valor_declarado_clp": 35000,
-      "status": "pendiente",
-      "scan_history": []
+      "status": "entregado",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_210",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-20T10:31:52.703Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-20T11:31:52.703Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "carga_bus",
+          "actor_id": "usr_301",
+          "actor_role": "operador_conductor_bus",
+          "at": "2026-09-20T12:41:52.703Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "ingreso_bodega_destino",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-20T18:41:52.703Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "entrega",
+          "actor_id": "usr_401",
+          "actor_role": "operador_conductor_entrega",
+          "at": "2026-09-20T20:01:52.703Z",
+          "firma_url": "ref:handoff.recepcion"
+        }
+      ]
     },
     {
       "id": "pkg_00001_3",
@@ -27,8 +99,91 @@
       "descripcion": "Electrodomésticos",
       "peso_kg": 5,
       "valor_declarado_clp": 40000,
-      "status": "pendiente",
-      "scan_history": []
+      "status": "entregado",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_210",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-20T10:31:52.703Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-20T11:31:52.703Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "carga_bus",
+          "actor_id": "usr_301",
+          "actor_role": "operador_conductor_bus",
+          "at": "2026-09-20T12:41:52.703Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "ingreso_bodega_destino",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-20T18:41:52.703Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "entrega",
+          "actor_id": "usr_401",
+          "actor_role": "operador_conductor_entrega",
+          "at": "2026-09-20T20:01:52.703Z",
+          "firma_url": "ref:handoff.recepcion"
+        }
+      ]
+    },
+    {
+      "id": "pkg_00001_4",
+      "order_id": "ot_00001",
+      "piece_code": "KARGO-00001-004",
+      "descripcion": "Ropa",
+      "peso_kg": 4,
+      "valor_declarado_clp": null,
+      "status": "entregado",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_210",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-20T10:31:52.703Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-20T11:31:52.703Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "carga_bus",
+          "actor_id": "usr_301",
+          "actor_role": "operador_conductor_bus",
+          "at": "2026-09-20T12:41:52.703Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "ingreso_bodega_destino",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-20T18:41:52.703Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "entrega",
+          "actor_id": "usr_401",
+          "actor_role": "operador_conductor_entrega",
+          "at": "2026-09-20T20:01:52.703Z",
+          "firma_url": "ref:handoff.recepcion"
+        }
+      ],
+      "agregado_en_recoleccion": true
     },
     {
       "id": "pkg_00002_1",
@@ -37,8 +192,44 @@
       "descripcion": "Ropa",
       "peso_kg": 3,
       "valor_declarado_clp": 30000,
-      "status": "pendiente",
-      "scan_history": []
+      "status": "entregado",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_211",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-20T16:26:52.707Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-20T17:16:52.707Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "carga_bus",
+          "actor_id": "usr_302",
+          "actor_role": "operador_conductor_bus",
+          "at": "2026-09-20T18:26:52.707Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "ingreso_bodega_destino",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-21T01:26:52.707Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "entrega",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-21T03:16:52.707Z",
+          "firma_url": "ref:handoff.recepcion"
+        }
+      ]
     },
     {
       "id": "pkg_00002_2",
@@ -47,8 +238,44 @@
       "descripcion": "Calzado",
       "peso_kg": 4,
       "valor_declarado_clp": 35000,
-      "status": "pendiente",
-      "scan_history": []
+      "status": "entregado",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_211",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-20T16:26:52.707Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-20T17:16:52.707Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "carga_bus",
+          "actor_id": "usr_302",
+          "actor_role": "operador_conductor_bus",
+          "at": "2026-09-20T18:26:52.707Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "ingreso_bodega_destino",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-21T01:26:52.707Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "entrega",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-21T03:16:52.707Z",
+          "firma_url": "ref:handoff.recepcion"
+        }
+      ]
     },
     {
       "id": "pkg_00003_1",
@@ -57,8 +284,30 @@
       "descripcion": "Ropa",
       "peso_kg": 3,
       "valor_declarado_clp": 30000,
-      "status": "pendiente",
-      "scan_history": []
+      "status": "cargado_bus",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_210",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-21T00:21:52.708Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-21T01:06:52.708Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "carga_bus",
+          "actor_id": "usr_301",
+          "actor_role": "operador_conductor_bus",
+          "at": "2026-09-21T02:06:52.708Z",
+          "firma_url": null
+        }
+      ]
     },
     {
       "id": "pkg_00003_2",
@@ -67,28 +316,30 @@
       "descripcion": "Calzado",
       "peso_kg": 4,
       "valor_declarado_clp": 35000,
-      "status": "pendiente",
-      "scan_history": []
-    },
-    {
-      "id": "pkg_00003_3",
-      "order_id": "ot_00003",
-      "piece_code": "KARGO-00003-003",
-      "descripcion": "Electrodomésticos",
-      "peso_kg": 5,
-      "valor_declarado_clp": 40000,
-      "status": "pendiente",
-      "scan_history": []
-    },
-    {
-      "id": "pkg_00003_4",
-      "order_id": "ot_00003",
-      "piece_code": "KARGO-00003-004",
-      "descripcion": "Textiles",
-      "peso_kg": 6,
-      "valor_declarado_clp": 45000,
-      "status": "pendiente",
-      "scan_history": []
+      "status": "cargado_bus",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_210",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-21T00:21:52.708Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-21T01:06:52.708Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "carga_bus",
+          "actor_id": "usr_301",
+          "actor_role": "operador_conductor_bus",
+          "at": "2026-09-21T02:06:52.708Z",
+          "firma_url": null
+        }
+      ]
     },
     {
       "id": "pkg_00004_1",
@@ -103,14 +354,14 @@
           "checkpoint": "recoleccion",
           "actor_id": "usr_211",
           "actor_role": "operador_conductor_recoleccion",
-          "at": "2026-09-21T18:36:41.610Z",
+          "at": "2026-09-21T10:21:52.709Z",
           "firma_url": "ref:handoff.entrega"
         },
         {
           "checkpoint": "ingreso_bodega_op",
           "actor_id": "usr_305",
           "actor_role": "operador_encargado_bodega",
-          "at": "2026-09-21T18:36:41.611Z",
+          "at": "2026-09-21T11:01:52.709Z",
           "firma_url": null
         }
       ]
@@ -128,39 +379,14 @@
           "checkpoint": "recoleccion",
           "actor_id": "usr_211",
           "actor_role": "operador_conductor_recoleccion",
-          "at": "2026-09-21T18:36:41.610Z",
+          "at": "2026-09-21T10:21:52.709Z",
           "firma_url": "ref:handoff.entrega"
         },
         {
           "checkpoint": "ingreso_bodega_op",
           "actor_id": "usr_305",
           "actor_role": "operador_encargado_bodega",
-          "at": "2026-09-21T18:36:41.611Z",
-          "firma_url": null
-        }
-      ]
-    },
-    {
-      "id": "pkg_00004_3",
-      "order_id": "ot_00004",
-      "piece_code": "KARGO-00004-003",
-      "descripcion": "Electrodomésticos",
-      "peso_kg": 5,
-      "valor_declarado_clp": 40000,
-      "status": "en_bodega_operador",
-      "scan_history": [
-        {
-          "checkpoint": "recoleccion",
-          "actor_id": "usr_211",
-          "actor_role": "operador_conductor_recoleccion",
-          "at": "2026-09-21T18:36:41.611Z",
-          "firma_url": "ref:handoff.entrega"
-        },
-        {
-          "checkpoint": "ingreso_bodega_op",
-          "actor_id": "usr_305",
-          "actor_role": "operador_encargado_bodega",
-          "at": "2026-09-21T18:36:41.611Z",
+          "at": "2026-09-21T11:01:52.709Z",
           "firma_url": null
         }
       ]
@@ -172,8 +398,37 @@
       "descripcion": "Ropa",
       "peso_kg": 3,
       "valor_declarado_clp": 30000,
-      "status": "pendiente",
-      "scan_history": []
+      "status": "en_bodega_destino",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_210",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-20T20:21:52.709Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-20T21:06:52.709Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "carga_bus",
+          "actor_id": "usr_301",
+          "actor_role": "operador_conductor_bus",
+          "at": "2026-09-20T22:06:52.709Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "ingreso_bodega_destino",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-21T06:06:52.709Z",
+          "firma_url": null
+        }
+      ]
     },
     {
       "id": "pkg_00005_2",
@@ -182,6 +437,259 @@
       "descripcion": "Calzado",
       "peso_kg": 4,
       "valor_declarado_clp": 35000,
+      "status": "en_bodega_destino",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_210",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-20T20:21:52.709Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-20T21:06:52.709Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "carga_bus",
+          "actor_id": "usr_301",
+          "actor_role": "operador_conductor_bus",
+          "at": "2026-09-20T22:06:52.709Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "ingreso_bodega_destino",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-21T06:06:52.709Z",
+          "firma_url": null
+        }
+      ]
+    },
+    {
+      "id": "pkg_00005_3",
+      "order_id": "ot_00005",
+      "piece_code": "KARGO-00005-003",
+      "descripcion": "Electrodomésticos",
+      "peso_kg": 5,
+      "valor_declarado_clp": 40000,
+      "status": "en_bodega_destino",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_210",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-20T20:21:52.709Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-20T21:06:52.709Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "carga_bus",
+          "actor_id": "usr_301",
+          "actor_role": "operador_conductor_bus",
+          "at": "2026-09-20T22:06:52.709Z",
+          "firma_url": null
+        },
+        {
+          "checkpoint": "ingreso_bodega_destino",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-21T06:06:52.709Z",
+          "firma_url": null
+        }
+      ]
+    },
+    {
+      "id": "pkg_00006_1",
+      "order_id": "ot_00006",
+      "piece_code": "KARGO-00006-001",
+      "descripcion": "Ropa",
+      "peso_kg": 3,
+      "valor_declarado_clp": 30000,
+      "status": "en_bodega_operador",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_211",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-21T14:21:52.710Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-21T15:01:52.710Z",
+          "firma_url": null
+        }
+      ]
+    },
+    {
+      "id": "pkg_00006_2",
+      "order_id": "ot_00006",
+      "piece_code": "KARGO-00006-002",
+      "descripcion": "Calzado",
+      "peso_kg": 4,
+      "valor_declarado_clp": 35000,
+      "status": "en_bodega_operador",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_211",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-21T14:21:52.710Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-21T15:01:52.710Z",
+          "firma_url": null
+        }
+      ]
+    },
+    {
+      "id": "pkg_00006_3",
+      "order_id": "ot_00006",
+      "piece_code": "KARGO-00006-003",
+      "descripcion": "Electrodomésticos",
+      "peso_kg": 5,
+      "valor_declarado_clp": 40000,
+      "status": "en_bodega_operador",
+      "scan_history": [
+        {
+          "checkpoint": "recoleccion",
+          "actor_id": "usr_211",
+          "actor_role": "operador_conductor_recoleccion",
+          "at": "2026-09-21T14:21:52.710Z",
+          "firma_url": "ref:handoff.entrega"
+        },
+        {
+          "checkpoint": "ingreso_bodega_op",
+          "actor_id": "usr_305",
+          "actor_role": "operador_encargado_bodega",
+          "at": "2026-09-21T15:01:52.710Z",
+          "firma_url": null
+        }
+      ]
+    },
+    {
+      "id": "pkg_00007_1",
+      "order_id": "ot_00007",
+      "piece_code": "KARGO-00007-001",
+      "descripcion": "Ropa",
+      "peso_kg": 3,
+      "valor_declarado_clp": 30000,
+      "status": "pendiente",
+      "scan_history": []
+    },
+    {
+      "id": "pkg_00007_2",
+      "order_id": "ot_00007",
+      "piece_code": "KARGO-00007-002",
+      "descripcion": "Calzado",
+      "peso_kg": 4,
+      "valor_declarado_clp": 35000,
+      "status": "pendiente",
+      "scan_history": []
+    },
+    {
+      "id": "pkg_00007_3",
+      "order_id": "ot_00007",
+      "piece_code": "KARGO-00007-003",
+      "descripcion": "Electrodomésticos",
+      "peso_kg": 5,
+      "valor_declarado_clp": 40000,
+      "status": "pendiente",
+      "scan_history": []
+    },
+    {
+      "id": "pkg_00007_4",
+      "order_id": "ot_00007",
+      "piece_code": "KARGO-00007-004",
+      "descripcion": "Textiles",
+      "peso_kg": 6,
+      "valor_declarado_clp": 45000,
+      "status": "pendiente",
+      "scan_history": []
+    },
+    {
+      "id": "pkg_00008_1",
+      "order_id": "ot_00008",
+      "piece_code": "KARGO-00008-001",
+      "descripcion": "Ropa",
+      "peso_kg": 3,
+      "valor_declarado_clp": 30000,
+      "status": "pendiente",
+      "scan_history": []
+    },
+    {
+      "id": "pkg_00008_2",
+      "order_id": "ot_00008",
+      "piece_code": "KARGO-00008-002",
+      "descripcion": "Calzado",
+      "peso_kg": 4,
+      "valor_declarado_clp": 35000,
+      "status": "pendiente",
+      "scan_history": []
+    },
+    {
+      "id": "pkg_00009_1",
+      "order_id": "ot_00009",
+      "piece_code": "KARGO-00009-001",
+      "descripcion": "Ropa",
+      "peso_kg": 3,
+      "valor_declarado_clp": 30000,
+      "status": "pendiente",
+      "scan_history": []
+    },
+    {
+      "id": "pkg_00009_2",
+      "order_id": "ot_00009",
+      "piece_code": "KARGO-00009-002",
+      "descripcion": "Calzado",
+      "peso_kg": 4,
+      "valor_declarado_clp": 35000,
+      "status": "pendiente",
+      "scan_history": []
+    },
+    {
+      "id": "pkg_00010_1",
+      "order_id": "ot_00010",
+      "piece_code": "KARGO-00010-001",
+      "descripcion": "Ropa",
+      "peso_kg": 3,
+      "valor_declarado_clp": 30000,
+      "status": "pendiente",
+      "scan_history": []
+    },
+    {
+      "id": "pkg_00010_2",
+      "order_id": "ot_00010",
+      "piece_code": "KARGO-00010-002",
+      "descripcion": "Calzado",
+      "peso_kg": 4,
+      "valor_declarado_clp": 35000,
+      "status": "pendiente",
+      "scan_history": []
+    },
+    {
+      "id": "pkg_00010_3",
+      "order_id": "ot_00010",
+      "piece_code": "KARGO-00010-003",
+      "descripcion": "Electrodomésticos",
+      "peso_kg": 5,
+      "valor_declarado_clp": 40000,
       "status": "pendiente",
       "scan_history": []
     }

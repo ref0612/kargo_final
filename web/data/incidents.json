@@ -1,0 +1,34 @@
+{
+  "incidents": [
+    {
+      "id": "inc_001",
+      "order_id": "ot_00001",
+      "tipo": "conteo",
+      "estado": "resuelta",
+      "creada_por": "usr_210",
+      "at": "2026-09-20T10:31:52.703Z",
+      "foto": null,
+      "resolucion": {
+        "por": "usr_a01",
+        "at": "2026-09-20T20:01:52.703Z",
+        "nota": "Merchant confirma la caja adicional. Se corrige el conteo declarado."
+      },
+      "detalle": "El merchant entregó una caja extra que no estaba declarada",
+      "esperado": 3,
+      "real": 4
+    },
+    {
+      "id": "inc_002",
+      "order_id": "ot_00006",
+      "tipo": "dano",
+      "estado": "abierta",
+      "creada_por": "usr_305",
+      "at": "2026-09-21T15:06:52.710Z",
+      "detalle": "Una caja llegó con el embalaje dañado; se registra al ingresar a bodega.",
+      "foto": null,
+      "esperado": null,
+      "real": null,
+      "resolucion": null
+    }
+  ]
+}

@@ -1,16 +1,18 @@
 {
-  "_comment": "B2B merchant account. bodegas feeds the origin dropdown (filtered by ciudad). contactos = default authorized persons (min 2), validated visually by crews against the RUT. Billing is monthly consolidated and ON HOLD.",
+  "_comment": "B2B merchant accounts (registered by the KAM from the coordinator view). bodegas feeds the origin dropdown (filtered by ciudad). contactos = default authorized persons (min 2), validated visually by crews against the RUT. Billing ON HOLD.",
   "merchants": [
     {
       "id": "mer_falabella",
       "razon_social": "Falabella Retail S.A.",
-      "rut": "90.749.000-1",
+      "rut": "90.749.000-9",
       "plan": "pro",
       "facturacion": {
         "modalidad": "mensual_consolidada",
         "dia_cierre": 1,
         "referencia_default": null
       },
+      "registrado_por": "usr_c01",
+      "created_at": "2025-01-10T09:00:00.000Z",
       "bodegas": [
         {
           "id": "bod_scl_01",
@@ -21,7 +23,8 @@
             "region": "Metropolitana",
             "ciudad": "Santiago",
             "comuna": "Quilicura",
-            "direccion": "Av. Presidente Eduardo Frei Montalva 8301"
+            "direccion": "Av. Presidente Eduardo Frei Montalva 8301",
+            "codigo_postal": "8730000"
           },
           "contactos": [
             {
@@ -47,7 +50,8 @@
             "region": "Metropolitana",
             "ciudad": "Santiago",
             "comuna": "Pudahuel",
-            "direccion": "Ruta 68 km 12"
+            "direccion": "Ruta 68 km 12",
+            "codigo_postal": "9020000"
           },
           "contactos": [
             {
@@ -73,7 +77,8 @@
             "region": "Araucanía",
             "ciudad": "Temuco",
             "comuna": "Temuco",
-            "direccion": "Manuel Montt 452"
+            "direccion": "Manuel Montt 452",
+            "codigo_postal": "4780000"
           },
           "contactos": [
             {
@@ -99,7 +104,8 @@
             "region": "Biobío",
             "ciudad": "Concepción",
             "comuna": "San Pedro de la Paz",
-            "direccion": "Av. Los Carrera 1500"
+            "direccion": "Av. Los Carrera 1500",
+            "codigo_postal": "4030000"
           },
           "contactos": [
             {
@@ -116,8 +122,76 @@
             }
           ]
         }
-      ],
-      "created_at": "2025-01-10T09:00:00.000Z"
+      ]
+    },
+    {
+      "id": "mer_ripley",
+      "razon_social": "Ripley Corp S.A.",
+      "rut": "76.123.456-0",
+      "plan": "basic",
+      "facturacion": {
+        "modalidad": "mensual_consolidada",
+        "dia_cierre": 1,
+        "referencia_default": null
+      },
+      "registrado_por": "usr_c01",
+      "created_at": "2025-06-02T10:00:00.000Z",
+      "bodegas": [
+        {
+          "id": "bod_rip_01",
+          "nombre": "CD Renca",
+          "ciudad": "Santiago",
+          "es_origen_default": true,
+          "direccion": {
+            "region": "Metropolitana",
+            "ciudad": "Santiago",
+            "comuna": "Renca",
+            "direccion": "Av. Presidente Balmaceda 2300",
+            "codigo_postal": "8640000"
+          },
+          "contactos": [
+            {
+              "nombre": "Carolina Vidal",
+              "rut": "15.111.222-6",
+              "telefono": "+56977001122",
+              "cargo": "Jefa de bodega"
+            },
+            {
+              "nombre": "Esteban Lara",
+              "rut": "14.222.333-3",
+              "telefono": "+56977003344",
+              "cargo": "Supervisor"
+            }
+          ]
+        },
+        {
+          "id": "bod_rip_02",
+          "nombre": "Tienda Temuco",
+          "ciudad": "Temuco",
+          "es_origen_default": false,
+          "direccion": {
+            "region": "Araucanía",
+            "ciudad": "Temuco",
+            "comuna": "Temuco",
+            "direccion": "Av. Alemania 671",
+            "codigo_postal": "4780000"
+          },
+          "contactos": [
+            {
+              "nombre": "Gabriela Núñez",
+              "rut": "16.333.444-5",
+              "telefono": "+56977005566",
+              "cargo": "Encargada"
+            },
+            {
+              "nombre": "Rodrigo Mena",
+              "rut": "15.444.555-2",
+              "telefono": "+56977007788",
+              "cargo": "Bodeguero"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

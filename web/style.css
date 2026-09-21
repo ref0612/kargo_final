@@ -335,3 +335,37 @@ canvas.sig{display:block;width:100%;height:150px;border:2px dashed #9AB0CB;borde
   [data-view=mobile] #device::before{display:none}
   .labels{grid-template-columns:1fr 1fr}
 }
+
+/* ---------- v2: KPIs, bus options, incidents, count adjustment ---------- */
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.warn::before{display:none}
+.pill.s-new{background:var(--blue-soft);color:var(--blue)}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+[data-view=mobile] .kgrid{grid-template-columns:1fr 1fr;gap:10px}
+.kcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow);min-width:0}
+.kcard .kl{font-size:12.5px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.kcard .kv2{font-size:32px;font-weight:800;line-height:1.15;letter-spacing:-.02em;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.kcard .kd{font-size:12px;color:var(--muted);line-height:1.35}
+.kcard.warn{border-color:#F0C36A;background:linear-gradient(180deg,#fff,var(--warn-soft))}
+.kcard.warn .kv2{color:var(--warn)}
+[data-view=mobile] .kcard .kv2{font-size:24px}
+.opt{display:flex;gap:12px;align-items:center;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;transition:border-color .15s,background .15s}
+.opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.opt.late:has(input:checked){border-color:#D9A441;background:var(--warn-soft)}
+.opt .grow{flex:1;min-width:0}
+.opt .tags{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.pkg.off{opacity:.65}.pkg.off .code{text-decoration:line-through}
+.printer{display:flex;gap:12px;align-items:center;padding:10px 12px;border:1px dashed #B5C4DA;border-radius:12px;background:#FAFCFF}
+.inc{padding:12px;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:4px}
+.inc.abierta{border-color:#F0C36A;background:#FFFCF3}
+.incimg{max-width:100%;max-height:120px;border-radius:8px;border:1px solid var(--line);align-self:flex-start}
+.rail.dense .lbl{display:none}
+.rail.dense li.now .lbl{display:none}
+.rail-cap.always{display:block}
+.big2{font-weight:700}
+input[type=date]{min-height:48px}
+.tbl td .chip{white-space:nowrap}
+.tbl .mono,.tbl a.mono{white-space:nowrap}
+[data-view=mobile] .opt{flex-wrap:wrap}
+[data-view=mobile] .opt .tags{flex-direction:row;flex-wrap:wrap;width:100%;justify-content:flex-start;padding-left:34px}
+.opt .grow .mono{white-space:nowrap}

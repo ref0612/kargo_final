@@ -1,5 +1,5 @@
 {
-  "_comment": "Every physical hand-over needs scan + timestamp + user. Only pickup (origin) and delivery (destination) also need a signature of an authorized person.",
+  "_comment": "Every physical hand-over needs scan + timestamp + user. Only pickup (origin) and final delivery also need a signature of an authorized person.",
   "roles": [
     {
       "id": "merchant",
@@ -18,11 +18,16 @@
     },
     {
       "id": "coordinador_logistico",
-      "nombre": "Coordinador Logístico",
+      "nombre": "Coordinador Logístico / Control Tower",
       "nivel": "kargo",
       "permisos": [
         "ver_ordenes_pendientes",
-        "asignar_operador_transporte"
+        "asignar_operador_transporte",
+        "registrar_merchant",
+        "importar_operador",
+        "ver_kpis",
+        "ver_conciliacion",
+        "resolver_incidencia"
       ]
     },
     {
@@ -32,7 +37,8 @@
       "permisos": [
         "recibir_asignacion",
         "designar_conductor_recoleccion",
-        "designar_movil_recoleccion"
+        "designar_movil_recoleccion",
+        "designar_ultima_milla"
       ]
     },
     {
@@ -41,7 +47,9 @@
       "nivel": "operador",
       "permisos": [
         "escanear_bulto_recoleccion",
-        "capturar_firma_entrega"
+        "capturar_firma_entrega",
+        "ajustar_bultos_recoleccion",
+        "reportar_incidencia"
       ]
     },
     {
@@ -50,7 +58,12 @@
       "nivel": "operador",
       "permisos": [
         "escanear_bulto_ingreso_bodega",
-        "asignar_bus_servicio"
+        "asignar_bus_servicio",
+        "escanear_bulto_ingreso_destino",
+        "marcar_lista_retiro",
+        "escanear_bulto_entrega_retiro",
+        "capturar_firma_recepcion",
+        "reportar_incidencia"
       ]
     },
     {
@@ -58,16 +71,44 @@
       "nombre": "Conductor / Auxiliar de Bus",
       "nivel": "operador",
       "permisos": [
-        "escanear_bulto_carga_bus"
+        "escanear_bulto_carga_bus",
+        "reportar_incidencia"
       ]
     },
     {
       "id": "operador_conductor_entrega",
-      "nombre": "Conductor / Auxiliar de Entrega",
+      "nombre": "Conductor / Auxiliar de Entrega (última milla)",
       "nivel": "operador",
       "permisos": [
         "escanear_bulto_entrega",
-        "capturar_firma_recepcion"
+        "capturar_firma_recepcion",
+        "reportar_incidencia"
+      ]
+    },
+    {
+      "id": "auditor",
+      "nombre": "Auditoría / Conciliación",
+      "nivel": "kargo",
+      "permisos": [
+        "ver_todo",
+        "ver_kpis",
+        "ver_conciliacion",
+        "resolver_incidencia"
+      ],
+      "no_permitido": [
+        "editar_operacion"
+      ]
+    },
+    {
+      "id": "finanzas",
+      "nombre": "Finanzas",
+      "nivel": "kargo",
+      "permisos": [
+        "ver_todo",
+        "ver_finanzas"
+      ],
+      "no_permitido": [
+        "editar_operacion"
       ]
     }
   ]

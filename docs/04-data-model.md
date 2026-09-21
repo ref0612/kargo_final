@@ -1,30 +1,32 @@
 # Data Model (JSON files acting as backend)
 
-Files live in `web/data/`. They simulate database tables and are the contract for the development team.
+Files live in `web/data/`. They simulate database tables and are the contract for the development team. `npm run seed` regenerates them by running a scenario through the real rules (`web/store.js`).
 
-## merchants.json — entity Merchant
-Fields: id, legal name, RUT, plan, billing mode (monthly consolidated), list of Warehouses. Each Warehouse has id, name, city (used by the origin dropdown filter), address, default authorized contacts (name, RUT, role, phone).
+| File | Entity | Notes |
+|---|---|---|
+| `merchants.json` | Merchant + Warehouses | Warehouses have `ciudad`, address with optional `codigo_postal`, and default authorized contacts (name, RUT, phone). Registered by the KAM. |
+| `users.json` | Demo users | No passwords. Real auth belongs to the backend. |
+| `operators.json` | Transport operator | Imported from Konnect. `vehiculos` (with `costo_dia`), `servicios` (timetable: origin, destination, `salidas` HH:MM), `puntos_retiro` per city. |
+| `konnect.json` | Konnect catalog (mock) | Source for the operator import (prefetch): fleet, timetable, team. |
+| `roles.json` | Roles and permissions | 9 roles; permissions are the strings checked by the store. |
+| `orders.json` | Order (OT) | See below. |
+| `packages.json` | Package | `piece_code`, `scan_history`, flags `agregado_en_recoleccion` / status `no_recolectado`. |
+| `tracking_events.json` | Event log | Append-only audit trail; the order timeline and package scans are derived views. |
+| `incidents.json` | Incident | Types: `conteo`, `dano`, `faltante`, `otro`. Open/resolved with note; optional photo. |
+| `config.json` | Business rules | `sla_promesa_horas` (48), `ventana_bus_horas` (2). |
+| `invoices.json` | Invoice | ON HOLD, empty on purpose. |
 
-## orders.json — entity Order (OT)
-An Order belongs to one Merchant and moves between an origin Warehouse and a destination Warehouse. It contains:
-- personas_autorizadas (authorized persons) for origin and destination, min 2 each.
-- referencia_cliente (client PO / reference) and periodo_facturacion (billing period, null until billing is defined).
-- packages: list of Package ids; bultos_total.
-- operacion (operation): coordinator id, operator id, pickup driver + vehicle plate, operator warehouse entry, bus plate + service + driver.
-- handoff: entrega (signature at origin) and recepcion (signature at destination).
-- timeline: ordered list of steps with timestamp and actor role. Order status is the last step, derived.
-
-## packages.json — entity Package
-An Order has 1..n Packages. Each has piece_code (label / QR), weight, description, declared value, status and scan_history. Every scan_history entry has: checkpoint, actor_id, actor_role, timestamp, signature url (only pickup and delivery).
-
-## tracking_events.json — entity Tracking Event
-Append-only log of the whole chain: order created, assigned to operator, pickup assigned, package scanned at pickup, at operator warehouse, on bus, at delivery, incident reported. The order timeline and package scan_history are derived views of this log. It is the audit trail for disputes and, later, billing.
-
-## roles.json — entity Role
-Roles with level (client, kargo, operator) and permission list. The Merchant is explicitly forbidden from assigning operators, scanning packages and editing operations.
-
-## invoices.json — entity Invoice (ON HOLD)
-Monthly consolidated invoice grouping the billable orders of a period. Calculation formula undefined: parked.
+## Order (orders.json)
+- `bultos_declarados` (immutable), `bultos_total` (current), `conteo` `{declarados, recolectados, diferencia, motivo, por, at}`.
+- `mpo` (lot) and `referencia_cliente` (client PO), `personas_autorizadas` (origen/destino, min 2 each).
+- `operacion.aceptacion` `{estado, at, rechazos[]}`; `operacion.transporte` `{servicio_id, bus_patente, salida, salida_at, asignado_at, cargado_at, riesgo_sla, ventana_ok}`.
+- `operacion.ultima_milla` `{modalidad: 'operador'|'retiro', conductor_id, movil_patente, punto_retiro, lista_at}`.
+- `operacion.bodega_operador` and `operacion.bodega_destino_operador` (`ingreso_at`).
+- `handoff.entrega` / `handoff.recepcion`: signature, authorized person, scanning user, time.
+- `timeline`: ordered steps with time and actor.
 
 ## Relations
-Merchant 1—n Warehouse; Merchant 1—n Order; Order 1—n Package; Order 1—n Tracking Event; Package 1—n Scan; Order n—1 Invoice (period); User n—1 Role; Order n—1 Transport Operator.
+Merchant 1—n Warehouse; Merchant 1—n Order; Order 1—n Package; Order 1—n Tracking Event; Order 1—n Incident; Operator 1—n Service (timetable); Package 1—n Scan; Role 1—n User.
+
+## Computed (not stored)
+KPIs (SSP, acceptance, PTAT, pickup adherence, successful inbound, service level, bus window, MPO compliance, cost per package), reconciliation per checkpoint, and the finance report by client/period are all derived from these files.

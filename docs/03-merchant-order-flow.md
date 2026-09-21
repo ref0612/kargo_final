@@ -28,3 +28,8 @@ Create -> Bulk Upload (CSV template, origin warehouse fixed per account, row-by-
 
 ## Merchant portal sections
 Home, Orders, Tracking, Incidents, Returns, Documents, Billing (ON HOLD), Account (warehouses, default authorized persons). Mobile uses a bottom navigation bar and a persistent "Register shipment" action.
+
+## Update (v2)
+- Optional **MPO / lot** field next to the client reference (used by the MPO compliance KPI).
+- The **merchant prints and sticks the labels** (one per package, showing i/n). At pickup the driver may adjust the count and print new labels if it differs; the merchant sees the variance and any incident.
+- New warehouses can also be registered by the KAM (coordinator view), with an optional 7-digit postal code.

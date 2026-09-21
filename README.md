@@ -24,33 +24,34 @@ Es un sitio 100 % estático: publica la carpeta **`web/`** como raíz (en Vercel
 
 | Control | Qué hace |
 |---|---|
-| **Ver como** | Cambia de usuario sin login (7 roles, 2 operadores). |
+| **Ver como** | Cambia de usuario sin login (9 roles, 2 operadores). |
 | **ES / EN** | Cambia todo el idioma de la interfaz al instante. |
 | **Móvil / Escritorio** | Móvil = marco de teléfono con barra inferior; Escritorio = panel completo con menú lateral, mapa de rutas y resumen. Bajo 700 px de pantalla real siempre es móvil. |
 | **Reiniciar demo** | Vuelve a los datos de `web/data/`. |
 
-Las preferencias se guardan. Enlaces directos para presentar: `http://localhost:3000/?as=usr_210&lang=en&view=mobile#/order/ot_00003` (`as` = id de usuario de `web/data/users.json`; agrega `&still=1` para desactivar animaciones al sacar capturas).
+Las preferencias se guardan. Enlaces directos para presentar: `http://localhost:3000/?as=usr_210&lang=en&view=mobile#/order/ot_00007` (`as` = id de usuario de `web/data/users.json`; agrega `&still=1` para desactivar animaciones al sacar capturas).
 
-## Cómo presentarlo (guion de 3 minutos)
+## Cómo presentarlo (guion de 5 minutos)
 
-Cada orden muestra **"Siguiente: <persona>"** con un botón para saltar a esa persona.
+Cada orden muestra **"Siguiente: <persona>"** con un botón para saltar a esa persona. El seed deja 10 órdenes en distintos estados (ver `docs/` y la guía en `deliverables/`).
 
-1. **Carla (Merchant)** → `＋ Nueva`: bodega de origen/destino, 2 personas autorizadas por punto (RUT validado), bultos (con "Duplicar") → *Crear orden* → etiquetas imprimibles.
-2. **Andrés (Coordinador)** → asigna la orden a un operador.
-3. **Patricia (Despachador)** → designa conductor y móvil.
-4. **Héctor (Conductor de recolección)** → escanea cada bulto ("Escanear todos (demo)" si no hay lector), elige la persona autorizada, confirma que vio la cédula y firma.
-5. **Camila (Bodega operador)** → escanea el ingreso y asigna bus/servicio.
+1. **Carla (Merchant)** → `＋ Nueva`: bodegas, 2 autorizados por punto (RUT validado), MPO opcional, bultos → *Crear orden* → etiquetas.
+2. **Andrés (Coordinador / Control Tower)** → asigna a un operador **eligiendo la última milla** (con el operador o retiro del destinatario).
+3. **Patricia (Despachador)** → **acepta o rechaza** (rechazo con motivo: vuelve al coordinador) → designa conductor y móvil.
+4. **Héctor (Conductor de recolección)** → puede **cambiar la cantidad de bultos** (motivo obligatorio, etiquetas nuevas), escanea, elige la persona autorizada, verifica RUT y **firma (obligatoria)**.
+5. **Camila (Bodega operador)** → escanea el ingreso y asigna el **bus con sugerencia de la parrilla** (más de 2 h = riesgo).
 6. **Jorge (Conductor de bus)** → escanea la carga.
-7. **Felipe (Conductor de entrega)** → escanea en destino y recibe la firma.
-8. Vuelve a **Carla**: ve el avance simplificado (5 estados), las firmas y el registro de eventos.
+7. **Camila (bodega destino)** → escanea el ingreso a destino. Según la modalidad: **Patricia designa la última milla** (Felipe entrega con escaneo y firma) o **Camila marca "lista para retiro"** y entrega al destinatario con escaneo y firma.
+8. **Carla**: ve el avance de 5 estados, el aviso de retiro, las firmas, las diferencias de conteo y las incidencias.
+9. Torre de control (KPIs y órdenes en riesgo), **Valentina (Auditoría)** conciliación por checkpoint, **Diego (Finanzas)** envíos por cliente y período con CSV, y en Coordinador: **Merchants** (alta por el KAM) y **Operadores** (importar desde Konnect).
 
-Cosas para probar: registro **manual** de un bulto con motivo, RUT inválido, menos de 2 autorizados, un conductor que intenta escanear el trabajo de otro, agregar una bodega nueva. **Reiniciar demo** (arriba a la derecha) vuelve a los datos iniciales.
+Enlace de ejemplo: `http://localhost:3000/?as=usr_210&lang=es&view=mobile#/order/ot_00007` (Héctor con su recolección pendiente). **Reiniciar demo** vuelve a los datos iniciales.
 
 ## Estructura
 
 ```
 web/          Sitio estático autocontenido (esta carpeta es lo que se despliega): index.html · app.js (UI por rol) · store.js (reglas) · i18n.js (ES/EN) · style.css
-web/data/     Contrato de datos: merchants, users, operators, roles, orders, packages, tracking_events, invoices
+web/data/     Contrato de datos: merchants, users, operators, konnect, roles, orders, packages, tracking_events, incidents, config, invoices
 scripts/      seed.js  → regenera web/data/ (npm run seed)
 test/         flow.test.js → cadena completa + permisos + validaciones (npm test)
 serve.js      servidor estático (sin API)
@@ -61,9 +62,9 @@ graphify-out/ Grafo de conocimiento de la especificación (graph.html)
 
 ## Para el equipo de backend
 
-- **`web/store.js` es la especificación ejecutable**: máquina de estados, permisos por rol, validaciones (RUT, ≥2 autorizados por punto, bultos, escaneo completo antes de confirmar, firma solo en recolección y entrega). El servidor real debe hacer cumplir lo mismo; `test/flow.test.js` describe el comportamiento esperado.
+- **`web/store.js` es la especificación ejecutable**: máquina de estados, permisos por rol, validaciones (RUT, ≥2 autorizados por punto, bultos, aceptación del despachador, ajuste de cantidad con motivo, ventana de bus de 2 h, escaneo completo antes de confirmar, firma en recolección y entrega, KPIs). El servidor real debe hacer cumplir lo mismo; `test/flow.test.js` describe el comportamiento esperado.
 - **Contrato de datos**: `web/data/*.json` (claves en español, tal como lo definió el brief). `timeline` de la orden y `scan_history` del bulto son vistas derivadas del log `tracking_events`.
-- **Estados internos (8)**: `creada → asignada_operador → recoleccion_asignada → recolectada → en_bodega_operador → asignada_transporte → cargada_bus → entregada`. El merchant solo ve 5.
+- **Estados internos (11)**: `creada → asignada_operador → aceptada → recoleccion_asignada → recolectada → en_bodega_operador → asignada_transporte → cargada_bus → en_bodega_destino → (ultima_milla_asignada | lista_retiro) → entregada`. El merchant solo ve 5.
 
 ## Qué es de mentira en el mockup
 
@@ -73,7 +74,10 @@ graphify-out/ Grafo de conocimiento de la especificación (graph.html)
 | Estado en `localStorage` | Base de datos, concurrencia, auditoría inmutable |
 | Firma guardada como data URL dentro del JSON | Subir el archivo y guardar su URL |
 | Escaneo por teclado/botón (un lector USB actúa como teclado) | Cámara del teléfono (BarcodeDetector / librería) |
-| Etiquetas Code 39 | QR / Code128 generado por el backend |
+| Etiquetas Code 39 e impresora portátil simulada | QR / DataMatrix generado por el backend + impresora Bluetooth |
+| Onboarding de operadores con un catálogo `konnect.json` | Prefetch real desde la base de datos de Konnect |
+| Sugerencia de bus con la hora del navegador | Reloj y parrilla del servidor, zona horaria de Chile |
+| KPIs calculados en el navegador | Cálculo en el backend / BI sobre el registro de eventos |
 | Mapa de rutas = esquema SVG de Chile (no geográfico exacto) | Mapa real con posición GPS del bus |
 | Fuentes Fira desde Google Fonts (sin internet cae a la fuente del sistema) | Autoalojar las fuentes |
 | Motivo del registro manual con `prompt()` | Formulario con códigos de motivo + revisión |
@@ -81,5 +85,5 @@ graphify-out/ Grafo de conocimiento de la especificación (graph.html)
 ## Fuera de alcance (por ahora)
 
 - **Facturación**: en pausa por definición del negocio (`web/data/invoices.json` vacío a propósito).
-- Carga masiva CSV, incidencias, devoluciones, reportes/SLA (fases 5–6 del roadmap).
+- Terceros para la última milla, integración GPS real, impresora portátil real, carga masiva CSV, devoluciones (ver `docs/05-open-decisions.md`).
 - Decisiones abiertas para el consultor: ver `docs/05-open-decisions.md`.

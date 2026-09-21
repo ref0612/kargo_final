@@ -1,4 +1,5 @@
 {
+  "_comment": "Imported from Konnect (prefetch). servicios = the operator timetable (parrilla) used for bus suggestions.",
   "operators": [
     {
       "id": "op_transportes_sur",
@@ -6,25 +7,106 @@
       "vehiculos": [
         {
           "patente": "FG-JI-98",
-          "tipo": "Camión 3/4"
+          "tipo": "Camión 3/4",
+          "costo_dia": 85000
         },
         {
           "patente": "HK-LM-45",
-          "tipo": "Furgón"
+          "tipo": "Furgón",
+          "costo_dia": 60000
+        },
+        {
+          "patente": "JK-LM-01",
+          "tipo": "Camioneta",
+          "costo_dia": 45000
         }
       ],
       "servicios": [
         {
           "id": "srv_sur_1",
+          "servicio": "Interurbano Sur",
           "bus_patente": "AB-CD-12",
-          "servicio": "Interurbano Sur"
+          "origen": "Santiago",
+          "destino": "Temuco",
+          "salidas": [
+            "07:00",
+            "13:00",
+            "19:30"
+          ],
+          "duracion_h": 9
         },
         {
           "id": "srv_sur_2",
+          "servicio": "Expreso Araucanía",
           "bus_patente": "CD-EF-34",
-          "servicio": "Expreso Araucanía"
+          "origen": "Santiago",
+          "destino": "Temuco",
+          "salidas": [
+            "10:00",
+            "22:00"
+          ],
+          "duracion_h": 8
+        },
+        {
+          "id": "srv_sur_3",
+          "servicio": "Costa Sur",
+          "bus_patente": "EF-GH-56",
+          "origen": "Santiago",
+          "destino": "Concepción",
+          "salidas": [
+            "06:30",
+            "12:30",
+            "18:00",
+            "23:30"
+          ],
+          "duracion_h": 6
+        },
+        {
+          "id": "srv_sur_4",
+          "servicio": "Retorno Norte",
+          "bus_patente": "GH-IJ-78",
+          "origen": "Concepción",
+          "destino": "Santiago",
+          "salidas": [
+            "08:00",
+            "14:00",
+            "20:00"
+          ],
+          "duracion_h": 6
+        },
+        {
+          "id": "srv_sur_5",
+          "servicio": "Retorno Araucanía",
+          "bus_patente": "IJ-KL-90",
+          "origen": "Temuco",
+          "destino": "Santiago",
+          "salidas": [
+            "09:00",
+            "15:00",
+            "21:30"
+          ],
+          "duracion_h": 9
+        },
+        {
+          "id": "srv_sur_6",
+          "servicio": "Bío-Araucanía",
+          "bus_patente": "KL-MN-12",
+          "origen": "Concepción",
+          "destino": "Temuco",
+          "salidas": [
+            "11:00",
+            "17:00"
+          ],
+          "duracion_h": 4
         }
-      ]
+      ],
+      "puntos_retiro": {
+        "Temuco": "Terminal Temuco · Oficina Transportes Sur, andén 4",
+        "Santiago": "Terminal Alameda · Of. Encomiendas Sur",
+        "Concepción": "Terminal Collao · Of. Transportes Sur",
+        "default": "Oficina Transportes Sur"
+      },
+      "origen": "konnect"
     },
     {
       "id": "op_andes_cargo",
@@ -32,16 +114,40 @@
       "vehiculos": [
         {
           "patente": "RT-YU-11",
-          "tipo": "Camión 3/4"
+          "tipo": "Camión 3/4",
+          "costo_dia": 80000
         }
       ],
       "servicios": [
         {
           "id": "srv_andes_1",
+          "servicio": "Andes Norte",
           "bus_patente": "PL-OK-77",
-          "servicio": "Andes Norte"
+          "origen": "Santiago",
+          "destino": "Temuco",
+          "salidas": [
+            "08:30",
+            "16:30"
+          ],
+          "duracion_h": 9
+        },
+        {
+          "id": "srv_andes_2",
+          "servicio": "Andes Regreso",
+          "bus_patente": "PL-OK-78",
+          "origen": "Temuco",
+          "destino": "Santiago",
+          "salidas": [
+            "09:30",
+            "17:30"
+          ],
+          "duracion_h": 9
         }
-      ]
+      ],
+      "puntos_retiro": {
+        "default": "Oficina Andes Cargo (terminal de la ciudad)"
+      },
+      "origen": "konnect"
     }
   ]
 }

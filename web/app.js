@@ -1,14 +1,17 @@
 // KARGO mockup UI. Vanilla JS, no build. State = web/store.js rules over web/data/*.json, persisted in localStorage.
 // Two independent toggles: language (ES/EN) and view (mobile frame / desktop). Same DOM, layout switched by body[data-view].
-// ponytail: full re-render on every action (fine at demo scale); Code 39 barcode instead of QR; window.prompt for manual-scan reason.
+// ponytail: full re-render on every action (fine at demo scale); Code 39 barcode instead of QR; window.prompt for small free-text reasons.
 import { createStore, HttpError, rutValid, FILES, CP } from './store.js';
 import { t, setLang, getLang, tErr, tNote } from './i18n.js';
 
-const LS = { db: 'kargo-mock-db-v1', me: 'kargo-mock-me', lang: 'kargo-mock-lang', view: 'kargo-mock-view' };
+const LS = { db: 'kargo-mock-db-v2', me: 'kargo-mock-me', lang: 'kargo-mock-lang', view: 'kargo-mock-view' };
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const fmt = (iso) => (iso ? new Date(iso).toLocaleString(getLang() === 'es' ? 'es-CL' : 'en-GB', { dateStyle: 'short', timeStyle: 'short' }) : '—');
+const loc = () => (getLang() === 'es' ? 'es-CL' : 'en-GB');
+const fmt = (iso) => (iso ? new Date(iso).toLocaleString(loc(), { dateStyle: 'short', timeStyle: 'short' }) : '—');
+const fmtTime = (iso) => new Date(iso).toLocaleTimeString(loc(), { hour: '2-digit', minute: '2-digit' });
+const money = (n) => '$' + Math.round(n || 0).toLocaleString(loc());
 const num = (id) => 'OT-' + id.replace('ot_', '');
 const pkgLabel = (n) => t(n === 1 ? 'pkg.one' : 'pkg.many', { n });
 const initials = (name) => name.split(' (')[0].split(' ').slice(0, 2).map((w) => w[0]).join('').toUpperCase();
@@ -27,6 +30,7 @@ const P = {
   scan: '<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/>',
   check: '<path d="M20 6 9 17l-5-5"/>',
   user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
   pin: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
   arrow: '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
   back: '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
@@ -39,17 +43,30 @@ const P = {
   search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
   copy: '<rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
   x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  alert: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
+  tower: '<path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/>',
+  wallet: '<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+  camera: '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+  clip: '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
 };
 const ic = (n, c = '') => `<svg class="ic ${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${P[n]}</svg>`;
 
 // ---- domain vocabulary ---------------------------------------------------------------------------
-const STEPS = ['creada', 'asignada_operador', 'recoleccion_asignada', 'recolectada', 'en_bodega_operador', 'asignada_transporte', 'cargada_bus', 'entregada'];
 const MS_IDX = { Creada: 0, Asignada: 1, 'En recolección': 2, 'En tránsito': 3, Entregada: 4 }; // store's merchant-facing labels
-const ROLES = ['merchant', 'coordinador_logistico', 'operador_despachador', 'operador_conductor_recoleccion', 'operador_encargado_bodega', 'operador_conductor_bus', 'operador_conductor_entrega'];
+const ROLES = ['merchant', 'coordinador_logistico', 'auditor', 'finanzas', 'operador_despachador', 'operador_conductor_recoleccion', 'operador_encargado_bodega', 'operador_conductor_bus', 'operador_conductor_entrega'];
+const TRANSIT = new Set(['recolectada', 'en_bodega_operador', 'asignada_transporte', 'cargada_bus', 'en_bodega_destino', 'ultima_milla_asignada', 'lista_retiro']);
+const ROUTES = {
+  merchant: ['', 'orders', 'new', 'account', 'order', 'labels'], coordinador_logistico: ['', 'all', 'tower', 'merchants', 'operators', 'order', 'labels'],
+  auditor: ['', 'all', 'order', 'labels'], finanzas: ['', 'all', 'order'],
+};
+const routesFor = (rol) => ROUTES[rol] || ['', 'all', 'order', 'labels'];
 
-let S, me, W = null, NB = null, sigDrawn = false, query = '', filter = 'all', lastKey = '', animateNow = false, viewPref = 'desktop';
+let S, me, W = null, NB = null, NBM = null, RM = { razon_social: '', rut: '', plan: 'basic', contacto_nombre: '' }, FIN = { merchant_id: '', from: '', to: '' };
+let sigDrawn = false, query = '', filter = 'all', lastKey = '', animateNow = false, viewPref = 'desktop', pendingPhoto = null;
 
-// ---- boot / persistence -----------------------------------------------------------------------------
+// ---- boot / persistence -----------------------------------------------------------------------
 async function loadDb(reset) {
   if (!reset) { try { const s = load('db'); if (s) return JSON.parse(s); } catch { /* ignore */ } }
   const db = {};
@@ -65,7 +82,7 @@ async function boot(reset = false) {
     $('#view').innerHTML = `<div class="card" style="margin-top:24px"><h2>${t('err.load.title')}</h2><p class="muted" style="margin-top:8px">${t('err.load.body')}</p></div>`;
     return;
   }
-  if (reset) { store('me'); W = NB = null; }
+  if (reset) { store('me'); W = NB = NBM = null; }
   const saved = load('me');
   me = S.userById(saved) ? saved : S.list('users')[0].id;
   buildWho();
@@ -73,6 +90,7 @@ async function boot(reset = false) {
 }
 const U = () => S.userById(me);
 const roleName = (rol) => t('role.' + rol);
+const hasPerm = (p) => S.bootstrap(U()).permisos.includes(p);
 
 function buildWho() {
   const groups = {};
@@ -82,7 +100,7 @@ function buildWho() {
     return `<option value="${u.id}" ${u.id === me ? 'selected' : ''}>${esc(u.nombre)}${esc(op)}</option>`;
   }).join('')}</optgroup>`).join('');
 }
-function switchUser(id) { me = id; store('me', id); W = NB = null; buildWho(); go('#/'); }
+function switchUser(id) { me = id; store('me', id); W = NB = NBM = null; buildWho(); go('#/'); }
 
 // ---- language + view toggles -----------------------------------------------------------------------------
 const effView = () => (innerWidth < 700 ? 'mobile' : viewPref);
@@ -112,23 +130,23 @@ function run(fn, ok) {
 }
 // Which orders is this user expected to act on right now?
 function actionable(u, o) {
-  const op = o.operacion;
+  const op = o.operacion, mod = op.ultima_milla.modalidad;
   switch (u.rol) {
     case 'coordinador_logistico': return o.status === 'creada';
-    case 'operador_despachador': return o.status === 'asignada_operador';
+    case 'operador_despachador': return o.status === 'asignada_operador' || o.status === 'aceptada' || (o.status === 'en_bodega_destino' && mod === 'operador');
     case 'operador_conductor_recoleccion': return o.status === 'recoleccion_asignada' && op.recoleccion.conductor_id === u.id;
-    case 'operador_encargado_bodega': return o.status === 'recolectada' || o.status === 'en_bodega_operador';
+    case 'operador_encargado_bodega': return ['recolectada', 'en_bodega_operador', 'cargada_bus', 'lista_retiro'].includes(o.status) || (o.status === 'en_bodega_destino' && mod === 'retiro');
     case 'operador_conductor_bus': return o.status === 'asignada_transporte' && op.transporte.conductor_id === u.id;
-    case 'operador_conductor_entrega': return o.status === 'cargada_bus';
+    case 'operador_conductor_entrega': return o.status === 'ultima_milla_asignada' && op.ultima_milla.conductor_id === u.id;
     default: return false;
   }
 }
 const msIdx = (o) => MS_IDX[o.estado_merchant];
-// merchant sees 5 states, everyone else the 8 internal steps
+// merchant sees 5 states, everyone else the internal steps of the order's own flow
 function steps(o, u) {
   return u.rol === 'merchant'
     ? { n: 5, idx: msIdx(o), labels: [0, 1, 2, 3, 4].map((i) => t('ms.' + i)) }
-    : { n: 8, idx: STEPS.indexOf(o.status), labels: STEPS.map((s) => t('st.' + s)) };
+    : { n: o.flujo.length, idx: o.flujo.indexOf(o.status), labels: o.flujo.map((s) => t('st.' + s)) };
 }
 const stageLabel = (o, u) => (u.rol === 'merchant' ? t('ms.' + msIdx(o)) : t('st.' + o.status));
 const chip = (o, u = U()) => `<span class="chip s${msIdx(o)}">${esc(stageLabel(o, u))}</span>`;
@@ -137,8 +155,9 @@ const cityB = (o) => o.bodega_destino.direccion.ciudad;
 const blk = (html, i, mo) => (html.trim() ? `<div class="${animateNow ? 'rise' : ''}" style="--i:${i};--mo:${mo}">${html}</div>` : '');
 // navigate without double-rendering when the hash is already there (hashchange also renders)
 function go(h) { if (location.hash === h || (h === '#/' && !location.hash)) render(); else location.hash = h; }
+const pct = (r) => (r.pct == null ? '—' : r.pct + '%');
 
-// Code 39 (hardware scanners read it like keyboard input). Real system: QR/Code128 from the backend.
+// Code 39 (hardware scanners read it like keyboard input). Real system: QR/DataMatrix from the backend.
 const C39 = { 0: 'nnnwwnwnn', 1: 'wnnwnnnnw', 2: 'nnwwnnnnw', 3: 'wnwwnnnnn', 4: 'nnnwwnnnw', 5: 'wnnwwnnnn', 6: 'nnwwwnnnn', 7: 'nnnwnnwnw', 8: 'wnnwnnwnn', 9: 'nnwwnnwnn', A: 'wnnnnwnnw', B: 'nnwnnwnnw', C: 'wnwnnwnnn', D: 'nnnnwwnnw', E: 'wnnnwwnnn', F: 'nnwnwwnnn', G: 'nnnnnwwnw', H: 'wnnnnwwnn', I: 'nnwnnwwnn', J: 'nnnnwwwnn', K: 'wnnnnnnww', L: 'nnwnnnnww', M: 'wnwnnnnwn', N: 'nnnnwnnww', O: 'wnnnwnnwn', P: 'nnwnwnnwn', Q: 'nnnnnnwww', R: 'wnnnnnwwn', S: 'nnwnnnwwn', T: 'nnnnwnwwn', U: 'wwnnnnnnw', V: 'nwwnnnnnw', W: 'wwwnnnnnn', X: 'nwnnwnnnw', Y: 'wwnnwnnnn', Z: 'nwwnwnnnn', '-': 'nwnnnnwnw', '.': 'wwnnnnwnn', ' ': 'nwwnnnwnn', '*': 'nwnnwnwnn' };
 function code39(text) {
   let x = 0, bars = '';
@@ -150,10 +169,10 @@ function code39(text) {
 }
 
 // ---- route map (schematic of Chile, zoomed to the network in use) -----------------------------------------------
-const GEO = { arica: [-18.48, -70.31], iquique: [-20.21, -70.15], antofagasta: [-23.65, -70.4], calama: [-22.46, -68.93], copiapo: [-27.37, -70.33], 'la serena': [-29.9, -71.25], valparaiso: [-33.05, -71.62], santiago: [-33.45, -70.67], rancagua: [-34.17, -70.74], talca: [-35.43, -71.66], chillan: [-36.61, -72.1], concepcion: [-36.83, -73.05], temuco: [-38.74, -72.59], valdivia: [-39.81, -73.25], osorno: [-40.57, -73.13], 'puerto montt': [-41.47, -72.94], coyhaique: [-45.57, -72.07], 'punta arenas': [-53.16, -70.91] };
+const GEO = { arica: [-18.48, -70.31], iquique: [-20.21, -70.15], antofagasta: [-23.65, -70.4], calama: [-22.46, -68.93], copiapo: [-27.37, -70.33], 'la serena': [-29.9, -71.25], valparaiso: [-33.05, -71.62], santiago: [-33.45, -70.67], rancagua: [-34.17, -70.74], curico: [-34.98, -71.24], talca: [-35.43, -71.66], chillan: [-36.61, -72.1], concepcion: [-36.83, -73.05], temuco: [-38.74, -72.59], valdivia: [-39.81, -73.25], osorno: [-40.57, -73.13], 'puerto montt': [-41.47, -72.94], coyhaique: [-45.57, -72.07], 'punta arenas': [-53.16, -70.91] };
 const COAST = [[-18, -70.3], [-20, -70.2], [-23.6, -70.45], [-27, -70.9], [-30, -71.5], [-33, -71.6], [-34.5, -72], [-36, -72.8], [-37.5, -73.6], [-38.7, -73.5], [-40, -73.7], [-41.5, -73.9], [-43, -74], [-45, -74.5], [-48, -75.5], [-53, -74.5]];
 const ANDES = [[-18, -69.5], [-20, -68.7], [-23.6, -67.8], [-27, -68.6], [-30, -70], [-33, -70], [-34.5, -70.3], [-36, -71], [-38, -71.3], [-40, -71.6], [-41.5, -71.8], [-43, -71.7], [-45, -71.9], [-48, -72.8], [-53, -71.5]];
-const ckey = (s) => String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const ckey = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 function interp(tab, lat) {
   for (let i = 0; i < tab.length - 1; i++) {
     const [a, al] = tab[i], [b, bl] = tab[i + 1];
@@ -192,7 +211,7 @@ function routeMap(orders, extra = []) {
     let nx = -dy / len, ny = dx / len; if (nx < 0) { nx = -nx; ny = -ny; }
     const bulge = 22 + (seen[pair] - 1) * 16, cx = (x1 + x2) / 2 + nx * bulge, cy = (y1 + y2) / 2 + ny * bulge;
     const d = `M${x1.toFixed(1)},${y1.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}`;
-    const idx = STEPS.indexOf(e.o.status), transit = idx >= 3 && idx <= 6, fin = idx === 7;
+    const transit = TRANSIT.has(e.o.status), fin = e.o.status === 'entregada';
     if (!fin) { active.add(e.a); active.add(e.b); }
     paths.push(`<path id="rp${i}" d="${d}" fill="none" stroke="${fin ? '#9AB3D4' : transit ? '#FFD2B5' : '#8AA0BC'}" stroke-width="${transit ? 5 : 2.4}" stroke-linecap="round" ${!fin && !transit ? 'stroke-dasharray="3 6"' : ''}/>`);
     if (transit) {
@@ -224,29 +243,31 @@ function mapCard(orders, u) {
 // ---- components -------------------------------------------------------------------------------------------------------
 function rail(o, u) {
   const { n, idx, labels } = steps(o, u), fin = o.status === 'entregada';
-  return `<ol class="rail" aria-label="${t('rail.aria')}">${labels.map((l, i) => {
+  return `<ol class="rail ${n > 6 ? 'dense' : ''}" aria-label="${t('rail.aria')}">${labels.map((l, i) => {
     const c = fin ? (i === n - 1 ? 'done fin' : 'done') : i < idx ? 'done' : i === idx ? 'now' : '';
-    return `<li class="${c}" ${i === idx ? 'aria-current="step"' : ''}><span class="dot">${c.includes('done') ? ic('check') : ''}</span><span class="lbl">${esc(l)}</span></li>`;
-  }).join('')}</ol><p class="rail-cap">${t('live.step', { n: idx + 1, t: n })} · ${esc(labels[idx])}</p>`;
+    return `<li class="${c}" ${i === idx ? 'aria-current="step"' : ''} title="${esc(l)}"><span class="dot">${c.includes('done') ? ic('check') : ''}</span><span class="lbl">${esc(l)}</span></li>`;
+  }).join('')}</ol><p class="rail-cap ${n > 6 ? 'always' : ''}">${t('live.step', { n: idx + 1, t: n })} · ${esc(labels[idx])}</p>`;
 }
 function routeBlock(o, u) {
-  const { n, idx } = steps(o, u), fin = o.status === 'entregada', pct = n > 1 ? (idx / (n - 1)) * 100 : 0;
+  const { n, idx } = steps(o, u), fin = o.status === 'entregada', p = n > 1 ? (idx / (n - 1)) * 100 : 0;
   return `<div class="live-route"><div><div class="cn">${esc(cityA(o))}</div><div class="wh">${esc(o.bodega_origen.nombre)}</div></div>
-    <div class="track"><span class="fill" style="width:${pct}%"></span><span class="truck ${fin ? 'done' : ''}" style="left:${pct}%">${ic(fin ? 'check' : 'truck')}</span></div>
+    <div class="track"><span class="fill" style="width:${p}%"></span><span class="truck ${fin ? 'done' : ''}" style="left:${p}%">${ic(fin ? 'check' : 'truck')}</span></div>
     <div class="to"><div class="cn">${esc(cityB(o))}</div><div class="wh">${esc(o.bodega_destino.nombre)}</div></div></div>${rail(o, u)}`;
 }
 function liveCard(o, u) {
   if (!o) return `<div class="card"><div class="card-h"><h2>${t('live.title')}</h2></div><p class="muted">${t('live.none')}</p></div>`;
   return `<div class="card"><div class="card-h"><h2>${t('live.title')}</h2>${chip(o, u)}</div>${routeBlock(o, u)}
-    <div class="row between" style="margin-top:18px;gap:12px"><span class="mono small muted">${num(o.id)} · ${pkgLabel(o.bultos_total)}</span><a class="btn sm" href="#/order/${o.id}">${t('w.viewOrder')}${ic('arrow', 'sm')}</a></div></div>`;
+    <div class="row between" style="margin-top:18px;gap:12px"><span class="mono small muted">${num(o.id)} · ${pkgLabel(o.activos)}</span><a class="btn sm" href="#/order/${o.id}">${t('w.viewOrder')}${ic('arrow', 'sm')}</a></div></div>`;
 }
 function orderCard(o, todo) {
   const u = U(), { n, idx } = steps(o, u), fin = o.status === 'entregada';
   const segs = Array.from({ length: n }, (_, i) => `<i class="${fin ? 'fin' : i < idx ? 'on' : i === idx ? 'cur' : ''}"></i>`).join('');
+  const flags = `${o.conteo.diferencia ? `<span class="chip warn">${ic('alert', 'sm')}${t('var.chip', { n: (o.conteo.diferencia > 0 ? '+' : '') + o.conteo.diferencia })}</span>` : ''}${o.incidencias_abiertas ? `<span class="chip warn">${ic('alert', 'sm')}${t('inc.open', { n: o.incidencias_abiertas })}</span>` : ''}`;
   return `<a class="ocard ${todo ? 'todo' : ''}" href="#/order/${o.id}">
     <div class="oc-top"><span class="oc-code">${num(o.id)}</span>${chip(o, u)}</div>
     <div class="rt"><span class="city">${esc(cityA(o))}</span><span class="line"></span><span class="city">${esc(cityB(o))}</span></div>
-    <div class="oc-meta"><span>${esc(o.bodega_origen.nombre)} → ${esc(o.bodega_destino.nombre)}</span><span>${pkgLabel(o.bultos_total)}</span><span>${fmt(o.created_at)}</span>${o.referencia_cliente ? `<span class="mono">${esc(o.referencia_cliente)}</span>` : ''}</div>
+    <div class="oc-meta"><span>${esc(o.bodega_origen.nombre)} → ${esc(o.bodega_destino.nombre)}</span><span>${pkgLabel(o.activos)}</span><span>${fmt(o.created_at)}</span>${o.referencia_cliente ? `<span class="mono">${esc(o.referencia_cliente)}</span>` : ''}</div>
+    ${flags ? `<div class="oc-meta" style="margin-top:6px">${flags}</div>` : ''}
     <div class="prog" aria-hidden="true">${segs}</div>
     ${todo ? `<div class="oc-todo">${ic('arrow', 'sm')}${t('todo.badge')}</div>` : ''}</a>`;
 }
@@ -254,14 +275,16 @@ function ordersTable(orders, u) {
   return `<div class="tblwrap"><table class="tbl"><thead><tr><th>${t('col.ot')}</th><th>${t('col.route')}</th><th>${t('col.pkgs')}</th><th>${t('col.status')}</th><th>${t('col.created')}</th><th>${t('col.ref')}</th></tr></thead><tbody>
     ${orders.map((o) => `<tr data-href="#/order/${o.id}" class="${actionable(u, o) ? 'todo' : ''}"><td><a class="mono" href="#/order/${o.id}">${num(o.id)}</a></td>
       <td><b>${esc(cityA(o))} → ${esc(cityB(o))}</b><div class="small muted">${esc(o.bodega_origen.nombre)} → ${esc(o.bodega_destino.nombre)}</div></td>
-      <td class="mono">${o.bultos_total}</td><td>${chip(o, u)}</td><td class="small">${fmt(o.created_at)}</td><td class="small mono muted">${esc(o.referencia_cliente || '—')}</td></tr>`).join('')}</tbody></table></div>`;
+      <td class="mono">${o.activos}${o.conteo.diferencia ? ` <span class="chip warn">${(o.conteo.diferencia > 0 ? '+' : '') + o.conteo.diferencia}</span>` : ''}</td><td>${chip(o, u)}</td><td class="small">${fmt(o.created_at)}</td><td class="small mono muted">${esc(o.referencia_cliente || '—')}</td></tr>`).join('')}</tbody></table></div>`;
 }
-const EV_ICON = (e) => (/^bulto_escaneado/.test(e.type) ? [/^REGISTRO MANUAL/.test(e.note) ? 'man' : 'scan', 'scan'] : /^traspaso/.test(e.type) ? ['sign', 'pen'] : e.type === 'orden_creada' ? ['', 'plus'] : /asignad/.test(e.type) ? ['', e.type === 'orden_asignada_operador' ? 'user' : 'truck'] : ['', 'check']);
+const EV_ICON = (e) => (/^bulto_escaneado/.test(e.type) ? [/^REGISTRO MANUAL/.test(e.note) ? 'man' : 'scan', 'scan']
+  : /^traspaso/.test(e.type) ? ['sign', 'pen'] : e.type === 'orden_creada' ? ['', 'plus']
+  : /incidencia|conteo|riesgo|rechazada/.test(e.type) ? ['man', 'alert'] : /asignad|aceptada|lista_para/.test(e.type) ? ['', /operador|aceptada/.test(e.type) ? 'user' : 'truck'] : ['', 'check']);
 function feedCard(u, orders) {
   const items = orders.flatMap((o) => S.events(u, o.id)).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 6);
   return `<div class="card"><div class="card-h"><h2>${t('feed.title')}</h2></div>${items.length ? `<ul class="feed">${items.map((e) => {
     const [cls, icon] = EV_ICON(e), who = S.userById(e.actor_id);
-    return `<li><span class="fi ${cls}">${ic(icon, 'sm')}</span><div><b>${t('ev.' + e.type)}</b><span class="s">${num(e.order_id)} · ${esc(who ? who.nombre.split(' (')[0] : e.actor_id)} · ${fmt(e.at)}</span>${/^REGISTRO MANUAL/.test(e.note) ? `<span class="s">${esc(tNote(e.note))}</span>` : ''}</div></li>`;
+    return `<li><span class="fi ${cls}">${ic(icon, 'sm')}</span><div><b>${t('ev.' + e.type)}</b><span class="s">${num(e.order_id)} · ${esc(who ? who.nombre.split(' (')[0] : e.actor_id)} · ${fmt(e.at)}</span>${/^REGISTRO MANUAL|^Rechazada|^Conteo/.test(e.note) ? `<span class="s">${esc(tNote(e.note))}</span>` : ''}</div></li>`;
   }).join('')}</ul>` : `<p class="muted">${t('feed.empty')}</p>`}</div>`;
 }
 function hero(u, orders) {
@@ -272,6 +295,7 @@ function hero(u, orders) {
     <p>${merchant ? t('hero.merchant') : t('guide.' + u.rol)}</p>${merchant ? `<a class="btn" href="#/new">${ic('plus')}${t('cta.new')}</a>` : ''}</div>
     <div class="hero-kpis">${merchant ? kp(orders.length, t('kpi.orders')) + kp(active, t('kpi.active'), true) + kp(done, t('kpi.delivered')) : kp(todo, t('kpi.todo'), todo > 0) + kp(active, t('kpi.active')) + kp(done, t('kpi.delivered'))}</div></section>`;
 }
+const kv = (k, v) => `<div class="kv"><span class="muted">${k}</span><b>${v}</b></div>`;
 
 // ---- views ---------------------------------------------------------------------------------------------------------------
 function featured(orders, u) {
@@ -299,14 +323,28 @@ function ordersView() {
     ${shown.length ? `<div class="only-desktop">${ordersTable(shown, u)}</div><div class="olist only-mobile">${shown.map((o) => orderCard(o, actionable(u, o))).join('')}</div>` : `<p class="muted">${t('orders.none')}</p>`}</div>`;
 }
 
+// -- action panels (what the current role can do on the open order) ------------------------------------------------------------------
+function serviceRadio(opts) {
+  return opts.map((x, i) => `<label class="opt ${x.en_ventana ? '' : 'late'}"><input type="radio" name="opt" value="${x.servicio_id}|${x.salida}" ${i === 0 ? 'checked' : ''}>
+    <span class="grow"><b>${esc(x.servicio)}</b> · <span class="mono">${x.bus_patente}</span><br><span class="small muted">${t('bus.departs', { time: x.salida, day: new Date(x.salida_at).getDate() === new Date().getDate() ? t('bus.today') : t('bus.tomorrow') })}</span></span>
+    <span class="tags">${x.sugerido ? `<span class="chip s4">${t('bus.suggested')}</span>` : ''}<span class="chip ${x.en_ventana ? 's1' : 'warn'}">${x.en_ventana ? t('bus.inwin') : t('bus.risk')}</span></span></label>`).join('');
+}
 function actionPanel(o, u) {
-  const c = CP[o.status];
+  const c = CP[o.status], mod = o.operacion.ultima_milla.modalidad;
   if (u.rol === 'coordinador_logistico' && o.status === 'creada') {
+    const rech = o.operacion.aceptacion.rechazos;
     return `<form class="card stack" data-form="assign"><h2>${t('assign.title')}</h2>
+      ${rech.length ? `<div class="hint">${ic('alert')}<span>${t('assign.rejected', { by: esc(S.list('operators').find((p) => p.id === rech[rech.length - 1].operador_id)?.nombre || ''), reason: esc(rech[rech.length - 1].motivo) })}</span></div>` : ''}
       <label class="f">${t('assign.op')}<select name="operador_id">${S.bootstrap(u).operators.map((p) => `<option value="${p.id}">${esc(p.nombre)}</option>`).join('')}</select></label>
-      <button class="btn block">${ic('check')}${t('assign.btn')}</button></form>`;
+      <label class="f">${t('assign.lm')}<select name="ultima_milla"><option value="operador">${t('lm.operador')}</option><option value="retiro">${t('lm.retiro')}</option></select></label>
+      <p class="helper">${t('assign.lmHelp')}</p><button class="btn block">${ic('check')}${t('assign.btn')}</button></form>`;
   }
   if (u.rol === 'operador_despachador' && o.status === 'asignada_operador') {
+    return `<div class="card stack"><h2>${t('accept.title')}</h2><p class="helper">${t('accept.help', { lm: t('lm.' + mod) })}</p>
+      <form data-form="accept"><button class="btn block">${ic('check')}${t('accept.btn')}</button></form>
+      <form class="stack" data-form="reject"><label class="f">${t('reject.reason')}<input name="reason" autocomplete="off" placeholder="${esc(t('reject.ph'))}"></label><button class="btn ghost block">${ic('x')}${t('reject.btn')}</button></form></div>`;
+  }
+  if (u.rol === 'operador_despachador' && o.status === 'aceptada') {
     const op = S.bootstrap(u).operator;
     return `<form class="card stack" data-form="pickup"><h2>${t('pickup.title')}</h2>
       <label class="f">${t('pickup.driver')}<select name="conductor_id">${op.equipo.filter((e) => e.rol === 'operador_conductor_recoleccion').map((e) => `<option value="${e.id}">${esc(e.nombre)}</option>`).join('')}</select></label>
@@ -314,36 +352,94 @@ function actionPanel(o, u) {
       <button class="btn block">${ic('truck')}${t('pickup.btn')}</button></form>`;
   }
   if (u.rol === 'operador_encargado_bodega' && o.status === 'en_bodega_operador') {
-    const op = S.bootstrap(u).operator;
-    return `<form class="card stack" data-form="transport"><h2>${t('transport.title')}</h2>
-      <label class="f">${t('transport.service')}<select name="servicio_id">${op.servicios.map((s) => `<option value="${s.id}">${esc(s.servicio)} · ${s.bus_patente}</option>`).join('')}</select></label>
+    const op = S.bootstrap(u).operator, opts = S.serviceOptions(u, o.id);
+    return `<form class="card stack" data-form="transport"><h2>${t('transport.title')}</h2><p class="helper">${t('transport.help', { a: esc(cityA(o)), b: esc(cityB(o)), h: S.bootstrap(u).config.ventana_bus_horas })}</p>
+      ${opts.length ? `<div class="stack">${serviceRadio(opts)}</div>
       <label class="f">${t('transport.driver')}<select name="conductor_id">${op.equipo.filter((e) => e.rol === 'operador_conductor_bus').map((e) => `<option value="${e.id}">${esc(e.nombre)}</option>`).join('')}</select></label>
-      <button class="btn block">${ic('truck')}${t('transport.btn')}</button></form>`;
+      <button class="btn block">${ic('truck')}${t('transport.btn')}</button>` : `<div class="hint">${ic('alert')}<span>${t('transport.none')}</span></div>`}</form>`;
   }
-  return c && actionable(u, o) ? scanPanel(o, c) : '';
+  if (u.rol === 'operador_despachador' && o.status === 'en_bodega_destino' && mod === 'operador') {
+    const op = S.bootstrap(u).operator;
+    return `<form class="card stack" data-form="lastmile"><h2>${t('lastmile.title')}</h2><p class="helper">${t('lastmile.help')}</p>
+      <label class="f">${t('lastmile.driver')}<select name="conductor_id">${op.equipo.filter((e) => e.rol === 'operador_conductor_entrega').map((e) => `<option value="${e.id}">${esc(e.nombre)}</option>`).join('')}</select></label>
+      <label class="f">${t('pickup.vehicle')}<select name="movil_patente">${op.vehiculos.map((v) => `<option value="${v.patente}">${v.patente} · ${esc(v.tipo)}</option>`).join('')}</select></label>
+      <button class="btn block">${ic('truck')}${t('lastmile.btn')}</button></form>`;
+  }
+  if (u.rol === 'operador_encargado_bodega' && o.status === 'en_bodega_destino' && mod === 'retiro') {
+    const op = S.bootstrap(u).operator, city = cityB(o), punto = (op.puntos_retiro && (op.puntos_retiro[city] || op.puntos_retiro.default)) || '';
+    return `<form class="card stack" data-form="ready"><h2>${t('ready.title')}</h2><p class="helper">${t('ready.help')}</p>
+      <div class="hint">${ic('pin')}<span><b>${t('ready.point')}:</b> ${esc(punto)}</span></div><button class="btn block">${ic('check')}${t('ready.btn')}</button></form>`;
+  }
+  return c && actionable(u, o) ? `<div class="stack">${scanPanel(o, c)}${c.cp === 'recoleccion' ? adjustCard(o) : ''}</div>` : '';
 }
 
 function scanPanel(o, c) {
-  const pend = o.paquetes.filter((p) => !p.scan_history.some((s) => s.checkpoint === c.cp));
-  const done = o.escaneados === o.paquetes.length;
+  const act = o.paquetes.filter((p) => p.status !== 'no_recolectado'), pend = act.filter((p) => !p.scan_history.some((s) => s.checkpoint === c.cp));
+  const done = o.escaneados === o.activos;
   const persons = c.signPerm ? o.personas_autorizadas[c.point] : null;
-  return `<div class="card stack"><div class="row between"><h2>${t('scan.title', { cp: t('cp.' + c.cp) })}</h2><span class="pill ${done ? 'scan' : ''}">${o.escaneados}/${o.paquetes.length}</span></div>
-    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${o.paquetes.length}" aria-valuenow="${o.escaneados}"><i style="width:${(o.escaneados / o.paquetes.length) * 100}%"></i></div>
+  return `<div class="card stack"><div class="row between"><h2>${t('scan.title', { cp: t('cp.' + c.cp) })}</h2><span class="pill ${done ? 'scan' : ''}">${o.escaneados}/${o.activos}</span></div>
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${o.activos}" aria-valuenow="${o.escaneados}"><i style="width:${o.activos ? (o.escaneados / o.activos) * 100 : 0}%"></i></div>
     ${pend.length ? `<form class="scanbox" data-form="scan"><input name="piece_code" placeholder="${esc(t('scan.placeholder'))}" autocomplete="off" autocapitalize="characters" aria-label="${esc(t('scan.aria'))}" autofocus><button class="btn blue">${ic('scan')}<span>${t('scan.btn')}</span></button></form>
       <div class="row between small"><span class="muted">${t('scan.sim')}</span><button class="link" data-act="scan-all" type="button">${t('scan.all')}</button></div>` : ''}
     <div>${o.paquetes.map((p) => {
+      if (p.status === 'no_recolectado') return `<div class="pkg off"><span><span class="code">${p.piece_code}</span><br><span class="d">${esc(p.motivo || '')}</span></span><span class="pill manual">${t('pkg.notpicked')}</span></div>`;
       const s = p.scan_history.find((x) => x.checkpoint === c.cp);
-      return `<div class="pkg"><span><span class="code">${p.piece_code}</span><br><span class="d">${esc(p.descripcion)} · ${p.peso_kg} ${t('unit.kg')}</span></span>
+      return `<div class="pkg"><span><span class="code">${p.piece_code}</span>${p.agregado_en_recoleccion ? ` <span class="pill s-new">${t('pkg.added')}</span>` : ''}<br><span class="d">${esc(p.descripcion)} · ${p.peso_kg ? p.peso_kg + ' ' + t('unit.kg') : '—'}</span></span>
         <span class="r">${s ? `<span class="pill ${s.manual ? 'manual' : 'scan'}">${ic('check', 'sm')}${s.manual ? t('pkg.manual') : t('pkg.scanned')}</span>`
-            : `<button class="link" data-act="manual" data-code="${p.piece_code}" type="button">${t('scan.manual')}</button><button class="btn sm ghost" data-act="scan-one" data-code="${p.piece_code}" type="button">${t('scan.btn')}</button>`}</span></div>`;
+            : `${c.cp === 'recoleccion' ? `<button class="link" data-act="noco" data-code="${p.piece_code}" type="button">${t('pkg.notpickedBtn')}</button>` : ''}<button class="link" data-act="manual" data-code="${p.piece_code}" type="button">${t('scan.manual')}</button><button class="btn sm ghost" data-act="scan-one" data-code="${p.piece_code}" type="button">${t('scan.btn')}</button>`}</span></div>`;
     }).join('')}</div>
     ${done ? `<form class="stack" data-form="confirm">
       ${persons ? `<h3 class="h3">${t(c.point === 'origen' ? 'confirm.origin' : 'confirm.dest')}</h3>
         ${persons.map((p, i) => `<label class="persona"><input type="radio" name="persona_rut" value="${p.rut}" ${i === 0 ? 'checked' : ''}><span><b>${esc(p.nombre)}</b><br><span class="mono small">${p.rut}</span> · <span class="small">${esc(p.telefono)}</span></span></label>`).join('')}
         <label class="check"><input type="checkbox" name="id_verificado"><span>${t('confirm.idcheck')}</span></label>
-        <div><div class="row between small" style="margin-bottom:6px"><span class="muted">${t('confirm.sig')}</span><button class="link" data-act="sig-clear" type="button">${t('confirm.clear')}</button></div><canvas class="sig" id="sig" aria-label="${esc(t('sig.aria'))}"></canvas></div>` : ''}
+        <div><div class="row between small" style="margin-bottom:6px"><span class="muted">${t('confirm.sig')} · ${t('confirm.mandatory')}</span><button class="link" data-act="sig-clear" type="button">${t('confirm.clear')}</button></div><canvas class="sig" id="sig" aria-label="${esc(t('sig.aria'))}"></canvas></div>` : ''}
       <button class="btn block">${ic('shield')}${t('confirm.btn')}</button></form>` : `<p class="small muted">${t('scan.needAll')}</p>`}
   </div>`;
+}
+// pickup driver: the box count can be changed (reason required) and new labels printed; the merchant signature stays mandatory
+function adjustCard(o) {
+  const news = o.paquetes.filter((p) => p.agregado_en_recoleccion);
+  return `<div class="card stack"><div class="row between"><h2>${t('adj.title')}</h2><span class="chip ${o.conteo.diferencia ? 'warn' : 's4'}">${t('adj.declared', { a: o.bultos_declarados, b: o.activos })}</span></div>
+    <p class="helper">${t('adj.help')}</p>
+    <form class="stack" data-form="adjust"><div class="grid2"><label class="f">${t('adj.add')}<input name="add" type="number" min="1" max="50" inputmode="numeric" placeholder="1"></label><label class="f">${t('adj.weight')}<input name="peso_kg" inputmode="decimal" placeholder="0"></label></div>
+      <label class="f">${t('adj.reason')}<input name="reason" autocomplete="off" placeholder="${esc(t('adj.reasonPh'))}"></label><button class="btn ghost block">${ic('plus')}${t('adj.btn')}</button></form>
+    <div class="printer">${ic('print')}<span><b>${t('adj.printer')}</b><br><span class="small muted">${t('adj.printerOk')}</span></span></div>
+    ${news.length ? `<div class="row" style="flex-wrap:wrap"><a class="btn sm" href="#/labels/${o.id}/new">${ic('print', 'sm')}${t('adj.printNew', { n: news.length })}</a><a class="btn sm ghost" href="#/labels/${o.id}">${t('adj.reprint')}</a></div>` : ''}</div>`;
+}
+
+// incidents attached to an order
+const INC_LABEL = (i) => t('inc.' + i);
+function incidentCard(o, u) {
+  const incs = S.incidents(u).filter((i) => i.order_id === o.id), canReport = hasPerm('reportar_incidencia'), canResolve = hasPerm('resolver_incidencia');
+  if (!incs.length && !canReport) return '';
+  return `<div class="card stack"><div class="card-h" style="margin:0"><h2>${t('inc.title')}</h2><span class="pill">${incs.length}</span></div>
+    ${incs.map((i) => `<div class="inc ${i.estado}"><div class="row between"><b>${INC_LABEL(i.tipo)}</b><span class="chip ${i.estado === 'abierta' ? 'warn' : 's4'}">${t('inc.' + i.estado)}</span></div>
+      <div class="small">${esc(i.detalle)}${i.esperado != null ? ` · <span class="mono">${i.esperado} → ${i.real}</span>` : ''}</div>
+      ${i.foto ? `<img class="incimg" alt="" src="${i.foto}">` : ''}
+      <div class="small muted">${fmt(i.at)} · ${esc((S.userById(i.creada_por) || {}).nombre || '')}</div>
+      ${i.resolucion ? `<div class="small"><b>${t('inc.resolution')}:</b> ${esc(i.resolucion.nota)} <span class="muted">(${esc((S.userById(i.resolucion.por) || {}).nombre || '')})</span></div>` : ''}
+      ${i.estado === 'abierta' && canResolve ? `<button class="link" data-act="resolve" data-id="${i.id}" type="button">${t('inc.resolve')}</button>` : ''}</div>`).join('')}
+    ${canReport ? `<details><summary style="font-weight:600;cursor:pointer;min-height:36px">${t('inc.report')}</summary><form class="stack" data-form="incident" style="margin-top:10px">
+      <label class="f">${t('inc.type')}<select name="tipo"><option value="dano">${INC_LABEL('dano')}</option><option value="faltante">${INC_LABEL('faltante')}</option><option value="conteo">${INC_LABEL('conteo')}</option><option value="otro">${INC_LABEL('otro')}</option></select></label>
+      <label class="f">${t('inc.detail')}<input name="detalle" autocomplete="off"></label>
+      <label class="f">${ic('camera', 'sm')} ${t('inc.photo')}<input type="file" id="incphoto" accept="image/*" capture="environment"></label>
+      <button class="btn ghost block">${ic('alert')}${t('inc.send')}</button></form></details>` : ''}</div>`;
+}
+
+function opsCard(o, u) {
+  const op = o.operacion, merchant = u.rol === 'merchant', tr = op.transporte, lm = op.ultima_milla;
+  const rows = [
+    kv(t('ops.lm'), t('lm.' + lm.modalidad)),
+    o.mpo ? kv('MPO', esc(o.mpo)) : '',
+    kv(t('ops.count'), `${o.bultos_declarados} → ${o.activos}${o.conteo.diferencia ? ` <span class="chip warn">${(o.conteo.diferencia > 0 ? '+' : '') + o.conteo.diferencia}</span>` : ''}`),
+    !merchant && op.aceptacion.estado ? kv(t('ops.accept'), t('acc.' + op.aceptacion.estado) + (op.aceptacion.rechazos.length ? ` · ${t('ops.rejections', { n: op.aceptacion.rechazos.length })}` : '')) : '',
+    !merchant && op.recoleccion.conductor_id ? kv(t('ops.pickup'), `${esc((S.userById(op.recoleccion.conductor_id) || {}).nombre || '')} · ${op.recoleccion.movil_patente}`) : '',
+    tr.servicio ? kv(t('ops.bus'), `${esc(tr.servicio)} · ${tr.bus_patente} · ${tr.salida}${tr.riesgo_sla ? ` <span class="chip warn">${t('bus.risk')}</span>` : ''}${tr.ventana_ok === true ? ` <span class="chip s4">${t('bus.inwin')}</span>` : tr.ventana_ok === false ? ` <span class="chip warn">${t('bus.outwin')}</span>` : ''}`) : '',
+    lm.conductor_id ? kv(t('ops.lastmile'), `${esc((S.userById(lm.conductor_id) || {}).nombre || '')} · ${lm.movil_patente}`) : '',
+    lm.punto_retiro ? kv(t('ready.point'), esc(lm.punto_retiro)) : '',
+  ].join('');
+  const pickupBanner = o.status === 'lista_retiro' ? `<div class="hint">${ic('pin')}<span>${t('ready.banner', { point: esc(lm.punto_retiro) })}</span></div>` : '';
+  return `${pickupBanner}<div class="card"><h3 class="h3" style="margin-bottom:6px">${t('ops.title')}</h3>${rows}</div>`;
 }
 
 function orderView(id) {
@@ -353,30 +449,31 @@ function orderView(id) {
   const sigs = ['entrega', 'recepcion'].filter((k) => o.handoff[k].firma_url), evs = S.events(u, o.id);
   const head = `<div class="card"><div class="row between" style="margin-bottom:14px"><div><div class="h3">${t('sec.progress')}</div><h2 class="mono" style="font-size:22px">${num(o.id)}</h2></div>${chip(o, u)}</div>${routeBlock(o, u)}
     <div class="small muted" style="margin-top:16px;line-height:1.6">${esc(o.bodega_origen.direccion.direccion)}, ${esc(o.bodega_origen.direccion.comuna)}<br>${esc(o.bodega_destino.direccion.direccion)}, ${esc(o.bodega_destino.direccion.comuna)}<br>
-    ${pkgLabel(o.bultos_total)} · ${t('ord.created', { date: fmt(o.created_at) })}${o.referencia_cliente ? ' · ' + t('ord.ref', { ref: esc(o.referencia_cliente) }) : ''}${o.operacion.operador_id ? '<br>' + t('ord.operator', { name: esc(S.list('operators').find((p) => p.id === o.operacion.operador_id).nombre) }) : ''}</div></div>`;
-  const custody = !merchant ? `<div class="card"><h3 class="h3" style="margin-bottom:14px">${t('sec.custody')}</h3><ul class="tl">${STEPS.map((s, i) => {
-    const tt = o.timeline.find((x) => x.step === s), who = tt ? S.userById(tt.actor_id) : null, cur = STEPS.indexOf(o.status), fin = o.status === 'entregada';
-    return `<li class="${fin && i === 7 ? 'fin done' : i < cur || (fin && i <= cur) ? 'done' : i === cur ? 'now' : 'todo'}">${t('st.' + s)}<small>${tt ? `${fmt(tt.at)} · ${esc(who ? who.nombre.split(' (')[0] : tt.actor_role)}` : t('act.' + s)}</small></li>`;
+    ${pkgLabel(o.activos)} · ${t('ord.created', { date: fmt(o.created_at) })}${o.referencia_cliente ? ' · ' + t('ord.ref', { ref: esc(o.referencia_cliente) }) : ''}${o.operacion.operador_id ? '<br>' + t('ord.operator', { name: esc(S.list('operators').find((p) => p.id === o.operacion.operador_id).nombre) }) : ''}</div></div>`;
+  const custody = !merchant ? `<div class="card"><h3 class="h3" style="margin-bottom:14px">${t('sec.custody')}</h3><ul class="tl">${o.flujo.map((s, i) => {
+    const tt = o.timeline.filter((x) => x.step === s).pop(), who = tt ? S.userById(tt.actor_id) : null, cur = o.flujo.indexOf(o.status), fin = o.status === 'entregada';
+    return `<li class="${fin && i === o.flujo.length - 1 ? 'fin done' : i < cur || (fin && i <= cur) ? 'done' : i === cur ? 'now' : 'todo'}">${t('st.' + s)}<small>${tt ? `${fmt(tt.at)} · ${esc(who ? who.nombre.split(' (')[0] : tt.actor_role)}` : t('act.' + s)}</small></li>`;
   }).join('')}</ul></div>` : '';
-  const pk = `<div class="card"><div class="card-h"><h2>${t('sec.packages')}</h2><span class="pill">${o.paquetes.length}</span></div>${o.paquetes.map((p) => `<div class="pkg"><span><span class="code">${p.piece_code}</span><br><span class="d">${esc(p.descripcion)} · ${p.peso_kg} ${t('unit.kg')}</span></span>
-      <span class="r">${p.scan_history.length ? p.scan_history.map((s) => `<span class="pill ${s.manual ? 'manual' : 'scan'}">${t('cp.' + s.checkpoint)}</span>`).join('') : `<span class="pill">${t('pkg.pending')}</span>`}</span></div>`).join('')}
+  const pk = `<div class="card"><div class="card-h"><h2>${t('sec.packages')}</h2><span class="pill">${o.activos}</span></div>${o.paquetes.map((p) => `<div class="pkg ${p.status === 'no_recolectado' ? 'off' : ''}"><span><span class="code">${p.piece_code}</span>${p.agregado_en_recoleccion ? ` <span class="pill s-new">${t('pkg.added')}</span>` : ''}<br><span class="d">${esc(p.descripcion)} · ${p.peso_kg ? p.peso_kg + ' ' + t('unit.kg') : '—'}</span></span>
+      <span class="r">${p.status === 'no_recolectado' ? `<span class="pill manual">${t('pkg.notpicked')}</span>` : p.scan_history.length ? p.scan_history.map((s) => `<span class="pill ${s.manual ? 'manual' : 'scan'}">${t('cp.' + s.checkpoint)}</span>`).join('') : `<span class="pill">${t('pkg.pending')}</span>`}</span></div>`).join('')}
       <a class="btn ghost sm" style="margin-top:12px" href="#/labels/${o.id}">${ic('print', 'sm')}${t('labels.btn')}</a></div>`;
   const hint = next && next.id !== me ? `<div class="hint">${ic('user')}<span>${t('ord.next', { name: `<b>${esc(next.nombre.split(' (')[0])}</b>`, role: esc(roleName(next.rol)) })} <button class="link" data-act="switch" data-id="${next.id}">${t('ord.switchTo')}</button></span></div>` : '';
   const auth = `<div class="card stack"><h3 class="h3">${t('sec.authorized')}</h3>${['origen', 'destino'].map((k) => `<div><b>${t(k === 'origen' ? 'sec.origin' : 'sec.dest')}</b>${o.personas_autorizadas[k].map((p) => `<div class="small muted" style="margin-top:3px">${esc(p.nombre)} · <span class="mono">${p.rut}</span> · ${esc(p.telefono)}</div>`).join('')}</div>`).join('')}</div>`;
   const sg = sigs.length ? `<div class="card stack"><h3 class="h3">${t('sec.signatures')}</h3>${sigs.map((k) => `<div><b>${t(k === 'entrega' ? 'sig.origin' : 'sig.dest')}</b><div class="small muted">${esc(o.handoff[k].persona_autorizada)} · ${fmt(o.handoff[k].at)}</div><img class="sigimg" alt="" src="${o.handoff[k].firma_url}"></div>`).join('')}</div>` : '';
   const ev = `<details class="card"><summary style="font-weight:600;cursor:pointer">${t('sec.events')} (${evs.length})</summary><ul class="feed" style="margin-top:12px">${evs.map((e) => `<li><div><b>${t('ev.' + e.type)}</b><span class="s">${fmt(e.at)} · ${esc((S.userById(e.actor_id) || {}).nombre || e.actor_id)}<br>${esc(tNote(e.note))}</span></div></li>`).join('')}</ul></details>`;
   const back = `<div style="padding-bottom:14px"><a class="btn ghost sm" href="#/${merchant ? 'orders' : ''}">${ic('back', 'sm')}${t('back')}</a></div>`;
-  return `${back}<div class="dash"><div class="cols"><div class="col">${blk(head, 0, 1)}${blk(custody, 2, 4)}${blk(pk, 3, 5)}</div>
-    <div class="col">${blk(hint, 1, 0)}${blk(actionPanel(o, u), 1, 2)}${blk(auth, 3, 6)}${blk(sg, 4, 7)}${blk(ev, 5, 8)}</div></div></div>`;
+  return `${back}<div class="dash"><div class="cols"><div class="col">${blk(head, 0, 1)}${blk(custody, 2, 5)}${blk(pk, 3, 6)}</div>
+    <div class="col">${blk(hint, 1, 0)}${blk(actionPanel(o, u), 1, 2)}${blk(opsCard(o, u), 2, 3)}${blk(incidentCard(o, u), 2, 4)}${blk(auth, 3, 7)}${blk(sg, 4, 8)}${blk(ev, 5, 9)}</div></div></div>`;
 }
 
-function labels(id) {
+function labels(id, mode) {
   let o; try { o = S.orderDetail(U(), id); } catch { return `<div class="card">${t('ord.notfound')}</div>`; }
+  const act = o.paquetes.filter((p) => p.status !== 'no_recolectado'), list = mode === 'new' ? act.filter((p) => p.agregado_en_recoleccion) : act;
   return `<div class="row between noprint" style="padding-bottom:12px"><a class="btn ghost sm" href="#/order/${o.id}">${ic('back', 'sm')}${t('back')}</a><button class="btn sm" data-act="print">${ic('print', 'sm')}${t('lab.print')}</button></div>
-    <p class="small muted noprint" style="padding-bottom:14px">${t('lab.hint')}</p>
-    <div class="labels">${o.paquetes.map((p, i) => `<div class="label"><div class="row between"><span class="big">${num(o.id)}</span><span class="small">${t('lab.pkgOf', { i: i + 1, n: o.paquetes.length })}</span></div>
+    <p class="small muted noprint" style="padding-bottom:14px">${t('lab.hint')}${mode === 'new' ? ' ' + t('lab.onlyNew') : ''}</p>
+    <div class="labels">${list.map((p) => `<div class="label"><div class="row between"><span class="big">${num(o.id)}</span><span class="small big2">${act.indexOf(p) + 1}/${act.length}</span></div>
       ${code39(p.piece_code)}<div class="mono" style="text-align:center;font-weight:600">${p.piece_code}</div>
-      <div class="small">${esc(o.bodega_origen.nombre)} → <b>${esc(o.bodega_destino.nombre)}</b><br>${esc(o.bodega_destino.direccion.direccion)}, ${esc(o.bodega_destino.direccion.comuna)}<br>${esc(p.descripcion)} · ${p.peso_kg} ${t('unit.kg')}</div></div>`).join('')}</div>`;
+      <div class="small">${esc(o.bodega_origen.nombre)} → <b>${esc(o.bodega_destino.nombre)}</b><br>${esc(o.bodega_destino.direccion.direccion)}, ${esc(o.bodega_destino.direccion.comuna)}<br>${esc(p.descripcion)} · ${p.peso_kg ? p.peso_kg + ' ' + t('unit.kg') : '—'}${o.mpo ? ' · ' + esc(o.mpo) : ''}</div></div>`).join('') || `<p class="muted">${t('orders.none')}</p>`}</div>`;
 }
 
 // ---- merchant: wizard -------------------------------------------------------------------------------------------------------------
@@ -385,18 +482,19 @@ const bodegaById = (id) => bodegas().find((b) => b.id === id);
 const blankPerson = () => ({ nombre: '', rut: '', telefono: '' });
 const newW = () => {
   const bs = bodegas(), def = bs.find((b) => b.es_origen_default) || bs[0];
-  return { step: 1, ciudad: def.ciudad, origen: def.id, destino: '', ref: '', filled: {}, personas: { origen: [], destino: [] }, paquetes: [{ descripcion: '', peso_kg: '', valor: '' }], done: null };
+  return { step: 1, ciudad: def.ciudad, origen: def.id, destino: '', ref: '', mpo: '', filled: {}, personas: { origen: [], destino: [] }, paquetes: [{ descripcion: '', peso_kg: '', valor: '' }], done: null };
 };
 const fld = (label, attr, val, extra = '') => `<label class="f">${label}<input ${attr} value="${esc(val)}" ${extra}></label>`;
 const personRow = (side, i, p) => `<div class="prow">${fld(t('w.name'), `data-bind="personas.${side}.${i}.nombre" autocomplete="off"`, p.nombre)}
   ${fld(t('w.rut'), `data-bind="personas.${side}.${i}.rut" data-rutcheck autocomplete="off"`, p.rut, p.rut && !rutValid(p.rut) ? 'class="bad"' : '')}
   ${fld(t('w.phone'), `data-bind="personas.${side}.${i}.telefono" inputmode="tel" autocomplete="off"`, p.telefono)}</div>`;
-const blankNB = () => ({ nombre: '', ciudad: '', direccion: { region: '', comuna: '', direccion: '' }, contactos: [{ nombre: '', rut: '', telefono: '' }, { nombre: '', rut: '', telefono: '' }] });
+const blankNB = () => ({ nombre: '', ciudad: '', codigo_postal: '', direccion: { region: '', comuna: '', direccion: '' }, contactos: [{ nombre: '', rut: '', telefono: '' }, { nombre: '', rut: '', telefono: '' }] });
 const nbv = (k) => k.split('.').reduce((a, x) => a?.[x], NB) ?? '';
 function bodegaForm() {
   const i = (lbl, k, extra = '') => fld(t(lbl), `data-bindnb="${k}"`, nbv(k), extra);
   return `<div class="card stack"><h2>${t('nb.title')}</h2>${i('nb.name', 'nombre')}
     <div class="grid2">${i('nb.city', 'ciudad')}${i('nb.region', 'direccion.region')}</div><div class="grid2">${i('nb.comuna', 'direccion.comuna')}${i('nb.street', 'direccion.direccion')}</div>
+    ${i('nb.postal', 'codigo_postal', 'inputmode="numeric"')}
     <h3 class="h3">${t('nb.people')}</h3>${NB.contactos.map((_, n) => `<div class="prow">${fld(t('w.name'), `data-bindnb="contactos.${n}.nombre"`, nbv(`contactos.${n}.nombre`))}${fld(t('w.rut'), `data-bindnb="contactos.${n}.rut"`, nbv(`contactos.${n}.rut`))}${fld(t('w.phone'), `data-bindnb="contactos.${n}.telefono" inputmode="tel"`, nbv(`contactos.${n}.telefono`))}</div>`).join('')}
     <div class="row"><button class="btn ghost" data-act="nb-cancel" type="button">${t('nb.cancel')}</button><button class="btn" data-act="nb-save" type="button">${t('nb.save')}</button></div></div>`;
 }
@@ -428,12 +526,12 @@ function wizard() {
       <div class="card stack"><h3 class="h3">${t('w.destination')}</h3>
       <label class="f">${t('w.destWh')}<select data-change="w-destino"><option value="">${t('w.select')}</option>${dest.map((b) => `<option value="${b.id}" ${b.id === W.destino ? 'selected' : ''}>${esc(b.ciudad)} · ${esc(b.nombre)}</option>`).join('')}<option value="__new">${t('w.newWh')}</option></select></label></div>
       ${NB ? bodegaForm() : ''}
-      <div class="card">${fld(t('w.ref'), 'data-bind="ref" autocomplete="off"', W.ref, `placeholder="${esc(t('w.refPh'))}"`)}</div>`;
+      <div class="card grid2">${fld(t('w.ref'), 'data-bind="ref" autocomplete="off"', W.ref, `placeholder="${esc(t('w.refPh'))}"`)}${fld(t('w.mpo'), 'data-bind="mpo" autocomplete="off"', W.mpo, 'placeholder="MPO-1234"')}</div>`;
   } else if (W.step === 2) {
     body = `<p class="helper">${t('w.persHelp')}</p>${['origen', 'destino'].map((side) => `<div class="card stack"><h3 class="h3">${t(side === 'origen' ? 'w.hands' : 'w.receives', { name: esc(bodegaById(side === 'origen' ? W.origen : W.destino).nombre) })}</h3>
         ${W.personas[side].map((p, i) => personRow(side, i, p)).join('')}<div><button class="link" data-act="w-add-person" data-side="${side}" type="button">+ ${t('w.addPerson')}</button></div></div>`).join('')}`;
   } else {
-    body = `${W.paquetes.map((p, i) => `<div class="card stack"><div class="row between"><h3 class="h3">${t('w.pkg', { n: i + 1 })}</h3><span><button class="link" data-act="w-dup" data-i="${i}" type="button">${t('w.dup')}</button>${W.paquetes.length > 1 ? ` · <button class="link" data-act="w-del" data-i="${i}" type="button">${t('w.del')}</button>` : ''}</span></div>
+    body = `<div class="hint">${ic('print')}<span>${t('w.printNote')}</span></div>${W.paquetes.map((p, i) => `<div class="card stack"><div class="row between"><h3 class="h3">${t('w.pkg', { n: i + 1 })}</h3><span><button class="link" data-act="w-dup" data-i="${i}" type="button">${t('w.dup')}</button>${W.paquetes.length > 1 ? ` · <button class="link" data-act="w-del" data-i="${i}" type="button">${t('w.del')}</button>` : ''}</span></div>
       <div class="prow">${fld(t('w.content'), `data-bind="paquetes.${i}.descripcion" autocomplete="off"`, p.descripcion)}${fld(t('w.weight'), `data-bind="paquetes.${i}.peso_kg" inputmode="decimal"`, p.peso_kg)}${fld(t('w.value'), `data-bind="paquetes.${i}.valor" inputmode="numeric"`, p.valor)}</div></div>`).join('')}
       <button class="btn ghost" data-act="w-add-pkg" type="button">${ic('plus')}${t('w.addPkg')}</button>`;
   }
@@ -445,26 +543,111 @@ function account() {
   const m = S.bootstrap(U()).merchant;
   return `<div class="stack"><div class="card row between" style="gap:16px"><div><h2 style="font-size:20px">${esc(m.razon_social)}</h2><div class="small muted">RUT ${m.rut} · ${t('acc.plan', { plan: esc(m.plan) })}<br>${t('acc.billing')}</div></div><span class="avatar" style="width:52px;height:52px;border-radius:16px">${ic('warehouse')}</span></div>
     <div class="row between"><h2>${t('acc.myWh', { n: m.bodegas.length })}</h2>${NB ? '' : `<button class="btn sm" data-act="nb-open">${ic('plus', 'sm')}${t('acc.add')}</button>`}</div>
-    ${NB ? bodegaForm() : ''}
-    <div class="whgrid">${m.bodegas.map((b) => `<div class="card"><div class="row between"><b>${esc(b.nombre)}</b>${b.es_origen_default ? `<span class="pill scan">${t('acc.default')}</span>` : ''}</div>
-      <div class="small muted" style="margin:4px 0 10px">${ic('pin', 'sm')} ${esc(b.direccion.direccion)}, ${esc(b.direccion.comuna)} · ${esc(b.ciudad)}</div>
-      ${b.contactos.map((c) => `<div class="small" style="margin-top:6px">${ic('user', 'sm')} ${esc(c.nombre)} · <span class="mono">${c.rut}</span> · ${esc(c.telefono)}</div>`).join('')}</div>`).join('')}</div></div>`;
+    ${NB ? bodegaForm() : ''}<div class="whgrid">${m.bodegas.map((b) => whCard(b)).join('')}</div></div>`;
+}
+const whCard = (b) => `<div class="card"><div class="row between"><b>${esc(b.nombre)}</b>${b.es_origen_default ? `<span class="pill scan">${t('acc.default')}</span>` : ''}</div>
+  <div class="small muted" style="margin:4px 0 10px">${ic('pin', 'sm')} ${esc(b.direccion.direccion)}, ${esc(b.direccion.comuna)} · ${esc(b.ciudad)}${b.direccion.codigo_postal ? ` · CP ${b.direccion.codigo_postal}` : ''}</div>
+  ${b.contactos.map((c) => `<div class="small" style="margin-top:6px">${ic('user', 'sm')} ${esc(c.nombre)} · <span class="mono">${c.rut}</span> · ${esc(c.telefono)}</div>`).join('')}</div>`;
+
+// ---- coordinator / control tower / audit / finance -------------------------------------------------------------------------------------
+function kcard(label, value, def, tone = '') {
+  return `<div class="kcard ${tone}"><div class="kl">${label}</div><div class="kv2">${value}</div><div class="kd">${def}</div></div>`;
+}
+function riskList(k) {
+  return k.riesgos.length ? k.riesgos.map((r) => `<a class="ocard todo" href="#/order/${r.id}"><div class="oc-top"><span class="oc-code">${num(r.id)}</span><span class="chip warn">${ic('alert', 'sm')}${t('risk.' + r.motivo)}</span></div></a>`).join('') : `<p class="muted">${t('risk.none')}</p>`;
+}
+function incidentsTable(u) {
+  const incs = S.incidents(u), can = hasPerm('resolver_incidencia');
+  return incs.length ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>${t('col.ot')}</th><th>${t('inc.type')}</th><th>${t('col.status')}</th><th>${t('inc.detail')}</th><th>${t('col.created')}</th><th></th></tr></thead><tbody>
+    ${incs.map((i) => `<tr data-href="#/order/${i.order_id}"><td><a class="mono" href="#/order/${i.order_id}">${num(i.order_id)}</a></td><td>${INC_LABEL(i.tipo)}</td><td><span class="chip ${i.estado === 'abierta' ? 'warn' : 's4'}">${t('inc.' + i.estado)}</span></td>
+      <td class="small">${esc(i.detalle)}${i.esperado != null ? ` <span class="mono">(${i.esperado} → ${i.real})</span>` : ''}${i.resolucion ? `<div class="muted">✔ ${esc(i.resolucion.nota)}</div>` : ''}</td><td class="small">${fmt(i.at)}</td>
+      <td>${i.estado === 'abierta' && can ? `<button class="btn sm ghost" data-act="resolve" data-id="${i.id}" type="button">${t('inc.resolve')}</button>` : ''}</td></tr>`).join('')}</tbody></table></div>` : `<p class="muted">${t('inc.none')}</p>`;
+}
+function towerView() {
+  const u = U(), k = S.kpis(u);
+  const cards = [
+    kcard(t('k.ssp'), pct(k.ssp), `${t('k.ssp.d')} · ${k.ssp.n}/${k.ssp.d}`), kcard(t('k.acc'), pct(k.aceptacion), `${t('k.acc.d')} · ${k.aceptacion.n}/${k.aceptacion.d}`),
+    kcard(t('k.ptat'), k.ptat_horas == null ? '—' : k.ptat_horas + ' h', t('k.ptat.d')), kcard(t('k.pa'), pct(k.adherencia), `${t('k.pa.d')} · ${k.adherencia.n}/${k.adherencia.d}`, k.adherencia.pct != null && k.adherencia.pct !== 100 ? 'warn' : ''),
+    kcard(t('k.inb'), pct(k.inbound), `${t('k.inb.d')} · ${k.inbound.n}/${k.inbound.d}`), kcard(t('k.sl'), pct(k.nivel_servicio), `${t('k.sl.d')}${k.nivel_servicio.r_prom != null ? ` · R̄ ${k.nivel_servicio.r_prom}` : ''}`),
+    kcard(t('k.win'), pct(k.ventana_bus), `${t('k.win.d')} · ${k.ventana_bus.n}/${k.ventana_bus.d}`), kcard(t('k.mpo'), pct(k.mpo), `${t('k.mpo.d')} · ${k.mpo.n}/${k.mpo.d}`),
+    kcard(t('k.cps'), k.cps_recoleccion == null ? '—' : money(k.cps_recoleccion), t('k.cps.d')),
+  ].join('');
+  return `<div class="dash">${blk(`<div class="kgrid">${cards}</div>`, 0, 0)}
+    <div class="cols"><div class="col">${blk(`<div class="card"><div class="card-h"><h2>${t('tower.risk')}</h2><span class="pill ${k.riesgos.length ? 'manual' : ''}">${k.riesgos.length}</span></div><div class="olist">${riskList(k)}</div></div>`, 1, 1)}
+      </div>
+    <div class="col">${blk(`<div class="card"><h2 style="margin-bottom:8px">${t('tower.about')}</h2><p class="small muted">${t('tower.aboutBody')}</p></div>`, 3, 3)}</div></div>
+    ${blk(`<div class="card"><div class="card-h"><h2>${t('tower.incidents')}</h2><span class="pill ${k.incidencias_abiertas ? 'manual' : ''}">${k.incidencias_abiertas}</span></div>${incidentsTable(u)}</div>`, 2, 4)}</div>`;
+}
+function auditView() {
+  const u = U(), k = S.kpis(u), rec = S.reconciliation(u);
+  const th = ['col.ot', 'col.status', 'rec.declared', 'rec.picked', 'rec.inbound', 'rec.loaded', 'rec.destin', 'rec.delivered', 'rec.diff', 'rec.inc'].map((x) => `<th>${t(x)}</th>`).join('');
+  const rows = rec.map((r) => `<tr data-href="#/order/${r.id}" class="${r.dif_conteo || r.incidencias_abiertas ? 'todo' : ''}"><td><a class="mono" href="#/order/${r.id}">${num(r.id)}</a></td><td class="small">${t('st.' + r.estado)}</td>
+    <td class="mono">${r.declarados}</td><td class="mono">${r.recolectados ?? '—'}</td><td class="mono">${r.ingreso_op}</td><td class="mono">${r.cargados}</td><td class="mono">${r.ingreso_destino}</td><td class="mono">${r.entregados}</td>
+    <td>${r.dif_conteo ? `<span class="chip warn">${(r.dif_conteo > 0 ? '+' : '') + r.dif_conteo}</span>` : '<span class="chip s4">0</span>'}</td><td>${r.incidencias_abiertas ? `<span class="chip warn">${r.incidencias_abiertas}</span>` : '—'}</td></tr>`).join('');
+  return `<div class="dash">${blk(`<div class="kgrid">${kcard(t('k.inb'), pct(k.inbound), t('k.inb.d'))}${kcard(t('k.pa'), pct(k.adherencia), t('k.pa.d'), k.adherencia.pct !== 100 ? 'warn' : '')}${kcard(t('inc.title'), k.incidencias_abiertas, t('audit.openInc'), k.incidencias_abiertas ? 'warn' : '')}${kcard(t('k.mpo'), pct(k.mpo), t('k.mpo.d'))}</div>`, 0, 0)}
+    ${blk(`<div class="card"><div class="card-h"><div><h2>${t('audit.rec')}</h2><div class="small muted">${t('audit.recHelp')}</div></div>${ic('clip')}</div><div class="tblwrap"><table class="tbl"><thead><tr>${th}</tr></thead><tbody>${rows}</tbody></table></div></div>`, 1, 1)}
+    ${blk(`<div class="card"><div class="card-h"><h2>${t('audit.cases')}</h2></div>${incidentsTable(u)}</div>`, 2, 2)}</div>`;
+}
+function financeView() {
+  const u = U(), q = S.finance(u, FIN), merchants = S.bootstrap(u).merchants || [];
+  const tbl = (head, rowsHtml) => `<div class="tblwrap"><table class="tbl"><thead><tr>${head.map((h) => `<th>${t(h)}</th>`).join('')}</tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
+  const grp = (g) => `<tr><td><b>${esc(g.nombre === '—' ? t('fin.unassigned') : g.nombre)}</b></td><td class="mono">${g.ordenes}</td><td class="mono">${g.bultos}</td><td class="mono">${g.peso_kg}</td><td class="mono">${money(g.valor_declarado_clp)}</td><td class="mono">${g.entregadas}</td></tr>`;
+  const gh = ['fin.name', 'kpi.orders', 'col.pkgs', 'fin.kg', 'fin.value', 'kpi.delivered'];
+  return `<div class="dash">${blk(`<div class="card"><div class="frow" style="margin:0"><label class="f" style="min-width:200px;flex:1">${t('fin.merchant')}<select data-fin="merchant_id"><option value="">${t('fin.all')}</option>${merchants.map((m) => `<option value="${m.id}" ${FIN.merchant_id === m.id ? 'selected' : ''}>${esc(m.razon_social)}</option>`).join('')}</select></label>
+      <label class="f">${t('fin.from')}<input type="date" data-fin="from" value="${FIN.from}"></label><label class="f">${t('fin.to')}<input type="date" data-fin="to" value="${FIN.to}"></label>
+      <button class="btn sm" data-act="fin-csv" type="button" style="align-self:flex-end">${ic('download', 'sm')}${t('fin.export')}</button></div>
+      <p class="helper" style="margin-top:10px">${t('fin.note')}</p></div>`, 0, 0)}
+    ${blk(`<div class="kgrid">${kcard(t('kpi.orders'), q.totales.ordenes, '')}${kcard(t('kpi.packages'), q.totales.bultos, '')}${kcard(t('fin.kg'), q.totales.peso_kg, '')}${kcard(t('kpi.delivered'), q.totales.entregadas, '')}</div>`, 1, 1)}
+    <div class="cols"><div class="col">${blk(`<div class="card"><div class="card-h"><h2>${t('fin.byMerchant')}</h2></div>${tbl(gh, q.por_merchant.map(grp).join('') || `<tr><td colspan="6" class="muted">${t('orders.none')}</td></tr>`)}</div>`, 2, 2)}
+      ${blk(`<div class="card"><div class="card-h"><h2>${t('fin.byOperator')}</h2></div>${tbl(gh, q.por_operador.map(grp).join('') || `<tr><td colspan="6" class="muted">${t('orders.none')}</td></tr>`)}</div>`, 3, 3)}</div>
+    <div class="col">${blk(`<div class="card"><div class="card-h"><h2>${t('fin.detail')}</h2></div>${tbl(['col.ot', 'fin.name', 'col.route', 'col.pkgs', 'fin.kg', 'col.status', 'fin.period'], q.rows.map((r) => `<tr data-href="#/order/${r.id}"><td><a class="mono" href="#/order/${r.id}">${num(r.id)}</a></td><td class="small">${esc(r.merchant)}</td><td class="small">${esc(r.origen)} → ${esc(r.destino)}</td><td class="mono">${r.bultos}</td><td class="mono">${r.peso_kg}</td><td class="small">${t('st.' + r.estado)}</td><td class="mono small">${r.periodo}</td></tr>`).join('') || `<tr><td colspan="7" class="muted">${t('orders.none')}</td></tr>`)}</div>`, 4, 4)}</div></div></div>`;
+}
+function csvExport() {
+  const q = S.finance(U(), FIN), head = ['orden', 'merchant', 'origen', 'destino', 'bultos', 'peso_kg', 'valor_declarado_clp', 'estado', 'creada', 'entregada', 'operador', 'referencia', 'periodo'];
+  const cell = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const csv = [head.join(','), ...q.rows.map((r) => [r.id, r.merchant, r.origen, r.destino, r.bultos, r.peso_kg, r.valor_declarado_clp, r.estado, r.creada, r.entregada, r.operador, r.referencia, r.periodo].map(cell).join(','))].join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' })); a.download = 'kargo_envios.csv'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function merchantsView() {
+  const u = U(), ms = S.list('merchants');
+  const reg = `<form class="card stack" data-form="rm"><h2>${t('mer.register')}</h2><p class="helper">${t('mer.kamHelp')}</p>
+    ${fld(t('mer.name'), 'data-bindrm="razon_social" autocomplete="off"', RM.razon_social)}<div class="grid2">${fld('RUT', 'data-bindrm="rut" data-rutcheck autocomplete="off"', RM.rut, RM.rut && !rutValid(RM.rut) ? 'class="bad"' : '')}
+    <label class="f">${t('mer.plan')}<select data-bindrm="plan"><option value="basic" ${RM.plan === 'basic' ? 'selected' : ''}>basic</option><option value="pro" ${RM.plan === 'pro' ? 'selected' : ''}>pro</option></select></label></div>
+    ${fld(t('mer.contact'), 'data-bindrm="contacto_nombre" autocomplete="off"', RM.contacto_nombre)}<button class="btn block">${ic('plus')}${t('mer.registerBtn')}</button></form>`;
+  const list = ms.map((m) => `<div class="card stack"><div class="row between"><div><b style="font-size:17px">${esc(m.razon_social)}</b><div class="small muted">RUT ${m.rut} · ${esc(m.plan)} · ${t('mer.users', { n: S.list('users').filter((x) => x.merchant_id === m.id).length })}</div></div>
+    ${NB && NBM === m.id ? '' : `<button class="btn sm ghost" data-act="mer-add-wh" data-id="${m.id}" type="button">${ic('plus', 'sm')}${t('acc.add')}</button>`}</div>
+    ${NB && NBM === m.id ? bodegaForm() : ''}${m.bodegas.length ? `<div class="whgrid">${m.bodegas.map(whCard).join('')}</div>` : `<p class="muted small">${t('mer.noWh')}</p>`}</div>`).join('');
+  return `<div class="cols"><div class="col">${blk(reg, 0, 0)}</div><div class="col">${blk(`<div class="stack">${list}</div>`, 1, 1)}</div></div>`;
+}
+function operatorsView() {
+  const u = U(), cat = S.konnectCatalog(u), ops = S.list('operators');
+  const opCard = (o) => `<div class="card stack"><div class="row between"><div><b style="font-size:17px">${esc(o.nombre)}</b><div class="small muted">${t('op.counts', { v: o.vehiculos.length, s: o.servicios.length, p: S.list('users').filter((x) => x.operador_id === o.id).length })}</div></div><span class="chip s4">${ic('check', 'sm')}${t('op.imported')}</span></div>
+    <details><summary style="font-weight:600;cursor:pointer;min-height:36px">${t('op.timetable')}</summary><div class="tblwrap"><table class="tbl"><thead><tr><th>${t('transport.service')}</th><th>${t('col.route')}</th><th>${t('op.departures')}</th></tr></thead><tbody>
+    ${o.servicios.map((s) => `<tr><td><b>${esc(s.servicio)}</b><div class="small mono muted">${s.bus_patente}</div></td><td class="small">${esc(s.origen)} → ${esc(s.destino)}</td><td class="mono small">${s.salidas.join(' · ')}</td></tr>`).join('')}</tbody></table></div></details>
+    <details><summary style="font-weight:600;cursor:pointer;min-height:36px">${t('op.fleet')}</summary>${o.vehiculos.map((v) => `<div class="kv"><span class="mono">${v.patente}</span><b>${esc(v.tipo)} · ${money(v.costo_dia)}/${t('op.day')}</b></div>`).join('')}</details></div>`;
+  const kCard = (k) => `<div class="card stack"><div class="row between"><div><b style="font-size:17px">${esc(k.nombre)}</b><div class="small muted">${t('op.counts', { v: k.vehiculos.length, s: k.servicios.length, p: (k.equipo || []).length })}</div></div>
+    ${k.importado ? `<span class="chip s4">${ic('check', 'sm')}${t('op.imported')}</span>` : `<button class="btn sm" data-act="import" data-id="${k.id}" type="button">${ic('download', 'sm')}${t('op.import')}</button>`}</div>
+    <div class="small muted">${k.servicios.map((s) => `${esc(s.origen)} → ${esc(s.destino)}`).join(' · ')}</div></div>`;
+  return `<div class="cols"><div class="col">${blk(`<div class="hint">${ic('download')}<span>${t('op.help')}</span></div>`, 0, 0)}${blk(`<h2 style="margin:4px 0">${t('op.konnect')}</h2><div class="stack">${cat.map(kCard).join('')}</div>`, 1, 1)}</div>
+    <div class="col">${blk(`<h2 style="margin:4px 0">${t('op.mine', { n: ops.length })}</h2><div class="stack">${ops.map(opCard).join('')}</div>`, 2, 2)}</div></div>`;
 }
 
 // ---- shell: sidebar / top / tab bar / router ---------------------------------------------------------------------------------------------
 function navItems(u) {
   const todo = S.listOrders(u).filter((o) => actionable(u, o)).length;
-  return u.rol === 'merchant'
-    ? [['', 'dash', 'nav.dashboard'], ['orders', 'list', 'nav.orders'], ['new', 'plus', 'nav.new', 'cta'], ['account', 'warehouse', 'nav.account']]
-    : [['', 'dash', 'nav.tasks', '', todo], ['all', 'list', 'nav.all']];
+  if (u.rol === 'merchant') return [['', 'dash', 'nav.dashboard'], ['orders', 'list', 'nav.orders'], ['new', 'plus', 'nav.new', 'cta'], ['account', 'warehouse', 'nav.account']];
+  if (u.rol === 'coordinador_logistico') return [['', 'dash', 'nav.tasks', '', todo], ['all', 'list', 'nav.all'], ['tower', 'tower', 'nav.tower'], ['merchants', 'users', 'nav.merchants'], ['operators', 'truck', 'nav.operators']];
+  if (u.rol === 'auditor') return [['', 'clip', 'nav.audit'], ['all', 'list', 'nav.all']];
+  if (u.rol === 'finanzas') return [['', 'wallet', 'nav.finance'], ['all', 'list', 'nav.all']];
+  return [['', 'dash', 'nav.tasks', '', todo], ['all', 'list', 'nav.all']];
 }
 function render() {
   const u = U(), merchant = u.rol === 'merchant';
-  let [route, arg] = location.hash.replace(/^#\/?/, '').split('/');
+  let [route, arg, arg2] = location.hash.replace(/^#\/?/, '').split('/');
   if (route === 'all' && merchant) route = 'orders';
   if (route === 'orders' && !merchant) route = 'all';
-  if ((route === 'new' || route === 'account') && !merchant) route = '';
-  const key = [route, arg, me, getLang(), document.body.dataset.view].join('|');
+  if (!routesFor(u.rol).includes(route)) route = '';
+  const key = [route, arg, arg2, me, getLang(), document.body.dataset.view].join('|');
   animateNow = key !== lastKey; lastKey = key;
   const active = route === 'order' || route === 'labels' ? (merchant ? 'orders' : '') : route;
   const items = navItems(u);
@@ -474,18 +657,20 @@ function render() {
     <nav aria-label="${esc(t('nav.aria'))}">${items.map(([r, i, k, , badge]) => `<a href="#/${r}" class="${r === active ? 'on' : ''}" ${r === active ? 'aria-current="page"' : ''}>${ic(i)}<span>${label(k)}</span>${badge ? `<span class="badge">${badge}</span>` : ''}</a>`).join('')}</nav>
     <div class="side-user"><span class="avatar">${initials(u.nombre)}</span><div><b>${esc(u.nombre.split(' (')[0])}</b><span>${esc(roleName(u.rol))}</span></div></div>`;
 
-  const titles = { '': merchant ? t('nav.dashboard') : t('nav.tasks'), orders: t('orders.all'), all: t('orders.all'), new: t('w.title'), account: t('nav.account'), order: arg ? num(arg) : '', labels: arg ? num(arg) : '' };
+  const home = { auditor: t('nav.audit'), finanzas: t('nav.finance') }[u.rol] || (merchant ? t('nav.dashboard') : t('nav.tasks'));
+  const titles = { '': home, orders: t('orders.all'), all: t('orders.all'), new: t('w.title'), account: t('nav.account'), tower: t('nav.tower'), merchants: t('nav.merchants'), operators: t('nav.operators'), order: arg ? num(arg) : '', labels: arg ? num(arg) : '' };
   $('#top').innerHTML = `<div class="tt"><div class="crumb">${esc(roleName(u.rol))}</div><h1>${esc(titles[route] ?? '')}</h1></div>
     <div class="logo"><span class="mark">${ic('truck')}</span><span>kargo<b>.</b>cl</span></div>
-    <div class="row">${merchant && route !== 'new' ? `<a class="btn only-desktop flex" href="#/new">${ic('plus')}${t('cta.new')}</a>` : ''}<div class="row only-mobile" style="gap:10px"><div class="whos" style="text-align:right;font-size:12px;line-height:1.2;color:var(--muted)"><b style="display:block;color:var(--ink);font-size:13px">${esc(u.nombre.split(' (')[0].split(' ')[0])}</b>${esc(roleName(u.rol).split(' ')[0])}</div><span class="avatar">${initials(u.nombre)}</span></div></div>`;
+    <div class="row">${merchant && route !== 'new' ? `<a class="btn only-desktop flex" href="#/new">${ic('plus')}${t('cta.new')}</a>` : ''}<div class="row only-mobile" style="gap:10px"><div class="whos"><b>${esc(u.nombre.split(' (')[0].split(' ')[0])}</b>${esc(roleName(u.rol).split(' ')[0])}</div><span class="avatar">${initials(u.nombre)}</span></div></div>`;
 
   $('#tabbar').innerHTML = items.map(([r, i, k, cls, badge]) => cls === 'cta'
     ? `<a href="#/${r}" class="cta" aria-label="${esc(label(k))}"><span class="plus">${ic(i, 'lg')}</span><span>${t(k)}</span></a>`
     : `<a href="#/${r}" class="${r === active ? 'on' : ''}" ${r === active ? 'aria-current="page"' : ''}>${ic(i)}<span>${t(k)}</span>${badge ? `<span class="badge" aria-label="${badge}">${badge}</span>` : ''}</a>`).join('');
   $('#tabbar').setAttribute('aria-label', t('nav.aria'));
 
-  const views = { '': dashboard, orders: ordersView, all: ordersView, order: () => orderView(arg), labels: () => labels(arg), new: wizard, account };
-  $('#view').innerHTML = (views[route] || dashboard)();
+  const homeView = { auditor: auditView, finanzas: financeView }[u.rol] || dashboard;
+  const views = { '': homeView, orders: ordersView, all: ordersView, order: () => orderView(arg), labels: () => labels(arg, arg2), new: wizard, account, tower: towerView, merchants: merchantsView, operators: operatorsView };
+  $('#view').innerHTML = (views[route] || homeView)();
   initSignature();
   countUp();
   const f = $('#view form[data-form=scan] input'); if (f && animateNow === false) f.focus({ preventScroll: true });
@@ -519,26 +704,46 @@ function initSignature() {
 const setPath = (obj, path, val) => { const k = path.split('.'); const last = k.pop(); k.reduce((a, x) => a[x], obj)[last] = val; };
 const currentId = () => location.hash.split('/')[2];
 
+// downscale a picked photo so localStorage stays small
+function readPhoto(file) {
+  return new Promise((resolve) => {
+    const r = new FileReader();
+    r.onload = () => { const img = new Image(); img.onload = () => { const k = Math.min(1, 480 / Math.max(img.width, img.height)), cv = document.createElement('canvas'); cv.width = img.width * k; cv.height = img.height * k; cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); resolve(cv.toDataURL('image/jpeg', 0.6)); }; img.onerror = () => resolve(null); img.src = r.result; };
+    r.onerror = () => resolve(null); r.readAsDataURL(file);
+  });
+}
+
 document.addEventListener('input', (e) => {
   const el = e.target;
   if (el.id === 'q') { query = el.value; const p = el.selectionStart; render(); const q = $('#q'); q.focus(); q.setSelectionRange(p, p); return; }
   if (el.dataset.bind && W) { setPath(W, el.dataset.bind, el.value); const s = $('#wsum'); if (s) s.innerHTML = wizSummary(); }
   if (el.dataset.bindnb && NB) setPath(NB, el.dataset.bindnb, el.value);
+  if (el.dataset.bindrm) RM[el.dataset.bindrm] = el.value;
   if (el.dataset.rutcheck !== undefined) el.classList.toggle('bad', !!el.value && !rutValid(el.value));
 });
-document.addEventListener('change', (e) => {
+document.addEventListener('change', async (e) => {
   const el = e.target, a = el.dataset.change;
   if (el.id === 'who') return switchUser(el.value);
+  if (el.id === 'incphoto') { pendingPhoto = el.files[0] ? await readPhoto(el.files[0]) : null; return toast(pendingPhoto ? t('inc.photoOk') : t('inc.photoBad'), pendingPhoto ? '' : 'err'); }
+  if (el.dataset.fin) { FIN[el.dataset.fin] = el.value; return render(); }
+  if (el.dataset.bindrm) RM[el.dataset.bindrm] = el.value;
   if (a === 'w-ciudad') { W.ciudad = el.value; W.origen = bodegas().find((b) => b.ciudad === el.value).id; if (W.destino === W.origen) W.destino = ''; render(); }
   if (a === 'w-origen') { W.origen = el.value; if (W.destino === W.origen) W.destino = ''; render(); }
-  if (a === 'w-destino') { if (el.value === '__new') { NB = blankNB(); W.destino = ''; } else W.destino = el.value; render(); }
+  if (a === 'w-destino') { if (el.value === '__new') { NB = blankNB(); NBM = null; W.destino = ''; } else W.destino = el.value; render(); }
 });
 
 const forms = {
-  assign: (f) => run(() => S.assign(U(), currentId(), { operador_id: f.get('operador_id') }), 'assign.ok'),
+  assign: (f) => run(() => S.assign(U(), currentId(), { operador_id: f.get('operador_id'), ultima_milla: f.get('ultima_milla') }), 'assign.ok'),
+  accept: () => run(() => S.accept(U(), currentId()), 'accept.ok'),
+  reject: (f) => run(() => S.reject(U(), currentId(), { reason: f.get('reason') }), 'reject.ok'),
   pickup: (f) => run(() => S.pickup(U(), currentId(), { conductor_id: f.get('conductor_id'), movil_patente: f.get('movil_patente') }), 'pickup.ok'),
-  transport: (f) => run(() => S.transport(U(), currentId(), { servicio_id: f.get('servicio_id'), conductor_id: f.get('conductor_id') }), 'transport.ok'),
+  lastmile: (f) => run(() => S.assignLastMile(U(), currentId(), { conductor_id: f.get('conductor_id'), movil_patente: f.get('movil_patente') }), 'lastmile.ok'),
+  ready: () => run(() => S.markPickupReady(U(), currentId()), 'ready.ok'),
+  transport: (f) => { const [servicio_id, salida] = String(f.get('opt') || '|').split('|'); run(() => S.transport(U(), currentId(), { servicio_id, salida, conductor_id: f.get('conductor_id') }), 'transport.ok'); },
+  adjust: (f) => run(() => S.adjustCount(U(), currentId(), { add: f.get('add'), peso_kg: f.get('peso_kg'), reason: f.get('reason') }), 'adj.ok'),
+  incident: (f) => { const foto = pendingPhoto; pendingPhoto = null; run(() => S.reportIncident(U(), currentId(), { tipo: f.get('tipo'), detalle: f.get('detalle'), foto }), 'inc.sent'); },
   scan: (f) => run(() => S.scan(U(), currentId(), { piece_code: f.get('piece_code') }), 'scan.ok'),
+  rm: () => run(() => { S.registerMerchant(U(), RM); RM = { razon_social: '', rut: '', plan: 'basic', contacto_nombre: '' }; buildWho(); }, 'mer.ok'),
   confirm: (f) => {
     if ($('#sig') && !sigDrawn) return toast(t('confirm.needSig'), 'err');
     const firma = $('#sig') ? $('#sig').toDataURL('image/png') : undefined;
@@ -554,8 +759,13 @@ const acts = {
   filter: (el) => { filter = el.dataset.f; render(); },
   'sig-clear': () => initSignature(),
   'scan-one': (el) => run(() => S.scan(U(), currentId(), { piece_code: el.dataset.code }), 'scan.ok'),
-  'scan-all': () => run(() => { const o = ORDER(); o.paquetes.filter((p) => !p.scan_history.some((s) => s.checkpoint === o.checkpoint_actual)).forEach((p) => S.scan(U(), currentId(), { piece_code: p.piece_code })); }, 'scan.allOk'),
+  'scan-all': () => run(() => { const o = ORDER(); o.paquetes.filter((p) => p.status !== 'no_recolectado' && !p.scan_history.some((s) => s.checkpoint === o.checkpoint_actual)).forEach((p) => S.scan(U(), currentId(), { piece_code: p.piece_code })); }, 'scan.allOk'),
   manual: (el) => { const reason = prompt(t('scan.manualPrompt')); if (reason) run(() => S.scan(U(), currentId(), { piece_code: el.dataset.code, manual: true, reason }), 'scan.manualOk'); },
+  noco: (el) => { const reason = prompt(t('adj.removePrompt')); if (reason) run(() => S.adjustCount(U(), currentId(), { remove: [el.dataset.code], reason }), 'adj.ok'); },
+  resolve: (el) => { const nota = prompt(t('inc.resolvePrompt')); if (nota) run(() => S.resolveIncident(U(), el.dataset.id, { nota }), 'inc.resolved'); },
+  import: (el) => run(() => { S.importOperator(U(), el.dataset.id); buildWho(); }, 'op.ok'),
+  'fin-csv': () => csvExport(),
+  'mer-add-wh': (el) => { NB = blankNB(); NBM = el.dataset.id; render(); },
   'w-back': () => { W.step--; render(); },
   'w-next': () => {
     if (W.step === 1) {
@@ -574,7 +784,7 @@ const acts = {
     const clean = (arr) => arr.filter((p) => p.nombre || p.rut || p.telefono);
     try {
       W.done = S.createOrder(U(), {
-        bodega_origen_id: W.origen, bodega_destino_id: W.destino, referencia_cliente: W.ref,
+        bodega_origen_id: W.origen, bodega_destino_id: W.destino, referencia_cliente: W.ref, mpo: W.mpo,
         personas_autorizadas: { origen: clean(W.personas.origen), destino: clean(W.personas.destino) },
         paquetes: W.paquetes.map((p) => ({ descripcion: p.descripcion, peso_kg: Number(String(p.peso_kg).replace(',', '.')), valor_declarado_clp: p.valor === '' ? null : Number(p.valor) })),
       });
@@ -586,15 +796,15 @@ const acts = {
     }
     render();
   },
-  'nb-open': () => { NB = blankNB(); render(); },
-  'nb-cancel': () => { NB = null; render(); },
-  'nb-save': () => run(() => { const b = S.addBodega(U(), NB); NB = null; if (W) W.destino = b.id; }, 'nb.saved'),
+  'nb-open': () => { NB = blankNB(); NBM = null; render(); },
+  'nb-cancel': () => { NB = null; NBM = null; render(); },
+  'nb-save': () => run(() => { const b = S.addBodega(U(), NB, NBM); NB = null; NBM = null; if (W) W.destino = b.id; }, 'nb.saved'),
 };
 document.addEventListener('click', (e) => {
   const lg = e.target.closest('[data-lang]'); if (lg) return changeLang(lg.dataset.lang);
   const vm = e.target.closest('[data-viewmode]'); if (vm) return changeView(vm.dataset.viewmode);
   const a = e.target.closest('[data-act]'); if (a) return acts[a.dataset.act]?.(a);
-  const row = e.target.closest('tr[data-href]'); if (row && !e.target.closest('a')) location.hash = row.dataset.href;
+  const row = e.target.closest('tr[data-href]'); if (row && !e.target.closest('a,button')) location.hash = row.dataset.href;
 });
 $('#reset').addEventListener('click', () => { if (confirm(t('demo.resetConfirm'))) boot(true); });
 

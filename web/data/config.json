@@ -1,0 +1,9 @@
+{
+  "_comment": "Business rules used by KPIs and the bus window.",
+  "config": [
+    {
+      "sla_promesa_horas": 48,
+      "ventana_bus_horas": 2
+    }
+  ]
+}
