@@ -16,9 +16,20 @@ Abrir **http://localhost:3000** (idealmente en el celular o con el navegador en 
 
 > `npm start` es solo un servidor de archivos estáticos: los navegadores bloquean leer los JSON desde un archivo suelto.
 
+## Controles de la demo (barra superior)
+
+| Control | Qué hace |
+|---|---|
+| **Ver como** | Cambia de usuario sin login (7 roles, 2 operadores). |
+| **ES / EN** | Cambia todo el idioma de la interfaz al instante. |
+| **Móvil / Escritorio** | Móvil = marco de teléfono con barra inferior; Escritorio = panel completo con menú lateral, mapa de rutas y resumen. Bajo 700 px de pantalla real siempre es móvil. |
+| **Reiniciar demo** | Vuelve a los datos de `data/`. |
+
+Las preferencias se guardan. Enlaces directos para presentar: `http://localhost:3000/?as=usr_210&lang=en&view=mobile#/order/ot_00003` (`as` = id de usuario de `data/users.json`; agrega `&still=1` para desactivar animaciones al sacar capturas).
+
 ## Cómo presentarlo (guion de 3 minutos)
 
-Arriba hay un selector **"Ver como"** para cambiar de usuario sin login. Cada orden muestra **"Siguiente: <persona>"** con un botón para saltar a esa persona.
+Cada orden muestra **"Siguiente: <persona>"** con un botón para saltar a esa persona.
 
 1. **Carla (Merchant)** → `＋ Nueva`: bodega de origen/destino, 2 personas autorizadas por punto (RUT validado), bultos (con "Duplicar") → *Crear orden* → etiquetas imprimibles.
 2. **Andrés (Coordinador)** → asigna la orden a un operador.
@@ -34,7 +45,7 @@ Cosas para probar: registro **manual** de un bulto con motivo, RUT inválido, me
 ## Estructura
 
 ```
-web/          index.html · app.js (UI por rol) · store.js (reglas) · style.css
+web/          index.html · app.js (UI por rol) · store.js (reglas) · i18n.js (ES/EN) · style.css (sistema de diseño)
 data/         Contrato de datos: merchants, users, operators, roles, orders, packages, tracking_events, invoices
 scripts/      seed.js  → regenera data/ (npm run seed)
 test/         flow.test.js → cadena completa + permisos + validaciones (npm test)
@@ -59,6 +70,8 @@ graphify-out/ Grafo de conocimiento de la especificación (graph.html)
 | Firma guardada como data URL dentro del JSON | Subir el archivo y guardar su URL |
 | Escaneo por teclado/botón (un lector USB actúa como teclado) | Cámara del teléfono (BarcodeDetector / librería) |
 | Etiquetas Code 39 | QR / Code128 generado por el backend |
+| Mapa de rutas = esquema SVG de Chile (no geográfico exacto) | Mapa real con posición GPS del bus |
+| Fuentes Fira desde Google Fonts (sin internet cae a la fuente del sistema) | Autoalojar las fuentes |
 | Motivo del registro manual con `prompt()` | Formulario con códigos de motivo + revisión |
 
 ## Fuera de alcance (por ahora)
