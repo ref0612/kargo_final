@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><title>KARGO — Guía completa del mockup</title>
+<link rel="stylesheet" href="doc.css"></head><body>
+
+<!-- ============ PORTADA ============ -->
+<section class="page cover">
+  <div>
+    <div class="bar"></div>
+    <div class="eyebrow">Guía de referencia · Equipo KARGO</div>
+    <h1>Guía completa del mockup: cada pantalla, cada botón, cada regla</h1>
+    <p class="dek">Qué hace el mockup funcional de KARGO, cómo se recorre de punta a punta, qué ocurre al presionar cada botón y qué es real y qué es simulado.</p>
+    <div class="toc">
+      <div><b>01</b>Qué es y qué alcance tiene</div><div><b>02</b>Cómo correrlo y desplegarlo</div>
+      <div><b>03</b>La barra superior de la demo</div><div><b>04</b>Anatomía de la pantalla</div>
+      <div><b>05</b>Estados del flujo</div><div><b>06</b>Reglas transversales</div>
+      <div><b>07</b>Guía por rol (9 roles)</div><div><b>08</b>Indicadores y fórmulas</div>
+      <div><b>09</b>Los datos (archivos JSON)</div><div><b>10</b>Escenario de ejemplo (10 órdenes)</div>
+      <div><b>11</b>Recorridos de demo</div><div><b>12</b>Idioma, límites y glosario</div>
+    </div>
+  </div>
+  <div class="meta"><div><b>Fecha</b>21 de septiembre de 2026</div><div><b>Versión</b>v2 · commit 7a0e3eb (main)</div><div><b>Repositorio</b>github.com/ref0612/kargo_final</div></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section class="page">
+  <div class="sec"><span class="n">01</span><h2>Qué es y qué alcance tiene</h2></div>
+  <p class="lede">Un mockup navegable que demuestra <b>todo el flujo de una encomienda</b>: desde que el merchant la crea hasta que se entrega en la bodega de destino, pasando por coordinación, aceptación del operador, recolección, bodegas, bus y última milla. Sirve para mostrar el sistema y para que el equipo de backend tenga claro qué construir.</p>
+  <div class="grid2">
+    <div class="card"><h4>Lo que sí es</h4><ul>
+      <li>Una aplicación web <b>mobile-first</b> con vista de escritorio, en español e inglés.</li>
+      <li><b>9 roles</b> que se cambian al instante sin iniciar sesión.</li>
+      <li>Las <b>reglas del negocio ejecutables</b> (estados, permisos, validaciones, indicadores) en <span class="mono">web/store.js</span>, con 17 pruebas automáticas.</li>
+      <li>Un <b>contrato de datos</b> en archivos JSON (<span class="mono">web/data</span>).</li>
+    </ul></div>
+    <div class="card"><h4>Lo que no es</h4><ul>
+      <li><b>No tiene backend ni base de datos.</b> El estado vive en el navegador de cada persona.</li>
+      <li>No tiene inicio de sesión real ni contraseñas.</li>
+      <li>No usa la cámara ni impresoras reales; el escaneo y la impresión están simulados.</li>
+      <li>No calcula precios ni factura (en pausa).</li>
+    </ul></div>
+  </div>
+  <div class="callout"><b>Importante para presentarlo:</b> todo lo que hagas queda guardado en <i>tu</i> navegador. Otra persona que abra el enlace no ve tus cambios. El botón <b>Reiniciar demo</b> vuelve a los datos de ejemplo.</div>
+  <h3>Los tres tramos y dónde caen en el mockup</h3>
+  <table><tr><th>Tramo</th><th>Qué cubre</th><th>Roles que intervienen</th></tr>
+    <tr><td class="k">First Mile</td><td>Crear la orden, asignar, aceptar y recolectar con escaneo y firma.</td><td>Merchant, Coordinador, Despachador, Conductor de recolección</td></tr>
+    <tr><td class="k">Mid Mile</td><td>Ingreso a bodega del operador, asignación del bus, carga y llegada a la bodega de destino.</td><td>Encargado de bodega, Conductor de bus</td></tr>
+    <tr><td class="k">Last Mile</td><td>Entrega en la bodega del merchant (con el operador) o retiro del destinatario.</td><td>Despachador, Conductor de última milla, Encargado de bodega</td></tr>
+    <tr><td class="k">Soporte</td><td>Control Tower, Auditoría, Finanzas, onboarding.</td><td>Coordinador, Auditoría, Finanzas</td></tr>
+  </table>
+</section>
+
+<!-- ============ 2 ============ -->
+<section class="page">
+  <div class="sec"><span class="n">02</span><h2>Cómo correrlo y desplegarlo</h2></div>
+  <h3>En tu computador</h3>
+  <ol class="steps"><li>Abre una terminal en la carpeta del proyecto (<span class="mono">C:\Users\pasaj\Desktop\kargo_final</span>).</li><li>Ejecuta <span class="mono">npm start</span>.</li><li>Abre <b>http://localhost:3000</b> en el navegador. Para verlo como celular usa el botón <i>Móvil</i> de la barra superior o abre la dirección desde un teléfono en la misma red Wi-Fi, con la IP de tu equipo.</li></ol>
+  <p>Solo necesita Node 18 o superior; no hay que instalar dependencias. <span class="mono">npm start</span> es un servidor de archivos estáticos: los navegadores no permiten leer los JSON desde un archivo suelto.</p>
+  <h3>Comandos útiles</h3>
+  <table><tr><th>Comando</th><th>Qué hace</th></tr>
+    <tr><td class="k mono">npm start</td><td>Sirve el mockup en el puerto 3000 (otro puerto: <span class="mono">$env:PORT=3001; npm start</span>).</td></tr>
+    <tr><td class="k mono">npm test</td><td>Corre las 17 pruebas: flujo completo, permisos, KPIs y cobertura de traducciones.</td></tr>
+    <tr><td class="k mono">npm run seed</td><td>Regenera los datos de ejemplo (<span class="mono">web/data</span>) ejecutando un escenario por las reglas reales.</td></tr>
+  </table>
+  <h3>En internet (Vercel, Netlify, GitHub Pages…)</h3>
+  <p>Es un sitio 100 % estático. Publica la carpeta <b>web/</b> como raíz: en Vercel, <i>Framework Preset</i> "Other", <i>Build Command</i> vacío y <i>Output Directory</i> <span class="mono">web</span>. Como los datos viajan dentro de <span class="mono">web/data</span>, no hay nada más que configurar.</p>
+  <h3>Dónde queda guardado el estado</h3>
+  <ul>
+    <li>Los datos de la demo (órdenes, escaneos, firmas…) se guardan en el <span class="mono">localStorage</span> del navegador, bajo la clave <span class="mono">kargo-mock-db-v2</span>.</li>
+    <li>También se recuerdan el usuario elegido, el idioma y la vista (móvil o escritorio).</li>
+    <li>Si abres la demo en otro navegador o en modo incógnito, empieza desde los datos de ejemplo.</li>
+    <li>Cuando cambian los datos de ejemplo en una versión nueva, la clave sube de versión (v2) para que nadie vea datos viejos mezclados.</li>
+  </ul>
+  <h3>Enlaces directos (para presentar)</h3>
+  <p>La dirección acepta parámetros: <span class="mono">?as=usr_210&amp;lang=en&amp;view=mobile#/order/ot_00007</span></p>
+  <table><tr><th>Parte</th><th>Significado</th></tr>
+    <tr><td class="k mono">as=</td><td>Identificador del usuario (ver la lista en la sección 10).</td></tr>
+    <tr><td class="k mono">lang=</td><td><span class="mono">es</span> o <span class="mono">en</span>.</td></tr>
+    <tr><td class="k mono">view=</td><td><span class="mono">mobile</span> o <span class="mono">desktop</span>.</td></tr>
+    <tr><td class="k mono">still=1</td><td>Desactiva las animaciones (útil para tomar capturas).</td></tr>
+    <tr><td class="k mono">#/order/ot_00007</td><td>Abre directamente esa orden.</td></tr>
+  </table>
+</section>
+
+<!-- ============ 3 ============ -->
+<section class="page">
+  <div class="sec"><span class="n">03</span><h2>La barra superior de la demo</h2></div>
+  <p class="lede">Está siempre visible y no forma parte del producto real: existe para recorrer el flujo cambiando de persona.</p>
+  <ul class="btnlist">
+    <li><b>Ver como</b><span>Lista desplegable con todos los usuarios de ejemplo, agrupados por rol. Al elegir uno se cambia de persona al instante, se vuelve a su pantalla de inicio y se cierran los formularios abiertos.</span></li>
+    <li><b>ES / EN</b><span>Cambia todo el idioma: textos, roles, estados, mensajes de error y eventos. Se conserva la pantalla y lo que estabas escribiendo. Los datos de ejemplo (nombres de bodegas, cargos) siguen en español.</span></li>
+    <li><b>Móvil / Escritorio</b><span><b>Móvil</b>: marco de teléfono con barra de navegación inferior. <b>Escritorio</b>: menú lateral, encabezado con título y paneles de varias columnas. En una pantalla real de menos de 700 px el botón desaparece y siempre es móvil.</span></li>
+    <li><b>Reiniciar demo</b><span>Pide confirmación y vuelve a los datos de ejemplo, borrando lo hecho. Conserva idioma y vista.</span></li>
+  </ul>
+  <h3>Ayuda para seguir el flujo</h3>
+  <p>En el detalle de cualquier orden no entregada aparece un aviso naranja: <b>"Siguiente: &lt;persona&gt; (&lt;rol&gt;). Ver como esta persona"</b>. El enlace cambia a esa persona y abre la misma orden. Así el recorrido se hace sin buscar en la lista.</p>
+  <figure class="crop-fig"><div class="crop" style="height:68mm"><img src="img/01_merchant_panel.png" alt=""></div><figcaption>Vista de escritorio del merchant: barra de demo arriba, menú lateral, encabezado con cifras, seguimiento en vivo, mapa de rutas y órdenes recientes.</figcaption></figure>
+</section>
+
+<!-- ============ 4 ============ -->
+<section class="page">
+  <div class="sec"><span class="n">04</span><h2>Anatomía de la pantalla</h2></div>
+  <h3>Escritorio</h3>
+  <ul>
+    <li><b>Menú lateral:</b> logotipo, navegación según el rol (la opción activa lleva una marca naranja), globito con la cantidad de tareas pendientes y, abajo, la persona actual con su rol.</li>
+    <li><b>Encabezado:</b> ruta de migas (el rol), título de la pantalla y, para el merchant, el botón <i>Nueva encomienda</i>.</li>
+    <li><b>Contenido:</b> una o dos columnas de tarjetas. En pantallas angostas (menos de 1180 px) pasa a una columna.</li>
+  </ul>
+  <h3>Móvil</h3>
+  <ul>
+    <li><b>Barra superior:</b> logotipo y la persona actual.</li>
+    <li><b>Barra inferior:</b> navegación por iconos con etiqueta (máximo 5). Para el merchant, el botón central naranja es <i>Nueva encomienda</i>.</li>
+    <li>Las tablas anchas (Auditoría, Finanzas) se desplazan horizontalmente dentro de su tarjeta.</li>
+  </ul>
+  <figure class="crop-fig"><div class="crop" style="height:68mm"><img src="img/15_movil_pickup.png" alt=""></div><figcaption>Vista móvil con marco de teléfono: el conductor de recolección con su orden pendiente.</figcaption></figure>
+  <h3>Componentes que se repiten</h3>
+  <table class="tight"><tr><th>Componente</th><th>Qué significa</th></tr>
+    <tr><td class="k">Chip de estado</td><td>Estado de la orden. El merchant ve 5 estados; el resto de los roles ve el paso interno (por ejemplo "Aceptada por despachador").</td></tr>
+    <tr><td class="k">Riel de progreso</td><td>Puntos conectados: azul con visto = completado, naranja con pulso = paso actual, gris = pendiente. Para el merchant tiene 5 puntos; para el resto, uno por cada paso interno (10 u 11).</td></tr>
+    <tr><td class="k">Tarjeta de ruta</td><td>Ciudad de origen → ciudad de destino con un camión que avanza según el progreso.</td></tr>
+    <tr><td class="k">Chip naranja "Dif. +1" / "N incidencias"</td><td>Diferencia de conteo respecto de lo declarado, e incidencias abiertas.</td></tr>
+    <tr><td class="k">Mapa de rutas</td><td>Esquema de Chile ajustado a las ciudades en uso. Línea naranja animada = en tránsito; punteada = aún no sale; gris = entregada. Es un esquema, no un mapa exacto ni GPS.</td></tr>
+    <tr><td class="k">Actividad reciente</td><td>Los últimos 6 eventos de las órdenes que el usuario puede ver.</td></tr>
+    <tr><td class="k">Aviso emergente (toast)</td><td>Confirma cada acción ("Orden asignada") o explica el error ("Faltan 1 de 4 bultos por escanear"). Se traduce según el idioma.</td></tr>
+  </table>
+</section>
+
+<!-- ============ 5 ============ -->
+<section class="page">
+  <div class="sec"><span class="n">05</span><h2>Estados del flujo</h2></div>
+  <!--FLOW_SVG-->
+  <p style="font-size:8.4pt;color:#4F6078;margin-top:4pt"><b>ESC</b> = escaneo de cada bulto · <b>FIRMA</b> = firma de persona autorizada · <b>10a</b> última milla con el operador · <b>10b</b> retiro del destinatario · la descarga del bus no se escanea.</p>
+</section>
+<section class="page">
+  <div class="sec"><span class="n">05</span><h2>Estados del flujo (detalle)</h2></div>
+  <table class="tight"><tr><th>#</th><th>Estado</th><th>Quién actúa</th><th>Acción</th><th>Para avanzar exige</th><th>El merchant ve</th></tr>
+    <tr><td>1</td><td class="k">creada</td><td>Merchant</td><td>Crea la orden</td><td>Datos válidos (ver sección 7.1)</td><td>Creada</td></tr>
+    <tr><td>2</td><td class="k">asignada_operador</td><td>Coordinador</td><td>Elige operador y modalidad de última milla</td><td>Operador válido</td><td>Asignada</td></tr>
+    <tr><td>3</td><td class="k">aceptada</td><td>Despachador</td><td>Acepta (o rechaza con motivo → vuelve a "creada")</td><td>Motivo si rechaza</td><td>Asignada</td></tr>
+    <tr><td>4</td><td class="k">recoleccion_asignada</td><td>Despachador</td><td>Designa conductor y móvil</td><td>Conductor y móvil de su operador</td><td>En recolección</td></tr>
+    <tr><td>5</td><td class="k">recolectada</td><td>Conductor de recolección</td><td>Ajusta cantidad si difiere, escanea, verifica y firma</td><td>Todos los bultos activos escaneados + persona autorizada + RUT verificado + firma</td><td>En tránsito</td></tr>
+    <tr><td>6</td><td class="k">en_bodega_operador</td><td>Encargado de bodega</td><td>Escanea el ingreso</td><td>Todos los bultos escaneados</td><td>En tránsito</td></tr>
+    <tr><td>7</td><td class="k">asignada_transporte</td><td>Encargado de bodega</td><td>Elige servicio y salida de la parrilla y conductor de bus</td><td>Servicio que cubra la ruta</td><td>En tránsito</td></tr>
+    <tr><td>8</td><td class="k">cargada_bus</td><td>Conductor de bus</td><td>Escanea la carga</td><td>Todos los bultos escaneados</td><td>En tránsito</td></tr>
+    <tr><td>9</td><td class="k">en_bodega_destino</td><td>Encargado de bodega</td><td>Escanea el ingreso a destino</td><td>Todos los bultos escaneados</td><td>En tránsito</td></tr>
+    <tr><td>10a</td><td class="k">ultima_milla_asignada</td><td>Despachador</td><td>Designa conductor de entrega y móvil</td><td>Conductor y móvil válidos</td><td>En tránsito</td></tr>
+    <tr><td>10b</td><td class="k">lista_retiro</td><td>Encargado de bodega</td><td>Marca la carga lista para retiro</td><td>Modalidad "retiro"</td><td>En tránsito + aviso con el punto de retiro</td></tr>
+    <tr><td>11</td><td class="k">entregada</td><td>Conductor de entrega (o encargado en retiro)</td><td>Escanea y recibe la firma</td><td>Bultos escaneados + persona autorizada de destino + RUT + firma</td><td>Entregada</td></tr>
+  </table>
+  <div class="callout"><b>Sobre el estado 5:</b> "bultos activos" son los que no fueron marcados como "no recolectados". Un bulto agregado en la recolección también es activo y también se escanea.</div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section class="page">
+  <div class="sec"><span class="n">06</span><h2>Reglas transversales</h2></div>
+  <table><tr><th>Regla</th><th>Cómo funciona</th></tr>
+    <tr><td class="k">Escaneo</td><td>Cada traspaso físico exige escanear <b>cada bulto</b> (usuario, fecha y hora). En el mockup se escribe o pega el código y se presiona <i>Escanear</i>; un lector USB sirve porque escribe como teclado. Para demostrar sin lector: tocar <i>Escanear</i> en cada bulto o <i>Escanear todos (demo)</i>.</td></tr>
+    <tr><td class="k">Registro manual</td><td>Si un escaneo falla, el botón <i>Manual</i> pide un motivo y registra el bulto igual, marcado como "Manual" y visible en el registro de eventos.</td></tr>
+    <tr><td class="k">Firma</td><td>Solo en la <b>recolección</b> y la <b>entrega final</b>: se elige a una persona autorizada, se marca que se verificó el RUT contra la cédula y se firma en el recuadro. Sin las tres cosas no se avanza.</td></tr>
+    <tr><td class="k">Personas autorizadas</td><td>Al crear la orden el merchant registra al menos 2 por punto (origen y destino) con nombre, RUT válido y teléfono. Es la única verificación de identidad: se compara visualmente con la cédula.</td></tr>
+    <tr><td class="k">Trabajo asignado a otro</td><td>Un conductor solo puede escanear su recolección o su bus; otro conductor recibe "Esta recolección está asignada a otro conductor".</td></tr>
+    <tr><td class="k">Visibilidad</td><td>El merchant ve solo sus órdenes; cada operador, solo las asignadas a él; Coordinador, Auditoría y Finanzas ven todas (las dos últimas sin poder operar).</td></tr>
+    <tr><td class="k">Cantidad de bultos</td><td>Lo declarado por el merchant no cambia nunca. El conductor puede ajustar lo recolectado, siempre con motivo; queda la diferencia y una incidencia abierta.</td></tr>
+    <tr><td class="k">Ventana del bus</td><td>Si el servicio elegido sale a más de 2 horas de la asignación se marca "Riesgo &gt; 2 h". Al cargar se mide si se cumplió.</td></tr>
+    <tr><td class="k">Registro de eventos</td><td>Cada acción escribe un evento con persona, rol, fecha y nota. La línea de tiempo y el historial de cada bulto salen de ahí; no se puede editar.</td></tr>
+    <tr><td class="k">RUT</td><td>Se valida el dígito verificador. Un RUT inválido se marca en rojo mientras se escribe.</td></tr>
+  </table>
+</section>
+
+<!-- ============ 7.1 MERCHANT ============ -->
+<section>
+  <div class="sec"><span class="n">07</span><h2>Guía por rol</h2></div>
+  <h3>7.1 Merchant <span class="tag new">Carla Mendoza · usr_042</span> <span class="tag new">Tomás Ibarra · usr_043</span></h3>
+  <p><b>Objetivo:</b> crear la orden y seguir el avance. No asigna, no escanea, no gestiona la operación. <b>Menú:</b> Panel · Órdenes · Nueva encomienda · Cuenta.</p>
+  <h4>Panel</h4>
+  <ul class="btnlist">
+    <li><b>Encabezado</b><span>Saludo, frase y el botón <i>Nueva encomienda</i>. Tres cifras: Órdenes, En curso, Entregadas (cuentan al abrir).</span></li>
+    <li><b>Seguimiento en vivo</b><span>La orden en curso más avanzada: ciudades, camión, riel de 5 pasos y botón <i>Ver orden</i>.</span></li>
+    <li><b>Órdenes recientes</b><span>Las 4 últimas como tarjetas (código, estado, ruta, bultos, fecha, referencia, barra de avance). <i>Ver todas</i> abre la lista completa.</span></li>
+    <li><b>Red de rutas / Actividad</b><span>Mapa con las bodegas del merchant y sus envíos; últimos eventos.</span></li>
+  </ul>
+  <h4>Órdenes</h4>
+  <ul class="btnlist">
+    <li><b>Buscador</b><span>Filtra al escribir por código de orden, ciudad, nombre de bodega o referencia.</span></li>
+    <li><b>Todas · En curso · Entregadas</b><span>Filtros de estado (el activo se ve oscuro).</span></li>
+    <li><b>Tabla / tarjetas</b><span>Escritorio: tabla con Orden, Ruta, Bultos, Estado, Creada y Referencia (un chip indica la diferencia de conteo). Móvil: tarjetas. Un clic abre el detalle.</span></li>
+  </ul>
+  <figure class="crop-fig"><div class="crop" style="height:68mm"><img src="img/03_merchant_orden.png" alt=""></div><figcaption>Detalle de una orden entregada, visto por el merchant: recorrido de 5 pasos, detalle operativo, autorizados, firmas y eventos.</figcaption></figure>
+</section>
+<section>
+  <h4>Nueva encomienda (asistente de 3 pasos)</h4>
+  <p>Arriba hay un indicador de pasos. En escritorio, un panel de <b>Resumen</b> a la derecha muestra ruta, autorizados, bultos y peso total mientras escribes.</p>
+  <table class="tight"><tr><th>Paso</th><th>Campo o botón</th><th>Qué hace</th></tr>
+    <tr><td rowspan="5" class="k">1 · Origen y destino</td><td>Ciudad de origen / Bodega de origen</td><td>Si el merchant tiene una sola bodega, se usa esa y no se pregunta. Si tiene varias, se elige la ciudad y luego la bodega de esa ciudad.</td></tr>
+    <tr><td>Bodega de destino</td><td>Lista de las otras bodegas del merchant. La opción <i>+ Registrar bodega nueva…</i> abre un formulario dentro del asistente (ver "Cuenta").</td></tr>
+    <tr><td>Referencia interna / OC</td><td>Opcional. Aparece en listas y tablas.</td></tr>
+    <tr><td>MPO / lote</td><td>Opcional. Agrupa órdenes de un mismo lote para el indicador de cumplimiento MPO.</td></tr>
+    <tr><td>Continuar</td><td>Exige elegir el destino ("Elige la bodega de destino").</td></tr>
+    <tr><td rowspan="3" class="k">2 · Autorizados</td><td>Nombre · RUT · Teléfono</td><td>Vienen precargados con los contactos de cada bodega y son editables por orden. El RUT se pone rojo si es inválido.</td></tr>
+    <tr><td>+ Agregar otra persona</td><td>Suma una fila vacía en ese punto.</td></tr>
+    <tr><td>Atrás / Continuar</td><td>Navega entre pasos.</td></tr>
+    <tr><td rowspan="5" class="k">3 · Bultos</td><td>Contenido · Peso aprox. · Valor</td><td>Contenido y peso son obligatorios; el valor declarado es opcional.</td></tr>
+    <tr><td>Duplicar</td><td>Copia el bulto (útil para varias cajas iguales).</td></tr>
+    <tr><td>Quitar</td><td>Elimina el bulto (siempre queda al menos uno).</td></tr>
+    <tr><td>+ Agregar bulto</td><td>Suma un bulto vacío.</td></tr>
+    <tr><td>Crear orden</td><td>Valida todo. Si falla, muestra el error y vuelve al paso correspondiente (autorizados o bultos).</td></tr>
+  </table>
+  <p><b>Al crear:</b> pantalla de confirmación con el código de la orden y tres botones: <i>Imprimir etiquetas</i> (una por bulto, con código de barras y "i/n"), <i>Ver orden</i> y <i>Crear otra</i>. La orden queda en "Creada", a la espera del Coordinador.</p>
+  <figure class="crop-fig"><div class="crop" style="height:52mm"><img src="img/02_wizard_paso1.png" alt=""></div><figcaption>Paso 1 del asistente con el panel de resumen.</figcaption></figure>
+  <h4>Cuenta</h4>
+  <ul class="btnlist">
+    <li><b>Tarjeta de empresa</b><span>Razón social, RUT, plan y nota de facturación mensual (en pausa).</span></li>
+    <li><b>Agregar bodega</b><span>Formulario: nombre, ciudad, región, comuna, calle, código postal (7 dígitos, opcional) y 2 contactos con nombre, RUT y teléfono. <i>Guardar bodega</i> valida; <i>Cancelar</i> cierra.</span></li>
+    <li><b>Mis bodegas</b><span>Tarjetas con dirección, código postal, contactos y la marca "Origen por defecto".</span></li>
+  </ul>
+  <h4>Detalle de la orden (vista del merchant)</h4>
+  <p>Riel de 5 pasos · <b>Detalle operativo</b> (modalidad de última milla, MPO, bultos declarados → actuales con la diferencia, servicio del bus y si cumplió la ventana, punto de retiro) · aviso naranja de <b>retiro</b> cuando corresponde · <b>Bultos</b> con el punto donde ha sido escaneado cada uno · <b>Incidencias</b> (puede reportar una) · <b>Personas autorizadas</b> · <b>Firmas capturadas</b> · <b>Registro de eventos</b>.</p>
+  <h4>Etiquetas</h4>
+  <p>Desde <i>Ver / imprimir etiquetas</i>: una etiqueta por bulto con orden, "i/n", código de barras Code 39, código legible, destino, contenido y peso. <i>Imprimir</i> abre el diálogo del navegador (solo se imprimen las etiquetas).</p>
+</section>
+
+<!-- ============ 7.2 COORDINADOR ============ -->
+<section>
+  <h3>7.2 Coordinador / Control Tower <span class="tag new">Andrés Fuentes · usr_c01</span></h3>
+  <p><b>Objetivo:</b> asignar las órdenes, vigilar la operación, registrar merchants (KAM) e incorporar operadores. <b>Menú:</b> Tareas · Todas · Torre de control · Merchants · Operadores.</p>
+  <h4>Tareas y detalle de una orden "Creada"</h4>
+  <ul class="btnlist">
+    <li><b>Te toca actuar</b><span>Las órdenes en "Creada". Cada tarjeta lleva borde naranja. La cifra naranja del menú es la cantidad.</span></li>
+    <li><b>Operador de transporte</b><span>Lista de los operadores importados.</span></li>
+    <li><b>Última milla</b><span><i>Con el operador (entrega en bodega)</i> o <i>Retiro del destinatario</i>. Es una decisión por orden.</span></li>
+    <li><b>Asignar orden</b><span>Pasa a "Asignada a operador" y avisa "Orden asignada". Si el operador ya había rechazado esta orden, arriba se muestra quién y con qué motivo.</span></li>
+  </ul>
+  <figure class="crop-fig"><div class="crop" style="height:68mm"><img src="img/04_coord_asignar.png" alt=""></div><figcaption>Asignación de una orden nueva: operador y modalidad de última milla.</figcaption></figure>
+  <h4>Torre de control</h4>
+  <ul class="btnlist">
+    <li><b>9 tarjetas</b><span>SSP, aceptación, PTAT, adherencia, ingreso exitoso, nivel de servicio, ventana de bus, cumplimiento MPO y costo por bulto. Cada una muestra su fórmula y los números base (por ejemplo 6/9). Las que salen de lo esperado se tiñen de naranja. Fórmulas exactas en la sección 8.</span></li>
+    <li><b>Órdenes en riesgo</b><span>Órdenes con bus asignado cuya salida supera las 2 h o cuya ventana ya venció sin cargar. Un clic abre la orden.</span></li>
+    <li><b>Incidencias</b><span>Tabla con orden, tipo, estado, detalle (con "esperado → real" en las de conteo), fecha y el botón <i>Resolver</i>.</span></li>
+    <li><b>Resolver</b><span>Pide una nota de resolución; la incidencia pasa a "Resuelta" con quién y cuándo.</span></li>
+  </ul>
+  <h4>Merchants (trabajo del KAM)</h4>
+  <ul class="btnlist">
+    <li><b>Registrar merchant</b><span>Razón social, RUT (validado y único), plan (basic o pro) y nombre del contacto. Crea la empresa <i>y</i> su primer usuario (aparece de inmediato en "Ver como").</span></li>
+    <li><b>Lista de merchants</b><span>Cada uno con RUT, plan, cantidad de usuarios y sus bodegas.</span></li>
+    <li><b>Agregar</b><span>Abre el formulario de bodega para ese merchant (misma que en "Cuenta", con código postal). Un merchant sin bodegas todavía no puede crear órdenes.</span></li>
+  </ul>
+  <h4>Operadores (onboarding con Konnect)</h4>
+  <ul class="btnlist">
+    <li><b>Disponibles en Konnect</b><span>Catálogo simulado con flota, parrilla y equipo. Los ya incorporados llevan "Importado".</span></li>
+    <li><b>Importar</b><span>Copia el operador (vehículos con su costo diario, servicios con sus salidas, puntos de retiro) y crea a su equipo: despachador, conductores, encargado de bodega. Solo se puede importar una vez.</span></li>
+    <li><b>Operadores en Kargo</b><span>Tarjeta por operador con conteos y dos desplegables: <i>Parrilla de servicios</i> (servicio, patente, ruta, salidas) y <i>Flota y costo de contrato</i>.</span></li>
+  </ul>
+</section>
+
+<!-- ============ 7.3 DESPACHADOR ============ -->
+<section>
+  <h3>7.3 Despachador <span class="tag new">Patricia Lagos · usr_d05 (Sur)</span> <span class="tag new">Marcela Núñez · usr_d06 (Andes)</span></h3>
+  <p><b>Objetivo:</b> aceptar o rechazar lo que le asigna el Coordinador, designar la recolección y, cuando corresponde, la última milla. <b>Menú:</b> Tareas · Todas. Solo ve las órdenes de su operador.</p>
+  <ul class="btnlist">
+    <li><b>Aceptar orden</b><span>Estado "asignada_operador". Pasa a "Aceptada". El aviso recuerda la modalidad de última milla que eligió el coordinador.</span></li>
+    <li><b>Motivo del rechazo + Rechazar y devolver al coordinador</b><span>El motivo es obligatorio. La orden vuelve a "Creada" y el coordinador la ve con el motivo. El operador deja de verla.</span></li>
+    <li><b>Designar recolección</b><span>Solo tras aceptar. Eliges conductor de recolección y móvil (patente y tipo). Pasa a "Recolección asignada".</span></li>
+    <li><b>Designar última milla</b><span>Aparece cuando la carga está en la bodega de destino y la modalidad es "con el operador". Eliges conductor de entrega y móvil. Si la modalidad es "retiro", esta opción no existe y lo hace el encargado de bodega.</span></li>
+  </ul>
+  <figure class="crop-fig"><div class="crop" style="height:68mm"><img src="img/05_desp_aceptar.png" alt=""></div><figcaption>Orden pendiente de aceptación: Aceptar o rechazar con motivo.</figcaption></figure>
+</section>
+
+<!-- ============ 7.4 RECOLECCION ============ -->
+<section>
+  <h3>7.4 Conductor de recolección <span class="tag new">Héctor Ramos · usr_210</span> <span class="tag new">Sergio Muñoz · usr_211</span></h3>
+  <p><b>Objetivo:</b> retirar la carga en la bodega del merchant con escaneo por bulto y firma. Su lista "Te toca actuar" trae solo las recolecciones que se le asignaron.</p>
+  <h4>Tarjeta "Escanear: Recolección"</h4>
+  <ul class="btnlist">
+    <li><b>Contador y barra</b><span>Bultos escaneados sobre bultos activos (0/4). La barra se llena a medida que avanza.</span></li>
+    <li><b>Campo + Escanear</b><span>Escribe o escanea el código (por ejemplo KARGO-00007-002). Errores posibles: "Ese bulto no pertenece a esta orden", "Bulto ya escaneado en este paso".</span></li>
+    <li><b>Escanear todos (demo)</b><span>Escanea de una vez los bultos pendientes; solo para presentaciones.</span></li>
+    <li><b>Escanear (por bulto)</b><span>Escanea ese bulto sin escribir el código.</span></li>
+    <li><b>Manual</b><span>Registra el bulto con un motivo cuando el escaneo no funciona.</span></li>
+    <li><b>No recolectado</b><span>Marca el bulto como no retirado (pide motivo). Deja de contar como pendiente, queda tachado y genera diferencia de conteo. No se puede usar en un bulto ya escaneado.</span></li>
+  </ul>
+  <h4>Tarjeta "Cantidad de bultos"</h4>
+  <ul class="btnlist">
+    <li><b>Chip "Declarados a · Actuales b"</b><span>Verde si coinciden; naranja si hay diferencia.</span></li>
+    <li><b>Agregar bultos · Peso · Motivo</b><span>Suma esa cantidad (1 a 50) con códigos nuevos que continúan la numeración, marcados como "Agregado". El motivo es obligatorio.</span></li>
+    <li><b>Agregar y generar etiquetas</b><span>Guarda el ajuste, deja la diferencia de conteo y abre (o actualiza) una incidencia de tipo "Diferencia de conteo".</span></li>
+    <li><b>Impresora portátil</b><span>Indicador simulado: "Conectada por Bluetooth".</span></li>
+    <li><b>Imprimir N etiqueta(s) nueva(s) / Reimprimir todas</b><span>Abre las etiquetas (solo las nuevas o todas) para imprimir.</span></li>
+  </ul>
+  <h4>Confirmar el traspaso</h4>
+  <p>Aparece cuando todos los bultos activos están escaneados: elige a la <b>persona autorizada</b> que entrega (lista del origen), marca <b>"Verifiqué el RUT contra la cédula"</b>, <b>firma</b> en el recuadro (<i>Limpiar</i> lo borra) y presiona <i>Confirmar traspaso</i>. Pasa a "Recolectada".</p>
+  <figure class="crop-fig"><div class="crop" style="height:68mm"><img src="img/06_pickup_ajuste.png" alt=""></div><figcaption>Recolección: bultos por escanear, tarjeta de cantidad de bultos e impresora.</figcaption></figure>
+</section>
+
+<!-- ============ 7.5 BODEGA ============ -->
+<section>
+  <h3>7.5 Encargado de bodega del operador (WH1) <span class="tag new">Camila Reyes · usr_305 (Sur)</span> <span class="tag new">Elena Campos · usr_306 (Andes)</span></h3>
+  <p><b>Objetivo:</b> controlar la carga que entra y sale de las bodegas del operador y asignar el bus. Es el rol con más tareas distintas.</p>
+  <ul class="btnlist">
+    <li><b>Ingreso a bodega (origen)</b><span>Estado "Recolectada en origen". Escanea cada bulto y confirma. No exige firma.</span></li>
+    <li><b>Asignar bus / servicio</b><span>Estado "En bodega del operador". Muestra los servicios de la parrilla que cubren la ruta, ordenados por próxima salida. Cada opción indica servicio, patente, hora y si sale hoy o mañana, con etiquetas: <i>Sugerido</i> (la más próxima), <i>Dentro de ventana</i> (≤ 2 h) o <i>Riesgo &gt; 2 h</i>. Eliges una opción, el conductor de bus y presionas <i>Asignar transporte</i>. Si la ruta no tiene servicios, se avisa y no se puede asignar.</span></li>
+    <li><b>Ingreso a bodega destino</b><span>Estado "Cargada en bus". Escanea cada bulto y confirma. La descarga del bus no se escanea.</span></li>
+    <li><b>Marcar lista para retiro</b><span>Solo en modalidad "retiro" y con la carga en la bodega de destino. Muestra el punto de retiro del operador para esa ciudad. Pasa a "Lista para retiro" y el merchant ve el aviso.</span></li>
+    <li><b>Entrega en retiro</b><span>Estado "Lista para retiro". Escanea cada bulto, elige a la persona autorizada de destino, verifica el RUT, recibe la firma y confirma. La orden queda "Entregada".</span></li>
+    <li><b>Reportar incidencia</b><span>Desplegable: tipo (daño, faltante, diferencia de conteo, otro), detalle y foto opcional (cámara o archivo; se reduce de tamaño).</span></li>
+  </ul>
+  <figure class="crop-fig"><div class="crop" style="height:68mm"><img src="img/07_bus_sugerencia.png" alt=""></div><figcaption>Asignación del bus: opciones de la parrilla con sugerencia y ventana de 2 horas.</figcaption></figure>
+  <figure class="crop-fig"><div class="crop" style="height:60mm"><img src="img/08_retiro_lista.png" alt=""></div><figcaption>Modalidad retiro: la carga está en la bodega de destino y se marca lista para retiro.</figcaption></figure>
+</section>
+
+<!-- ============ 7.6-7.7 ============ -->
+<section>
+  <h3>7.6 Conductor de bus <span class="tag new">Jorge Pino · usr_301</span> <span class="tag new">Daniel Araya · usr_302</span> <span class="tag new">Raúl Godoy · usr_303 (Andes)</span></h3>
+  <p><b>Objetivo:</b> confirmar la carga al bus. Solo ve las órdenes donde el bodeguero lo designó a él.</p>
+  <ul class="btnlist">
+    <li><b>Escanear: Carga a bus</b><span>Mismo panel de escaneo (campo, escanear por bulto, escanear todos, manual). No hay firma.</span></li>
+    <li><b>Confirmar traspaso</b><span>Pasa a "Cargada en bus" y calcula si se cumplió la ventana de 2 horas desde la asignación (aparece como "Dentro de ventana" o "Fuera de ventana" en el detalle operativo).</span></li>
+  </ul>
+  <h3>7.7 Conductor de entrega (última milla) <span class="tag new">Felipe Lira · usr_401</span> <span class="tag new">Nicolás Paz · usr_402 (Andes)</span></h3>
+  <p><b>Objetivo:</b> entregar la carga en la bodega del merchant cuando la modalidad es "con el operador". Solo ve las entregas que el despachador le designó.</p>
+  <ul class="btnlist">
+    <li><b>Escanear: Entrega</b><span>Escanea cada bulto en la bodega de destino.</span></li>
+    <li><b>Confirmar traspaso</b><span>Elige a la persona autorizada de destino, verifica el RUT, firma y confirma. La orden pasa a "Entregada" y el merchant ve las dos firmas.</span></li>
+  </ul>
+</section>
+
+<!-- ============ 7.8 AUDITORIA ============ -->
+<section class="page">
+  <h3>7.8 Auditoría / Conciliación <span class="tag new">Valentina Rojas · usr_a01</span></h3>
+  <p><b>Objetivo:</b> comprobar que las cantidades cuadran en cada punto de control y cerrar los casos. Es solo lectura, salvo cerrar incidencias. <b>Menú:</b> Auditoría · Todas.</p>
+  <ul class="btnlist">
+    <li><b>4 tarjetas</b><span>Ingreso exitoso, adherencia de recolección, incidencias abiertas y cumplimiento MPO.</span></li>
+    <li><b>Conciliación por checkpoint</b><span>Una fila por orden con: Declarados, Recolectados, Ingreso origen, Cargados, Ingreso destino, Entregados, Diferencia (chip) e Incidencias abiertas. La fila con diferencia o incidencia abierta se resalta en naranja. Un clic abre la orden.</span></li>
+    <li><b>Casos de incidencia</b><span>La misma tabla que ve el Coordinador, con el botón <i>Resolver</i> (nota obligatoria).</span></li>
+    <li><b>Todas</b><span>Lista de todas las órdenes. Al abrir una, ve el detalle completo y el registro de eventos, sin botones de operación.</span></li>
+  </ul>
+  <figure class="crop-fig"><div class="crop" style="height:52mm"><img src="img/10_auditoria.png" alt=""></div><figcaption>Conciliación por punto de control: la orden 1 muestra +1 (caja agregada) y la orden 6 tiene una incidencia abierta.</figcaption></figure>
+  <h3>7.9 Finanzas <span class="tag new">Diego Salas · usr_f01</span></h3>
+  <p><b>Objetivo:</b> preparar la facturación y el pago. Solo lectura y sin precios (el modelo comercial está pendiente). <b>Menú:</b> Finanzas · Todas.</p>
+  <ul class="btnlist">
+    <li><b>Cliente · Desde · Hasta</b><span>Filtran por merchant y por fecha de creación de la orden. Los cambios se aplican al instante.</span></li>
+    <li><b>Exportar CSV</b><span>Descarga <span class="mono">kargo_envios.csv</span> con orden, cliente, origen, destino, bultos, peso, valor declarado, estado, fechas, operador, referencia y período (mes), respetando los filtros.</span></li>
+    <li><b>Tarjetas</b><span>Órdenes, bultos, peso y entregadas del período.</span></li>
+    <li><b>Por cliente / Por operador / Detalle</b><span>Totales por merchant y por operador (las órdenes sin operador aparecen como "Sin operador asignado") y el detalle de cada envío.</span></li>
+  </ul>
+  <figure class="crop-fig"><div class="crop" style="height:40mm"><img src="img/11_finanzas.png" alt=""></div><figcaption>Finanzas: filtros, totales, resumen por cliente y por operador.</figcaption></figure>
+</section>
+
+<!-- ============ 8 ============ -->
+<section class="page">
+  <div class="sec"><span class="n">08</span><h2>Indicadores y fórmulas</h2></div>
+  <p class="lede">Todos se calculan en el mockup con el registro de eventos y los datos de las órdenes (Coordinador → Torre de control).</p>
+  <table class="tight"><tr><th>Indicador</th><th>Fórmula exacta</th><th>Notas</th></tr>
+    <tr><td class="k">SSP · Recolecciones exitosas</td><td>órdenes con recolección completada ÷ órdenes que alguna vez tuvieron operador</td><td>Sobre todo el período.</td></tr>
+    <tr><td class="k">Tasa de aceptación</td><td>órdenes en estado de aceptación "aceptada" ÷ (órdenes con operador + rechazos registrados)</td><td>Un rechazo cuenta como asignación.</td></tr>
+    <tr><td class="k">PTAT</td><td>promedio de (ingreso a bodega del operador − asignación al operador) en horas</td><td>Una decimal.</td></tr>
+    <tr><td class="k">Adherencia de recolección</td><td>Σ bultos recolectados ÷ Σ bultos declarados, en órdenes ya recolectadas</td><td>&gt; 100 % si se agregaron bultos.</td></tr>
+    <tr><td class="k">Ingreso exitoso</td><td>Σ escaneos de ingreso a bodega origen ÷ Σ bultos recolectados, en órdenes que ya ingresaron</td><td>Contra robo en tránsito.</td></tr>
+    <tr><td class="k">Nivel de servicio</td><td>entregas con R ≤ 1 ÷ entregas, con R = (entrega − creación) ÷ horas prometidas (48 h)</td><td>También muestra R promedio.</td></tr>
+    <tr><td class="k">Ventana de bus</td><td>órdenes cargadas dentro de 2 h desde la asignación ÷ órdenes cargadas</td><td>Las 2 h están en <span class="mono">config.json</span>.</td></tr>
+    <tr><td class="k">Cumplimiento MPO</td><td>lotes con todas sus órdenes entregadas ÷ lotes con alguna orden recolectada</td><td>Lote = mismo valor de MPO.</td></tr>
+    <tr><td class="k">Costo por bulto</td><td>Σ costo diario de los vehículos distintos usados en recolecciones ÷ bultos recolectados</td><td>Costos de demostración.</td></tr>
+    <tr><td class="k">Órdenes en riesgo</td><td>órdenes en "asignada_transporte" con salida a más de 2 h de la asignación, o cuya ventana ya venció sin cargar</td><td>Lista, no porcentaje.</td></tr>
+  </table>
+</section>
+
+<!-- ============ 9 ============ -->
+<section class="page">
+  <div class="sec"><span class="n">09</span><h2>Los datos (archivos JSON)</h2></div>
+  <p class="lede">Están en <span class="mono">web/data/</span>. Son el contrato para el equipo de backend: cada archivo simula una tabla.</p>
+  <table class="tight"><tr><th>Archivo</th><th>Contenido</th><th>Campos a destacar</th></tr>
+    <tr><td class="k mono">merchants.json</td><td>Merchants y sus bodegas.</td><td>bodegas: ciudad, dirección (con <span class="mono">codigo_postal</span>), contactos autorizados (nombre, RUT, teléfono).</td></tr>
+    <tr><td class="k mono">users.json</td><td>Usuarios de ejemplo (sin contraseña).</td><td>rol, <span class="mono">merchant_id</span> u <span class="mono">operador_id</span>.</td></tr>
+    <tr><td class="k mono">operators.json</td><td>Operadores importados.</td><td>vehículos (<span class="mono">costo_dia</span>), servicios (origen, destino, <span class="mono">salidas</span>), <span class="mono">puntos_retiro</span>.</td></tr>
+    <tr><td class="k mono">konnect.json</td><td>Catálogo de Konnect (simulado).</td><td>lo mismo que operadores más su equipo.</td></tr>
+    <tr><td class="k mono">roles.json</td><td>9 roles y sus permisos.</td><td>lista de permisos y de acciones no permitidas.</td></tr>
+    <tr><td class="k mono">orders.json</td><td>Órdenes.</td><td><span class="mono">status</span>, <span class="mono">conteo</span>, <span class="mono">operacion</span> (aceptación, recolección, transporte, última milla), <span class="mono">handoff</span> (firmas), <span class="mono">timeline</span>.</td></tr>
+    <tr><td class="k mono">packages.json</td><td>Bultos.</td><td><span class="mono">piece_code</span>, <span class="mono">scan_history</span>, marca de agregado o no recolectado.</td></tr>
+    <tr><td class="k mono">tracking_events.json</td><td>Registro de eventos (solo se agrega).</td><td>tipo, actor, fecha, nota.</td></tr>
+    <tr><td class="k mono">incidents.json</td><td>Incidencias.</td><td>tipo, estado, detalle, esperado/real, foto, resolución.</td></tr>
+    <tr><td class="k mono">config.json</td><td>Reglas de negocio.</td><td><span class="mono">sla_promesa_horas</span> (48), <span class="mono">ventana_bus_horas</span> (2).</td></tr>
+    <tr><td class="k mono">invoices.json</td><td>Facturas.</td><td>Vacío a propósito (en pausa).</td></tr>
+  </table>
+  <div class="callout"><b>Códigos de estado y de escaneo:</b> los nombres internos están en español (por ejemplo <span class="mono">en_bodega_destino</span>) tal como se definió; el backend debe conservarlos o mapearlos.</div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section class="page">
+  <div class="sec"><span class="n">10</span><h2>Escenario de ejemplo</h2></div>
+  <p class="lede">Al reiniciar, hay 10 órdenes en distintos estados y 2 incidencias. Se generaron ejecutando el flujo real con un reloj simulado.</p>
+  <table class="tight"><tr><th>Orden</th><th>Cliente</th><th>Ruta</th><th>Bultos</th><th>Estado</th><th>Qué se puede probar</th></tr>
+    <tr><td class="k mono">ot_00001</td><td>Falabella</td><td>Santiago → Concepción</td><td>3 → 4</td><td>Entregada</td><td>Ver diferencia +1, firmas, incidencia resuelta por Auditoría.</td></tr>
+    <tr><td class="k mono">ot_00002</td><td>Ripley</td><td>Temuco → Santiago</td><td>2</td><td>Entregada</td><td>Última milla por retiro del destinatario.</td></tr>
+    <tr><td class="k mono">ot_00003</td><td>Falabella</td><td>Santiago → Temuco</td><td>2</td><td>Cargada en bus</td><td>Camila escanea el ingreso a bodega destino.</td></tr>
+    <tr><td class="k mono">ot_00004</td><td>Falabella</td><td>Concepción → Santiago</td><td>2</td><td>Asignada a bus</td><td>Riesgo &gt; 2 h y ventana vencida (sale en la Torre de control).</td></tr>
+    <tr><td class="k mono">ot_00005</td><td>Ripley</td><td>Santiago → Temuco</td><td>3</td><td>En bodega destino</td><td>Camila marca "lista para retiro" (modalidad retiro).</td></tr>
+    <tr><td class="k mono">ot_00006</td><td>Falabella</td><td>Concepción → Santiago</td><td>3</td><td>En bodega del operador</td><td>Asignar bus con sugerencia; incidencia de daño abierta.</td></tr>
+    <tr><td class="k mono">ot_00007</td><td>Falabella</td><td>Santiago → Temuco</td><td>4</td><td>Recolección asignada</td><td>Héctor: ajustar cantidad, escanear, firmar.</td></tr>
+    <tr><td class="k mono">ot_00008</td><td>Falabella</td><td>Santiago → Concepción</td><td>2</td><td>Asignada a operador (Sur)</td><td>Patricia acepta o rechaza.</td></tr>
+    <tr><td class="k mono">ot_00009</td><td>Falabella</td><td>Santiago → Temuco</td><td>2</td><td>Asignada a operador (Andes)</td><td>Marcela rechaza; Andrés reasigna.</td></tr>
+    <tr><td class="k mono">ot_00010</td><td>Falabella</td><td>Santiago → Temuco</td><td>3</td><td>Creada</td><td>Andrés asigna eligiendo la última milla.</td></tr>
+  </table>
+  <h3>Usuarios de ejemplo</h3>
+  <table class="tight"><tr><th>Rol</th><th>Personas (id)</th></tr>
+    <tr><td class="k">Merchant</td><td>Carla Mendoza — Falabella (usr_042) · Tomás Ibarra — Ripley (usr_043)</td></tr>
+    <tr><td class="k">Coordinador / Control Tower</td><td>Andrés Fuentes (usr_c01)</td></tr>
+    <tr><td class="k">Auditoría · Finanzas</td><td>Valentina Rojas (usr_a01) · Diego Salas (usr_f01)</td></tr>
+    <tr><td class="k">Operador Transportes Sur</td><td>Despachador Patricia Lagos (usr_d05) · Recolección Héctor Ramos (usr_210), Sergio Muñoz (usr_211) · Bodega Camila Reyes (usr_305) · Bus Jorge Pino (usr_301), Daniel Araya (usr_302) · Entrega Felipe Lira (usr_401)</td></tr>
+    <tr><td class="k">Operador Andes Cargo</td><td>Despachadora Marcela Núñez (usr_d06) · Recolección Tomás Vera (usr_212) · Bodega Elena Campos (usr_306) · Bus Raúl Godoy (usr_303) · Entrega Nicolás Paz (usr_402)</td></tr>
+  </table>
+</section>
+
+<!-- ============ 11 ============ -->
+<section class="page">
+  <div class="sec"><span class="n">11</span><h2>Recorridos de demo</h2></div>
+  <h3>A · Camino completo con última milla del operador (5 minutos)</h3>
+  <ol class="steps">
+    <li><b>Carla</b> → Nueva encomienda: destino Temuco, MPO opcional, 2 bultos → Crear orden → Imprimir etiquetas.</li>
+    <li><b>Andrés</b> → abre la orden nueva → elige el operador Sur y "Con el operador" → Asignar orden.</li>
+    <li><b>Patricia</b> → Aceptar orden → Designar conductor (Héctor) y móvil.</li>
+    <li><b>Héctor</b> → Escanear todos → elegir persona autorizada, marcar RUT, firmar → Confirmar traspaso.</li>
+    <li><b>Camila</b> → Escanear todos → Confirmar. Luego elige la opción sugerida, el conductor de bus (Jorge) → Asignar transporte.</li>
+    <li><b>Jorge</b> → Escanear todos → Confirmar.</li>
+    <li><b>Camila</b> → escanea el ingreso a destino → Confirmar.</li>
+    <li><b>Patricia</b> → Designar última milla (Felipe, un móvil).</li>
+    <li><b>Felipe</b> → Escanear todos → persona de destino, RUT, firma → Confirmar. <b>Carla</b> ve "Entregada" y ambas firmas.</li>
+  </ol>
+  <h3>B · Retiro del destinatario</h3>
+  <p>Igual que A, pero Andrés elige <i>Retiro del destinatario</i>. En el paso 8 no interviene Patricia: <b>Camila</b> marca "lista para retiro" (Carla ve el aviso con el punto de retiro) y luego escanea, elige la persona de destino y toma la firma. Atajo: la orden <span class="mono">ot_00005</span> ya está lista para este paso.</p>
+  <h3>C · Diferencia de conteo (orden ot_00007)</h3>
+  <p><b>Héctor</b> agrega 1 bulto con motivo → se generan etiquetas nuevas → escanea los 5 → firma. Luego mira: <b>Carla</b> (chip "Dif. +1" y detalle operativo), <b>Andrés</b> (incidencia en la Torre; adherencia &gt; 100 %), <b>Valentina</b> (fila resaltada; resuelve el caso con una nota).</p>
+  <h3>D · Rechazo y reasignación (orden ot_00009)</h3>
+  <p><b>Marcela</b> (Andes) escribe un motivo y rechaza → <b>Andrés</b> ve la orden en "Te toca actuar" con el aviso del rechazo y la asigna a Sur → <b>Patricia</b> la acepta.</p>
+  <h3>E · Riesgo de ventana (orden ot_00006)</h3>
+  <p><b>Camila</b> elige una salida marcada "Riesgo &gt; 2 h" y asigna → <b>Andrés</b> la ve en "Órdenes en riesgo" de la Torre de control.</p>
+  <h3>F · Onboarding</h3>
+  <p><b>Andrés</b> → Merchants → registra un merchant (RUT válido) y le agrega una bodega → Operadores → importa "Pacífico Cargo" y abre su parrilla y flota. Los nuevos usuarios aparecen en "Ver como".</p>
+</section>
+
+<!-- ============ 12 ============ -->
+<section>
+  <div class="sec"><span class="n">12</span><h2>Idioma, límites y glosario</h2></div>
+  <h3>Idioma</h3>
+  <ul><li>Todo el texto de la interfaz, los nombres de roles y estados, los mensajes de error del sistema y las notas del registro de eventos se traducen. Hay pruebas automáticas que verifican que ninguna clave, error ni tipo de evento quede sin traducir.</li><li>Los datos de ejemplo (nombres de bodegas, cargos, motivos escritos a mano) no se traducen.</li></ul>
+  <h3>Qué es simulado</h3>
+  <table class="tight"><tr><th>En el mockup</th><th>En el sistema real</th></tr>
+    <tr><td>Selección de usuario sin contraseña</td><td>Inicio de sesión y permisos en el servidor</td></tr>
+    <tr><td>Datos en el navegador</td><td>Base de datos, concurrencia y auditoría inmutable</td></tr>
+    <tr><td>Escaneo por teclado o botón; firma como imagen dentro del JSON</td><td>Cámara del teléfono; archivo de firma guardado</td></tr>
+    <tr><td>Code 39 e impresora portátil simulada</td><td>QR o DataMatrix e impresora Bluetooth</td></tr>
+    <tr><td>Catálogo <span class="mono">konnect.json</span> y sugerencia con la hora del navegador</td><td>Prefetch real desde Konnect y reloj del servidor</td></tr>
+    <tr><td>Mapa esquemático</td><td>Mapa real con GPS de los vehículos</td></tr>
+    <tr><td>Indicadores calculados en el navegador</td><td>Cálculo en el backend o herramienta de BI</td></tr>
+  </table>
+  <h3>Glosario</h3>
+  <table class="tight"><tr><th>Término</th><th>Significado</th></tr>
+    <tr><td class="k">OT</td><td>Orden de transporte (una encomienda con uno o más bultos).</td></tr>
+    <tr><td class="k">KAM</td><td>Key Account Manager: quien registra a los merchants.</td></tr>
+    <tr><td class="k">Parrilla</td><td>Lista de servicios de un operador (ruta y horas de salida).</td></tr>
+    <tr><td class="k">Checkpoint</td><td>Punto de control donde se escanea cada bulto.</td></tr>
+    <tr><td class="k">MPO</td><td>Orden de compra maestra (supuesto): agrupa lotes de varias órdenes.</td></tr>
+    <tr><td class="k">SSP / PTAT / PA</td><td>Recolecciones exitosas / Tiempo de recolección / Adherencia de recolección.</td></tr>
+    <tr><td class="k">CPS</td><td>Costo por envío (aquí, por bulto).</td></tr>
+    <tr><td class="k">WH1</td><td>Bodega del operador.</td></tr>
+    <tr><td class="k">Konnect</td><td>Plataforma de la que provienen operadores, buses, servicios y equipos.</td></tr>
+  </table>
+  <p class="foot">Documento complementario: "KARGO — Cambios después de la revisión del consultor".</p>
+</section>
+</body></html>

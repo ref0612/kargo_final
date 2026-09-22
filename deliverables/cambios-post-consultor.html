@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><title>KARGO — Cambios después de la revisión del consultor</title>
+<link rel="stylesheet" href="doc.css"></head><body>
+
+<!-- ================= PORTADA ================= -->
+<section class="page cover">
+  <div>
+    <div class="bar"></div>
+    <div class="eyebrow">Documento interno · Equipo KARGO</div>
+    <h1>Qué cambió en el mockup después de leer el documento del consultor</h1>
+    <p class="dek">Resumen de lo que planteó el consultor, las decisiones que tomamos, lo que se implementó en el mockup, en qué nos diferenciamos a propósito y qué queda pendiente.</p>
+    <div class="toc">
+      <div><b>01</b>Resumen ejecutivo</div><div><b>02</b>Qué dijo el consultor</div>
+      <div><b>03</b>Decisiones tomadas</div><div><b>04</b>Brechas: cómo quedó cada una</div>
+      <div><b>05</b>El nuevo flujo (diagrama)</div><div><b>06</b>Cambios por rol</div>
+      <div><b>07</b>Cambios en datos y reglas</div><div><b>08</b>Indicadores implementados</div>
+      <div><b>09</b>Diferencias con el consultor</div><div><b>10</b>Nomenclatura de escaneos</div>
+      <div><b>11</b>Pendiente y próximos pasos</div><div><b>12</b>Verificación</div>
+    </div>
+  </div>
+  <div class="meta"><div><b>Fecha</b>21 de septiembre de 2026</div><div><b>Versión del mockup</b>v2 · commit 7a0e3eb (main)</div><div><b>Alcance</b>Solo mockup; el backend lo construye el equipo de desarrollo</div></div>
+</section>
+
+<!-- ================= 1 RESUMEN ================= -->
+<section class="page">
+  <div class="sec"><span class="n">01</span><h2>Resumen ejecutivo</h2></div>
+  <p class="lede">El consultor no nos entregó una especificación cerrada: nos entregó un esqueleto de requerimientos con preguntas abiertas, un mockup de la recolección y tablas de indicadores que aún están en borrador. Lo usamos como guía para completar el flujo que nos faltaba.</p>
+  <div class="grid2">
+    <div class="card"><h4>Lo que planteó</h4><ul>
+      <li>Logística en 3 tramos: <b>First Mile</b> (recolección), <b>Mid Mile</b> (bodega y bus) y <b>Last Mile</b> (entrega).</li>
+      <li>4 funciones de soporte: Control Tower, Auditoría/Conciliación, Finanzas e Infraestructura.</li>
+      <li>Para cada actor: qué espera de la app y cómo se mide su desempeño en un dashboard.</li>
+      <li>Antifuga: etiquetas "1/x", ingreso exitoso y conciliación de lotes.</li>
+    </ul></div>
+    <div class="card"><h4>Lo que hicimos</h4><ul>
+      <li>El flujo pasó de <b>8 a 11 estados</b>, con aceptación del despachador y tramo de destino.</li>
+      <li><b>Última milla</b> con dos modalidades: con el operador o retiro del destinatario.</li>
+      <li>El conductor de recolección <b>puede ajustar la cantidad de bultos</b> y reimprimir etiquetas; la firma es obligatoria.</li>
+      <li>Bus con <b>sugerencia de la parrilla</b> y ventana de 2 horas.</li>
+      <li><b>3 roles nuevos o ampliados:</b> Control Tower, Auditoría y Finanzas, más el onboarding (Konnect y KAM).</li>
+      <li><b>9 indicadores</b> calculados a partir del registro de eventos.</li>
+    </ul></div>
+  </div>
+  <h3>Estado de cada brecha frente al consultor</h3>
+  <table><tr><th>Área</th><th>Estado</th><th>Comentario</th></tr>
+    <tr><td class="k">Flujo de recolección y destino</td><td><span class="tag ok">Hecho</span></td><td>Aceptación, ajuste de cantidad, ingreso a bodega destino, última milla y retiro.</td></tr>
+    <tr><td class="k">Regla de 2 horas del bus</td><td><span class="tag ok">Hecho</span></td><td>Sugerencia de la parrilla, alerta de riesgo y cumplimiento medido.</td></tr>
+    <tr><td class="k">Roles y onboarding</td><td><span class="tag ok">Hecho</span></td><td>Control Tower, Auditoría, Finanzas, alta de merchants por el KAM e importación de operadores desde Konnect.</td></tr>
+    <tr><td class="k">Indicadores</td><td><span class="tag ok">Hecho</span></td><td>Calculados en el navegador; las fórmulas del consultor tienen dos errores que documentamos.</td></tr>
+    <tr><td class="k">Etiquetas QR/DataMatrix e impresora real</td><td><span class="tag part">Parcial</span></td><td>Simulamos la impresora y usamos Code 39; el QR real es trabajo del backend.</td></tr>
+    <tr><td class="k">GPS en tiempo real</td><td><span class="tag no">Pendiente</span></td><td>La integración está pendiente en el negocio; el mapa es un esquema.</td></tr>
+    <tr><td class="k">Terceros para la última milla</td><td><span class="tag no">Fuera</span></td><td>Decisión: se deja fuera por ahora.</td></tr>
+    <tr><td class="k">Facturación y precios</td><td><span class="tag no">En pausa</span></td><td>Finanzas es solo lectura y no muestra precios.</td></tr>
+  </table>
+</section>
+
+<!-- ================= 2 QUE DIJO ================= -->
+<section class="page">
+  <div class="sec"><span class="n">02</span><h2>Qué dijo el consultor</h2></div>
+  <p class="lede">El PDF tiene 12 páginas. Las páginas 1, 7, 9 y 11 son solo títulos de sección; la 10 (nomenclatura de escaneos) y la 12 (diagrama de flujo) están vacías: <b>son entregables que el consultor espera de nuestro lado</b>.</p>
+  <h3>Actores y lo que espera de cada uno</h3>
+  <table><tr><th>Actor</th><th>Qué espera de la app</th><th>Cómo se mide</th></tr>
+    <tr><td class="k">Merchant</td><td>Onboarding propio (para escalar), crear orden, seguimiento e historial.</td><td>—</td></tr>
+    <tr><td class="k">Coordinador logístico</td><td>Visibilidad diaria: órdenes por código postal, vivas, pendientes y seguimiento en vivo de las recolecciones.</td><td>SSP (recolecciones exitosas)</td></tr>
+    <tr><td class="k">Despachador</td><td>Onboarding, varias flotas (contrato, costo, conductor), marcarse activo/inactivo y <b>aceptar</b> las órdenes asignadas.</td><td>SSP, PTAT, tasa de aceptación, adherencia</td></tr>
+    <tr><td class="k">Conductor de recolección</td><td>Impresora portátil conectada al teléfono; cada etiqueta con "1/x, 2/x…"; firma del merchant.</td><td>Ingreso exitoso (anti-robo en tránsito)</td></tr>
+    <tr><td class="k">Bodega (Mid Mile)</td><td>Ingreso, staging y salida. <b>Hoy solo</b> se escanean ingresos.</td><td>(sin definir)</td></tr>
+    <tr><td class="k">Tripulación del bus</td><td>Escaneo de carga. <b>Sin escaneo</b> al descargar.</td><td>—</td></tr>
+    <tr><td class="k">Conciliación</td><td>Coincidencia de lotes de la orden maestra (MPO) y ubicación de envíos perdidos.</td><td>Cumplimiento MPO</td></tr>
+  </table>
+  <h3>Indicadores que definió (borrador)</h3>
+  <table><tr><th>Indicador</th><th>Fórmula del consultor</th></tr>
+    <tr><td class="k">SSP</td><td>Órdenes recolectadas ÷ órdenes recibidas o asignadas (por día)</td></tr>
+    <tr><td class="k">PTAT</td><td>Tiempo entre la asignación y la entrega en bodega</td></tr>
+    <tr><td class="k">Aceptación</td><td>Órdenes aceptadas ÷ órdenes asignadas por el coordinador</td></tr>
+    <tr><td class="k">Pickup Adherence</td><td>Cajas recolectadas ÷ cajas que debían recolectarse</td></tr>
+    <tr><td class="k">Successful Inbound</td><td>Escaneos de ingreso ÷ cajas recolectadas</td></tr>
+    <tr><td class="k">Nivel de servicio</td><td>R = tiempo real ÷ prometido; órdenes con R ≤ 1 ÷ total</td></tr>
+    <tr><td class="k">CPS</td><td>Envíos ÷ costo de vehículos del día (recolección y entrega)</td></tr>
+    <tr><td class="k">MPO compliance</td><td>Lotes entregados ÷ lotes recolectados</td></tr>
+  </table>
+  <div class="callout warn"><b>Tres cosas a corregir en su documento:</b> (1) CPS está invertido: "envíos ÷ costo" es envíos por peso gastado, no costo por envío; (2) el nivel de servicio usa <span class="mono">R &lt; 1</span> y <span class="mono">R ≤ 1</span> en distintas partes; (3) "MPO" nunca se define (asumimos orden de compra maestra que agrupa lotes).</div>
+  <p><b>Excluido por ahora, según el propio consultor:</b> planificación de rutas, escaneos de staging y de salida de bodega, escaneo al descargar el bus, y el seguimiento de la bodega (queda como "scope of improvement").</p>
+</section>
+
+<!-- ================= 3 DECISIONES ================= -->
+<section class="page">
+  <div class="sec"><span class="n">03</span><h2>Decisiones tomadas</h2></div>
+  <h3>Respuestas a las 5 preguntas del consultor</h3>
+  <table><tr><th>Pregunta</th><th>Respuesta</th><th>Qué implica para el sistema</th></tr>
+    <tr><td class="k">1. Geografía</td><td>Ciudades o provincias; también código postal.</td><td>Ciudad como clave principal; código postal opcional en bodegas.</td></tr>
+    <tr><td class="k">2. GPS</td><td>Sí, falta terminar la integración.</td><td>Queda pendiente; el mapa es un esquema.</td></tr>
+    <tr><td class="k">3. Bodega → bus</td><td>Debe estar en ruta dentro de 2 horas de asignado.</td><td>Ventana de 2 horas con alerta (ver decisión sobre el bus).</td></tr>
+    <tr><td class="k">4. Del bus al cliente</td><td>El mismo operador hace primera, media y última milla, bodega a bodega; también retiro en un punto del operador; terceros como idea personal.</td><td>Dos modalidades de última milla; terceros fuera.</td></tr>
+    <tr><td class="k">5. Cliente rechaza la entrega</td><td>Se presume infrecuente.</td><td>Sin flujo propio por ahora (queda pendiente).</td></tr>
+  </table>
+  <div class="callout warn"><b>Corrección pendiente con el consultor:</b> en la respuesta 5 se escribió "each individual <i>winery</i>". Quisimos decir <i>warehouse</i> (bodega). En español "bodega" significa ambas cosas y el consultor podría creer que los clientes son viñas.</div>
+  <h3>Decisiones posteriores</h3>
+  <table><tr><th>Tema</th><th>Decisión</th></tr>
+    <tr><td class="k">Última milla</td><td>Se implementan las opciones 1 (con el operador) y 2 (retiro del destinatario). Terceros quedan fuera.</td></tr>
+    <tr><td class="k">Cantidad de bultos</td><td>El conductor de recolección <b>sí puede cambiar la cantidad</b> e imprimir etiquetas nuevas. La firma del merchant o de quien entrega es obligatoria en la recolección. <i>(Esto revirtió la propuesta anterior de que solo levantara una incidencia.)</i></td></tr>
+    <tr><td class="k">Bus</td><td>Asignación manual por el bodeguero, más una sugerencia del próximo servicio según la parrilla del operador. Si sale a más de 2 horas de la asignación se marca riesgo.</td></tr>
+    <tr><td class="k">Parrilla de servicios</td><td>Es la lista de servicios del operador asignado.</td></tr>
+    <tr><td class="k">Roles</td><td>Control Tower dentro del Coordinador; rol de Auditoría/Conciliación; rol de Finanzas maestro de solo lectura.</td></tr>
+    <tr><td class="k">Onboarding de operadores</td><td>Lo hace Kargo: prefetch desde Konnect (buses, servicios y equipo vienen de su base de datos).</td></tr>
+    <tr><td class="k">Onboarding de merchants</td><td>Lo hace el KAM, dentro de la vista del Coordinador.</td></tr>
+  </table>
+  <p class="foot"><b>Interpretación que hicimos:</b> en el mensaje sobre el ajuste de cantidad se leyó "en destino"; lo aplicamos en la <b>recolección (origen)</b>, que es donde el conductor recibe los bultos y donde exigimos la firma. Confírmalo si querías otra cosa.</p>
+</section>
+
+<!-- ================= 4 BRECHAS ================= -->
+<section class="page">
+  <div class="sec"><span class="n">04</span><h2>Brechas: cómo quedó cada una</h2></div>
+  <p class="lede" style="margin-bottom:6pt">La lista de "qué falta de nuestro lado" que habíamos armado tras leer el PDF, con el resultado y dónde verlo en el mockup.</p>
+  <table class="tight"><tr><th>Brecha</th><th>Estado</th><th>Cómo quedó / dónde verlo</th></tr>
+    <tr><td class="k">Aceptación del despachador</td><td><span class="tag ok">Hecho</span></td><td>Patricia (Despachador) ve <i>Aceptar orden</i> y <i>Rechazar</i> (con motivo); un rechazo devuelve la orden al coordinador. Orden <span class="mono">ot_00008</span>.</td></tr>
+    <tr><td class="k">Recolección con conteo</td><td><span class="tag ok">Hecho</span></td><td>Héctor puede agregar bultos o marcar uno "no recolectado" con motivo; se imprimen etiquetas nuevas y queda una diferencia de conteo con incidencia. Orden <span class="mono">ot_00007</span>.</td></tr>
+    <tr><td class="k">Firma del merchant en la recolección</td><td><span class="tag ok">Hecho</span></td><td>Sigue obligatoria: persona autorizada, RUT verificado y firma.</td></tr>
+    <tr><td class="k">Tramo desde el bus al destino</td><td><span class="tag ok">Hecho</span></td><td>Estados nuevos: ingreso a bodega destino, última milla asignada o lista para retiro.</td></tr>
+    <tr><td class="k">Regla de 2 horas</td><td><span class="tag ok">Hecho</span></td><td>El bodeguero ve los servicios de la ruta con etiquetas "Sugerido", "Dentro de ventana" o "Riesgo &gt; 2 h". Orden <span class="mono">ot_00006</span>.</td></tr>
+    <tr><td class="k">Parrilla de servicios</td><td><span class="tag ok">Hecho</span></td><td>Cada operador trae su parrilla (origen, destino, salidas). Se ve en Coordinador → Operadores.</td></tr>
+    <tr><td class="k">Cómo se conecta un envío con un bus</td><td><span class="tag part">Parcial</span></td><td>Manual con sugerencia, como se decidió. La sugerencia usa la hora del navegador.</td></tr>
+    <tr><td class="k">Código postal / provincia</td><td><span class="tag part">Parcial</span></td><td>Código postal opcional en bodegas. Falta agrupar por código postal en los paneles.</td></tr>
+    <tr><td class="k">MPO / lote</td><td><span class="tag part">Parcial</span></td><td>Campo opcional en la orden y KPI de cumplimiento. Falta definir MPO con el consultor.</td></tr>
+    <tr><td class="k">Tiempo prometido</td><td><span class="tag part">Parcial</span></td><td>Un único valor de 48 h en configuración. Falta por ruta y servicio.</td></tr>
+    <tr><td class="k">Costos de flota</td><td><span class="tag part">Parcial</span></td><td>Costo diario por vehículo (dato demo) para el costo por bulto.</td></tr>
+    <tr><td class="k">Despachador: flota y activo/inactivo</td><td><span class="tag part">Parcial</span></td><td>La flota y su costo llegan desde Konnect; falta el interruptor activo/inactivo.</td></tr>
+    <tr><td class="k">GPS de vehículos</td><td><span class="tag no">Pendiente</span></td><td>Integración pendiente en el negocio.</td></tr>
+    <tr><td class="k">Etiquetas QR/DataMatrix, impresora real</td><td><span class="tag part">Parcial</span></td><td>Code 39 y una impresora portátil simulada.</td></tr>
+    <tr><td class="k">Control Tower</td><td><span class="tag ok">Hecho</span></td><td>Coordinador → Torre de control: 9 indicadores, órdenes en riesgo e incidencias.</td></tr>
+    <tr><td class="k">Auditoría / Conciliación</td><td><span class="tag ok">Hecho</span></td><td>Rol nuevo: conciliación por punto de control y casos de incidencia.</td></tr>
+    <tr><td class="k">Finanzas</td><td><span class="tag ok">Hecho</span></td><td>Rol nuevo, solo lectura: envíos por cliente y período, exportación CSV, sin precios.</td></tr>
+    <tr><td class="k">Infraestructura</td><td><span class="tag part">Parcial</span></td><td>Dentro del Coordinador: importar operadores y ver su parrilla y flota. Falta editar la red.</td></tr>
+    <tr><td class="k">Onboarding merchant y operador</td><td><span class="tag ok">Hecho</span></td><td>Coordinador → Merchants (alta y bodegas) y Operadores (importar desde Konnect).</td></tr>
+    <tr><td class="k">Diagrama de flujo y nomenclatura de escaneos</td><td><span class="tag ok">Hecho</span></td><td>Secciones 05 y 10 de este documento.</td></tr>
+  </table>
+</section>
+
+<!-- ================= 5 FLUJO (landscape) ================= -->
+<section class="page">
+  <div class="sec"><span class="n">05</span><h2>El nuevo flujo</h2></div>
+  <p style="margin-bottom:6pt;color:#4F6078">Este es el diagrama que el consultor dejó vacío. Antes eran 8 estados y la orden saltaba de "cargada en bus" a "entregada"; ahora son 11.</p>
+  <!--FLOW_SVG-->
+  <p style="font-size:8.6pt;color:#4F6078;margin-top:4pt"><b>ESC</b> = escaneo de cada bulto (usuario + fecha/hora) · <b>FIRMA</b> = firma de una persona autorizada, RUT verificado visualmente · <b>10a</b> = última milla con el operador · <b>10b</b> = retiro del destinatario · la descarga del bus no se escanea · el merchant ve solo 5 estados (Creada, Asignada, En recolección, En tránsito, Entregada).</p>
+  <table style="margin-top:6pt"><tr><th>Antes (8)</th><th>Ahora (11)</th></tr>
+    <tr><td>creada → asignada_operador → recoleccion_asignada → recolectada → en_bodega_operador → asignada_transporte → cargada_bus → entregada</td>
+    <td>creada → asignada_operador → <b>aceptada</b> → recoleccion_asignada → recolectada → en_bodega_operador → asignada_transporte → cargada_bus → <b>en_bodega_destino</b> → <b>(ultima_milla_asignada | lista_retiro)</b> → entregada</td></tr></table>
+</section>
+
+<!-- ================= 6 ROLES ================= -->
+<section class="page">
+  <div class="sec"><span class="n">06</span><h2>Cambios por rol</h2></div>
+  <table><tr><th>Rol</th><th>Antes</th><th>Ahora</th></tr>
+    <tr><td class="k">Merchant</td><td>Crear orden, ver avance.</td><td>Igual, más campo <b>MPO</b>, aviso de <b>retiro</b>, diferencia de conteo visible, incidencias y detalle operativo.</td></tr>
+    <tr><td class="k">Coordinador / Control Tower</td><td>Asignar a un operador.</td><td>Asigna <b>eligiendo la última milla</b>; ve KPIs y órdenes en riesgo; <b>registra merchants</b> y sus bodegas (KAM); <b>importa operadores</b> desde Konnect; resuelve incidencias.</td></tr>
+    <tr><td class="k">Auditoría / Conciliación</td><td>No existía.</td><td><b>Nuevo</b>, solo lectura: conciliación por punto de control, casos de incidencia (puede cerrarlos con una nota).</td></tr>
+    <tr><td class="k">Finanzas</td><td>No existía.</td><td><b>Nuevo</b>, solo lectura: envíos por cliente, operador y período; CSV; sin precios.</td></tr>
+    <tr><td class="k">Despachador</td><td>Designar conductor y móvil.</td><td><b>Acepta o rechaza</b> la asignación; designa recolección; <b>designa la última milla</b> cuando corresponde.</td></tr>
+    <tr><td class="k">Conductor de recolección</td><td>Escanear y firmar.</td><td>Además <b>ajusta la cantidad</b> de bultos (con motivo), marca "no recolectado", reimprime etiquetas y reporta incidencias.</td></tr>
+    <tr><td class="k">Encargado de bodega</td><td>Escanear ingreso y asignar bus.</td><td>Bus con <b>sugerencia y ventana de 2 h</b>; <b>ingreso a bodega destino</b>; en retiro: <b>marca lista</b> y entrega con escaneo y firma.</td></tr>
+    <tr><td class="k">Conductor de bus</td><td>Escanear la carga.</td><td>Igual (la descarga sigue sin escaneo).</td></tr>
+    <tr><td class="k">Conductor de entrega</td><td>Escanear y firmar en destino.</td><td>Ahora es el conductor de <b>última milla</b>, designado por el despachador.</td></tr>
+  </table>
+  <div class="callout"><b>Nombres:</b> el "operador logístico" que mencionabas es en el sistema el <b>Coordinador / Control Tower</b> (tu equipo). El "Operador de transporte" es la empresa externa.</div>
+</section>
+
+<!-- ================= 7 DATOS Y REGLAS ================= -->
+<section class="page">
+  <div class="sec"><span class="n">07</span><h2>Cambios en datos y reglas</h2></div>
+  <h3>Archivos de datos nuevos</h3>
+  <table><tr><th>Archivo</th><th>Para qué sirve</th></tr>
+    <tr><td class="k mono">konnect.json</td><td>Catálogo simulado de operadores de Konnect (flota, parrilla, equipo). De aquí se importa.</td></tr>
+    <tr><td class="k mono">incidents.json</td><td>Incidencias: conteo, daño, faltante, otro; abiertas o resueltas, con foto opcional y nota de resolución.</td></tr>
+    <tr><td class="k mono">config.json</td><td>Reglas de negocio: horas prometidas (48) y ventana del bus (2).</td></tr>
+  </table>
+  <h3>Campos nuevos en la orden</h3>
+  <ul>
+    <li><b>Conteo:</b> <span class="mono">bultos_declarados</span> (no cambia), <span class="mono">bultos_total</span> (actual) y <span class="mono">conteo</span> con diferencia, motivo, quién y cuándo.</li>
+    <li><b>Aceptación:</b> estado (pendiente, aceptada, rechazada) y lista de rechazos con motivo.</li>
+    <li><b>Transporte:</b> servicio, salida, hora de asignación, hora de carga, <span class="mono">riesgo_sla</span> y <span class="mono">ventana_ok</span>.</li>
+    <li><b>Última milla:</b> modalidad, conductor, móvil, punto de retiro y hora de "lista".</li>
+    <li><b>Bodega destino:</b> hora de ingreso. <b>MPO</b> opcional. Bodegas con código postal opcional.</li>
+  </ul>
+  <h3>Reglas nuevas que el backend debe hacer cumplir</h3>
+  <table><tr><th>Regla</th><th>Detalle</th></tr>
+    <tr><td class="k">Aceptar antes de designar</td><td>No se puede designar conductor sin que el despachador acepte. Un rechazo exige motivo y devuelve la orden a "creada".</td></tr>
+    <tr><td class="k">Ajuste de cantidad</td><td>Solo durante la recolección, solo el conductor asignado y siempre con motivo. No se puede quitar un bulto ya escaneado. Cada cambio deja diferencia de conteo y abre una incidencia.</td></tr>
+    <tr><td class="k">Firma obligatoria</td><td>La recolección y la entrega final no se confirman sin persona autorizada, RUT verificado y firma. Se confirma con los bultos activos escaneados.</td></tr>
+    <tr><td class="k">Bus</td><td>El servicio debe cubrir la ruta y la salida debe existir en la parrilla. Si sale a más de 2 h de la asignación se marca riesgo. Al cargar se mide si se cumplió la ventana.</td></tr>
+    <tr><td class="k">Modalidad de última milla</td><td>La elige el coordinador al asignar. Con el operador: el despachador designa conductor. Retiro: el bodeguero marca "lista" y entrega con escaneo y firma.</td></tr>
+    <tr><td class="k">Incidencias</td><td>Las reportan el merchant y las cuadrillas; solo el Coordinador y Auditoría las resuelven, con nota.</td></tr>
+    <tr><td class="k">Onboarding</td><td>Solo el Coordinador registra merchants (RUT válido y único) e importa operadores (una sola vez).</td></tr>
+    <tr><td class="k">Roles de solo lectura</td><td>Auditoría y Finanzas ven todas las órdenes pero no pueden modificar operaciones.</td></tr>
+  </table>
+</section>
+
+<!-- ================= 8 KPIs ================= -->
+<section class="page">
+  <div class="sec"><span class="n">08</span><h2>Indicadores implementados</h2></div>
+  <p class="lede">Se ven en Coordinador → Torre de control (y una parte en Auditoría). Todos se calculan con las marcas de tiempo del registro de eventos.</p>
+  <table><tr><th>Indicador</th><th>Cómo se calcula en el mockup</th><th>Observación</th></tr>
+    <tr><td class="k">SSP</td><td>Órdenes con recolección completada ÷ órdenes que alguna vez tuvieron operador.</td><td>Por período completo, no por día.</td></tr>
+    <tr><td class="k">Aceptación</td><td>Órdenes aceptadas ÷ asignaciones (órdenes con operador + rechazos registrados).</td><td>Un rechazo cuenta como asignación.</td></tr>
+    <tr><td class="k">PTAT</td><td>Promedio de (ingreso a bodega del operador − asignación al operador), en horas.</td><td>Solo órdenes que ya ingresaron.</td></tr>
+    <tr><td class="k">Adherencia de recolección</td><td>Σ bultos recolectados ÷ Σ bultos declarados.</td><td>Sobre 100 % = bultos de más; bajo 100 % = faltantes.</td></tr>
+    <tr><td class="k">Ingreso exitoso</td><td>Escaneos de ingreso a bodega origen ÷ bultos recolectados.</td><td>Anti-robo en tránsito.</td></tr>
+    <tr><td class="k">Nivel de servicio</td><td>Entregas con R ≤ 1 ÷ entregas; R = (entrega − creación) ÷ 48 h.</td><td>Usamos R ≤ 1. Se muestra R promedio.</td></tr>
+    <tr><td class="k">Ventana de bus</td><td>Órdenes cargadas dentro de 2 h de la asignación ÷ cargadas.</td><td>Indicador propio de la decisión de 2 h.</td></tr>
+    <tr><td class="k">Cumplimiento MPO</td><td>Lotes con todas sus órdenes entregadas ÷ lotes con alguna orden recolectada.</td><td>Depende de definir MPO.</td></tr>
+    <tr><td class="k">Costo por bulto</td><td>Costo diario de los vehículos usados en recolecciones ÷ bultos recolectados.</td><td><b>Orientada como costo ÷ envíos</b> (corrige el error del consultor). Costos de demostración.</td></tr>
+  </table>
+  <figure class="crop-fig"><div class="crop"><img src="img/09_torre.png" alt=""></div><figcaption>Torre de control: indicadores, órdenes en riesgo (ventana de 2 h vencida) e incidencias.</figcaption></figure>
+</section>
+
+<!-- ================= 9 DIFERENCIAS ================= -->
+<section class="page">
+  <div class="sec"><span class="n">09</span><h2>Diferencias con el consultor (a comunicarle)</h2></div>
+  <table><tr><th>Tema</th><th>El consultor</th><th>Nosotros</th></tr>
+    <tr><td class="k">Quién imprime las etiquetas</td><td>El conductor las imprime en la recolección con impresora portátil.</td><td>El <b>merchant imprime y pega</b> las etiquetas antes. El conductor solo imprime <b>etiquetas nuevas</b> si cambia la cantidad, y puede reimprimir.</td></tr>
+    <tr><td class="k">Cambio de cantidad</td><td>El conductor edita la cantidad.</td><td>Igual, pero <b>siempre con motivo</b>; queda diferencia de conteo e incidencia.</td></tr>
+    <tr><td class="k">Verificación de identidad</td><td>Firma del merchant.</td><td>Además: al menos 2 <b>personas autorizadas con RUT</b>, comparado visualmente con la cédula, y <b>firma en la entrega final</b>.</td></tr>
+    <tr><td class="k">Última milla</td><td>Abierta (operador, retiro o terceros).</td><td>Operador o retiro; terceros fuera.</td></tr>
+    <tr><td class="k">Escaneo al descargar el bus</td><td>No hay.</td><td>No hay; el control está en el ingreso a la bodega de destino.</td></tr>
+    <tr><td class="k">Fórmulas</td><td>CPS invertido; R &lt; 1 y R ≤ 1.</td><td>CPS = costo ÷ bultos; R ≤ 1.</td></tr>
+  </table>
+  <figure class="crop-fig"><div class="crop"><img src="img/06_pickup_ajuste.png" alt=""></div><figcaption>Recolección: escaneo por bulto, "No recolectado", tarjeta de cantidad de bultos y estado de la impresora.</figcaption></figure>
+</section>
+
+<!-- ================= 10 NOMENCLATURA ================= -->
+<section class="page">
+  <div class="sec"><span class="n">10</span><h2>Nomenclatura de escaneos (propuesta)</h2></div>
+  <p class="lede">Es la tabla que el consultor dejó vacía. Todo escaneo registra pieza, usuario, fecha y hora.</p>
+  <table><tr><th>Escaneo</th><th>Código interno</th><th>Quién</th><th>Dónde</th><th>Firma</th></tr>
+    <tr><td class="k">Recolección</td><td class="mono">recoleccion</td><td>Conductor de recolección</td><td>Bodega del merchant</td><td><span class="tag sign">Sí</span></td></tr>
+    <tr><td class="k">Ingreso a bodega origen</td><td class="mono">ingreso_bodega_op</td><td>Encargado de bodega</td><td>Bodega del operador (origen)</td><td>No</td></tr>
+    <tr><td class="k">Carga a bus</td><td class="mono">carga_bus</td><td>Conductor o auxiliar de bus</td><td>Terminal / bodega origen</td><td>No</td></tr>
+    <tr><td class="k">Ingreso a bodega destino</td><td class="mono">ingreso_bodega_destino</td><td>Encargado de bodega</td><td>Bodega del operador (destino)</td><td>No</td></tr>
+    <tr><td class="k">Entrega</td><td class="mono">entrega</td><td>Conductor de última milla (o encargado, si es retiro)</td><td>Bodega destino o punto de retiro</td><td><span class="tag sign">Sí</span></td></tr>
+  </table>
+  <p><b>No se escanea (fuera de alcance):</b> descarga del bus, staging y salida de bodega.</p>
+  <h3>Código de la etiqueta</h3>
+  <ul>
+    <li>Formato: <span class="mono">KARGO-&lt;OT de 5 dígitos&gt;-&lt;bulto de 3 dígitos&gt;</span>, por ejemplo <span class="mono">KARGO-00007-002</span>.</li>
+    <li>La etiqueta muestra además el conteo humano <b>"i/n"</b> (por ejemplo 2/4) para detectar cajas faltantes.</li>
+    <li>Los bultos agregados en la recolección continúan la numeración (por ejemplo la 005) y se marcan como "Agregado".</li>
+    <li>Hoy el código de barras es Code 39; el objetivo del consultor es QR o DataMatrix.</li>
+  </ul>
+  <figure class="crop-fig"><div class="crop" style="height:78mm"><img src="img/14_etiquetas.png" alt=""></div><figcaption>Etiquetas de la orden ot_00007: un código por bulto con "i/n".</figcaption></figure>
+</section>
+
+<!-- ================= 11 PENDIENTE ================= -->
+<section class="page">
+  <div class="sec"><span class="n">11</span><h2>Pendiente y próximos pasos</h2></div>
+  <table><tr><th>Tema</th><th>Quién decide</th><th>Nota</th></tr>
+    <tr><td class="k">Facturación y precios</td><td>Negocio</td><td>En pausa; Finanzas ya entrega los datos para facturar.</td></tr>
+    <tr><td class="k">Terceros en la última milla</td><td>Negocio</td><td>Quién paga y cómo se integra.</td></tr>
+    <tr><td class="k">GPS real de los vehículos</td><td>Integración con Konnect</td><td>Hoy solo hay un mapa esquemático.</td></tr>
+    <tr><td class="k">Definición de MPO y reglas de conciliación de lotes</td><td>Consultor</td><td>Asumimos "orden de compra maestra".</td></tr>
+    <tr><td class="k">Tiempo prometido por ruta y servicio</td><td>Consultor + negocio</td><td>Hoy un único valor de 48 h.</td></tr>
+    <tr><td class="k">Entrega fallida o reprogramada</td><td>Negocio</td><td>Se presume rara, pero conviene un estado mínimo.</td></tr>
+    <tr><td class="k">Escaneo al descargar el bus</td><td>Consultor</td><td>Revisar cuando crezca el volumen.</td></tr>
+    <tr><td class="k">Interruptor activo/inactivo del despachador y edición de la red</td><td>Producto</td><td>Falta en la sección Infraestructura.</td></tr>
+    <tr><td class="k">QR/DataMatrix e impresora portátil real</td><td>Backend y hardware</td><td>Simulado en el mockup.</td></tr>
+  </table>
+  <h3>Próximos pasos sugeridos</h3>
+  <ol class="steps"><li>Enviar al consultor las correcciones de su documento y la aclaración de "winery".</li><li>Validar con él el diagrama de flujo (sección 05) y la nomenclatura de escaneos (sección 10).</li><li>Decidir el tratamiento de la entrega fallida y del tiempo prometido por ruta.</li><li>Entregar al equipo de backend el repositorio: <span class="mono">web/store.js</span> es la especificación ejecutable y <span class="mono">web/data/*.json</span> el contrato de datos.</li></ol>
+</section>
+
+<!-- ================= 12 VERIFICACION ================= -->
+<section>
+  <div class="sec"><span class="n">12</span><h2>Verificación</h2></div>
+  <ul>
+    <li><b>17 pruebas automáticas</b> pasan: cadena completa con ambas modalidades, permisos, ajuste de cantidad, ventana de bus, incidencias, onboarding, KPIs, conciliación, finanzas y cobertura de traducciones (todas las claves, errores y eventos existen en español e inglés).</li>
+    <li>Se recorrió el flujo completo desde la interfaz (merchant → coordinador → despachador con rechazo y reasignación → recolección con ajuste → bus con riesgo → destino → retiro con firma) sin errores de consola.</li>
+    <li>Código publicado en <span class="mono">github.com/ref0612/kargo_final</span>, rama <span class="mono">main</span>, commit <span class="mono">7a0e3eb</span>.</li>
+  </ul>
+  <p class="foot">Guía detallada de cada pantalla y botón: documento "Guía completa del mockup".</p>
+</section>
+</body></html>
