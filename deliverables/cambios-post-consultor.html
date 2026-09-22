@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><title>KARGO — Cambios después de la revisión del consultor</title>
-<link rel="stylesheet" href="doc.css"></head><body>
+<link rel="stylesheet" href="doc.css"></head><body data-lang="es">
+<button class="langtoggle" onclick="var b=document.body,n=b.dataset.lang==='es'?'en':'es';b.dataset.lang=n;this.textContent=n==='es'?'View in English':'Ver en español';var u=new URL(location);u.searchParams.set('lang',n);history.replaceState(null,'',u);">View in English</button>
+<script>(function(){var p=new URLSearchParams(location.search),l=p.get('lang');if(l==='en'||l==='es')document.body.dataset.lang=l;})();</script>
 
-<!-- ================= PORTADA ================= -->
-<section class="page cover">
+<!-- ================= PORTADA / COVER ================= -->
+<section class="page cover" lang="es">
   <div>
     <div class="bar"></div>
     <div class="eyebrow">Documento interno · Equipo KARGO</div>
@@ -20,9 +22,26 @@
   </div>
   <div class="meta"><div><b>Fecha</b>21 de septiembre de 2026</div><div><b>Versión del mockup</b>v2 · commit 7a0e3eb (main)</div><div><b>Alcance</b>Solo mockup; el backend lo construye el equipo de desarrollo</div></div>
 </section>
+<section class="page cover" lang="en">
+  <div>
+    <div class="bar"></div>
+    <div class="eyebrow">Internal document · KARGO Team</div>
+    <h1>What changed in the mockup after reading the consultant's document</h1>
+    <p class="dek">Summary of what the consultant proposed, the decisions we made, what was implemented in the mockup, where we deliberately diverge, and what's still open.</p>
+    <div class="toc">
+      <div><b>01</b>Executive summary</div><div><b>02</b>What the consultant said</div>
+      <div><b>03</b>Decisions made</div><div><b>04</b>Gaps: how each one stands</div>
+      <div><b>05</b>The new flow (diagram)</div><div><b>06</b>Changes by role</div>
+      <div><b>07</b>Data and rule changes</div><div><b>08</b>Implemented KPIs</div>
+      <div><b>09</b>Differences from the consultant</div><div><b>10</b>Scan nomenclature</div>
+      <div><b>11</b>Open items and next steps</div><div><b>12</b>Verification</div>
+    </div>
+  </div>
+  <div class="meta"><div><b>Date</b>September 21, 2026</div><div><b>Mockup version</b>v2 · commit 7a0e3eb (main)</div><div><b>Scope</b>Mockup only; the backend is built by the dev team</div></div>
+</section>
 
-<!-- ================= 1 RESUMEN ================= -->
-<section class="page">
+<!-- ================= 1 RESUMEN / SUMMARY ================= -->
+<section class="page" lang="es">
   <div class="sec"><span class="n">01</span><h2>Resumen ejecutivo</h2></div>
   <p class="lede">El consultor no nos entregó una especificación cerrada: nos entregó un esqueleto de requerimientos con preguntas abiertas, un mockup de la recolección y tablas de indicadores que aún están en borrador. Lo usamos como guía para completar el flujo que nos faltaba.</p>
   <div class="grid2">
@@ -53,9 +72,40 @@
     <tr><td class="k">Facturación y precios</td><td><span class="tag no">En pausa</span></td><td>Finanzas es solo lectura y no muestra precios.</td></tr>
   </table>
 </section>
+<section class="page" lang="en">
+  <div class="sec"><span class="n">01</span><h2>Executive summary</h2></div>
+  <p class="lede">The consultant didn't hand us a closed spec: he gave us a skeleton of requirements with open questions, a pickup mockup, and KPI tables that are still a draft. We used it as a guide to complete the flow we were missing.</p>
+  <div class="grid2">
+    <div class="card"><h4>What he proposed</h4><ul>
+      <li>Logistics in 3 legs: <b>First Mile</b> (pickup), <b>Mid Mile</b> (warehouse and bus) and <b>Last Mile</b> (delivery).</li>
+      <li>4 support functions: Control Tower, Audit/Reconciliation, Finance and Infrastructure.</li>
+      <li>For each actor: what they expect from the app and how their performance is measured on a dashboard.</li>
+      <li>Leak-prevention: "1/x" labels, successful inbound scan, and batch reconciliation.</li>
+    </ul></div>
+    <div class="card"><h4>What we did</h4><ul>
+      <li>The flow grew from <b>8 to 11 states</b>, with dispatcher acceptance and a destination leg.</li>
+      <li><b>Last mile</b> with two modalities: delivered by the operator, or picked up by the recipient.</li>
+      <li>The pickup driver <b>can adjust the package count</b> and reprint labels; a signature stays mandatory.</li>
+      <li>Bus assignment with a <b>timetable suggestion</b> and a 2-hour window.</li>
+      <li><b>3 new or expanded roles:</b> Control Tower, Audit and Finance, plus onboarding (Konnect and KAM).</li>
+      <li><b>9 KPIs</b> computed from the event log.</li>
+    </ul></div>
+  </div>
+  <h3>Status of each gap versus the consultant</h3>
+  <table><tr><th>Area</th><th>Status</th><th>Comment</th></tr>
+    <tr><td class="k">Pickup and destination flow</td><td><span class="tag ok">Done</span></td><td>Acceptance, count adjustment, destination warehouse inbound, last mile and pickup.</td></tr>
+    <tr><td class="k">Bus 2-hour rule</td><td><span class="tag ok">Done</span></td><td>Timetable suggestion, risk alert and measured compliance.</td></tr>
+    <tr><td class="k">Roles and onboarding</td><td><span class="tag ok">Done</span></td><td>Control Tower, Audit, Finance, merchant registration by the KAM, and operator import from Konnect.</td></tr>
+    <tr><td class="k">KPIs</td><td><span class="tag ok">Done</span></td><td>Computed client-side; the consultant's formulas have two errors we documented.</td></tr>
+    <tr><td class="k">QR/DataMatrix labels and a real printer</td><td><span class="tag part">Partial</span></td><td>We simulate the printer and use Code 39; a real QR is backend work.</td></tr>
+    <tr><td class="k">Real-time GPS</td><td><span class="tag no">Open</span></td><td>The integration is pending on the business side; the map is a schematic.</td></tr>
+    <tr><td class="k">Third parties for last mile</td><td><span class="tag no">Out of scope</span></td><td>Decision: left out for now.</td></tr>
+    <tr><td class="k">Billing and pricing</td><td><span class="tag no">On hold</span></td><td>Finance is read-only and shows no prices.</td></tr>
+  </table>
+</section>
 
-<!-- ================= 2 QUE DIJO ================= -->
-<section class="page">
+<!-- ================= 2 QUE DIJO / WHAT HE SAID ================= -->
+<section class="page" lang="es">
   <div class="sec"><span class="n">02</span><h2>Qué dijo el consultor</h2></div>
   <p class="lede">El PDF tiene 12 páginas. Las páginas 1, 7, 9 y 11 son solo títulos de sección; la 10 (nomenclatura de escaneos) y la 12 (diagrama de flujo) están vacías: <b>son entregables que el consultor espera de nuestro lado</b>.</p>
   <h3>Actores y lo que espera de cada uno</h3>
@@ -82,9 +132,36 @@
   <div class="callout warn"><b>Tres cosas a corregir en su documento:</b> (1) CPS está invertido: "envíos ÷ costo" es envíos por peso gastado, no costo por envío; (2) el nivel de servicio usa <span class="mono">R &lt; 1</span> y <span class="mono">R ≤ 1</span> en distintas partes; (3) "MPO" nunca se define (asumimos orden de compra maestra que agrupa lotes).</div>
   <p><b>Excluido por ahora, según el propio consultor:</b> planificación de rutas, escaneos de staging y de salida de bodega, escaneo al descargar el bus, y el seguimiento de la bodega (queda como "scope of improvement").</p>
 </section>
+<section class="page" lang="en">
+  <div class="sec"><span class="n">02</span><h2>What the consultant said</h2></div>
+  <p class="lede">The PDF has 12 pages. Pages 1, 7, 9 and 11 are just section titles; page 10 (scan nomenclature) and page 12 (flow diagram) are empty: <b>they are deliverables the consultant expects from us</b>.</p>
+  <h3>Actors and what he expects from each</h3>
+  <table><tr><th>Actor</th><th>What they expect from the app</th><th>How it's measured</th></tr>
+    <tr><td class="k">Merchant</td><td>Self-service onboarding (to scale), order creation, tracking and history.</td><td>—</td></tr>
+    <tr><td class="k">Logistics coordinator</td><td>Daily visibility: orders by postal code, live, pending, and real-time pickup tracking.</td><td>SSP (successful pickups)</td></tr>
+    <tr><td class="k">Dispatcher</td><td>Onboarding, several fleets (contract, cost, driver), setting themselves active/inactive, and <b>accepting</b> assigned orders.</td><td>SSP, PTAT, acceptance rate, adherence</td></tr>
+    <tr><td class="k">Pickup driver</td><td>Portable printer connected to the phone; each label with "1/x, 2/x…"; merchant signature.</td><td>Successful inbound (anti-theft in transit)</td></tr>
+    <tr><td class="k">Warehouse (Mid Mile)</td><td>Inbound, staging and outbound. <b>Today only</b> inbound is scanned.</td><td>(undefined)</td></tr>
+    <tr><td class="k">Bus crew</td><td>Loading scan. <b>No scan</b> on unloading.</td><td>—</td></tr>
+    <tr><td class="k">Reconciliation</td><td>Matching master-order (MPO) batches and locating lost shipments.</td><td>MPO compliance</td></tr>
+  </table>
+  <h3>KPIs he defined (draft)</h3>
+  <table><tr><th>KPI</th><th>Consultant's formula</th></tr>
+    <tr><td class="k">SSP</td><td>Orders picked up ÷ orders received or assigned (per day)</td></tr>
+    <tr><td class="k">PTAT</td><td>Time between assignment and warehouse delivery</td></tr>
+    <tr><td class="k">Acceptance</td><td>Orders accepted ÷ orders assigned by the coordinator</td></tr>
+    <tr><td class="k">Pickup Adherence</td><td>Boxes picked up ÷ boxes that should have been picked up</td></tr>
+    <tr><td class="k">Successful Inbound</td><td>Inbound scans ÷ boxes picked up</td></tr>
+    <tr><td class="k">Service level</td><td>R = actual time ÷ promised time; orders with R ≤ 1 ÷ total</td></tr>
+    <tr><td class="k">CPS</td><td>Shipments ÷ daily vehicle cost (pickup and delivery)</td></tr>
+    <tr><td class="k">MPO compliance</td><td>Batches delivered ÷ batches picked up</td></tr>
+  </table>
+  <div class="callout warn"><b>Three things to correct in his document:</b> (1) CPS is inverted: "shipments ÷ cost" is shipments per dollar spent, not cost per shipment; (2) the service level uses <span class="mono">R &lt; 1</span> and <span class="mono">R ≤ 1</span> in different places; (3) "MPO" is never defined (we assume master purchase order, which groups batches).</div>
+  <p><b>Excluded for now, per the consultant himself:</b> route planning, staging and warehouse-outbound scans, bus-unloading scan, and warehouse tracking (left as "scope of improvement").</p>
+</section>
 
-<!-- ================= 3 DECISIONES ================= -->
-<section class="page">
+<!-- ================= 3 DECISIONES / DECISIONS ================= -->
+<section class="page" lang="es">
   <div class="sec"><span class="n">03</span><h2>Decisiones tomadas</h2></div>
   <h3>Respuestas a las 5 preguntas del consultor</h3>
   <table><tr><th>Pregunta</th><th>Respuesta</th><th>Qué implica para el sistema</th></tr>
@@ -107,9 +184,32 @@
   </table>
   <p class="foot"><b>Interpretación que hicimos:</b> en el mensaje sobre el ajuste de cantidad se leyó "en destino"; lo aplicamos en la <b>recolección (origen)</b>, que es donde el conductor recibe los bultos y donde exigimos la firma. Confírmalo si querías otra cosa.</p>
 </section>
+<section class="page" lang="en">
+  <div class="sec"><span class="n">03</span><h2>Decisions made</h2></div>
+  <h3>Answers to the consultant's 5 questions</h3>
+  <table><tr><th>Question</th><th>Answer</th><th>What it means for the system</th></tr>
+    <tr><td class="k">1. Geography</td><td>Cities or provinces; also postal code.</td><td>City as the primary key; postal code optional on warehouses.</td></tr>
+    <tr><td class="k">2. GPS</td><td>Yes, the integration still needs to be finished.</td><td>Still open; the map is a schematic.</td></tr>
+    <tr><td class="k">3. Warehouse → bus</td><td>Must be en route within 2 hours of being assigned.</td><td>2-hour window with an alert (see the bus decision).</td></tr>
+    <tr><td class="k">4. From the bus to the client</td><td>The same operator does first, mid and last mile, warehouse to warehouse; also pickup at an operator location; third parties as a personal idea.</td><td>Two last-mile modalities; third parties out.</td></tr>
+    <tr><td class="k">5. Client refuses the delivery</td><td>Assumed infrequent.</td><td>No dedicated flow for now (open item).</td></tr>
+  </table>
+  <div class="callout warn"><b>Correction pending with the consultant:</b> answer 5 said "each individual <i>winery</i>." We meant <i>warehouse</i> (in Spanish, "bodega" means both, and the consultant might think our clients are vineyards).</div>
+  <h3>Later decisions</h3>
+  <table><tr><th>Topic</th><th>Decision</th></tr>
+    <tr><td class="k">Last mile</td><td>Options 1 (delivered by the operator) and 2 (recipient pickup) are implemented. Third parties are left out.</td></tr>
+    <tr><td class="k">Package count</td><td>The pickup driver <b>can change the count</b> and print new labels. The merchant's or receiver's signature is mandatory at pickup. <i>(This reverses the earlier proposal that they could only file an incident.)</i></td></tr>
+    <tr><td class="k">Bus</td><td>Manual assignment by the warehouse worker, plus a suggestion of the next service from the operator's timetable. If it departs more than 2 hours after assignment, it's flagged as risk.</td></tr>
+    <tr><td class="k">Service timetable</td><td>It's the assigned operator's own list of services.</td></tr>
+    <tr><td class="k">Roles</td><td>Control Tower inside the Coordinator; an Audit/Reconciliation role; a read-only master Finance role.</td></tr>
+    <tr><td class="k">Operator onboarding</td><td>Done by Kargo: a prefetch from Konnect (buses, services and crew come from its database).</td></tr>
+    <tr><td class="k">Merchant onboarding</td><td>Done by the KAM, inside the Coordinator's view.</td></tr>
+  </table>
+  <p class="foot"><b>Interpretation we made:</b> the message about the count adjustment said "at destination"; we applied it at <b>pickup (origin)</b>, which is where the driver receives the packages and where we require the signature. Let us know if you meant something else.</p>
+</section>
 
-<!-- ================= 4 BRECHAS ================= -->
-<section class="page">
+<!-- ================= 4 BRECHAS / GAPS ================= -->
+<section class="page" lang="es">
   <div class="sec"><span class="n">04</span><h2>Brechas: cómo quedó cada una</h2></div>
   <p class="lede" style="margin-bottom:6pt">La lista de "qué falta de nuestro lado" que habíamos armado tras leer el PDF, con el resultado y dónde verlo en el mockup.</p>
   <table class="tight"><tr><th>Brecha</th><th>Estado</th><th>Cómo quedó / dónde verlo</th></tr>
@@ -135,20 +235,55 @@
     <tr><td class="k">Diagrama de flujo y nomenclatura de escaneos</td><td><span class="tag ok">Hecho</span></td><td>Secciones 05 y 10 de este documento.</td></tr>
   </table>
 </section>
+<section class="page" lang="en">
+  <div class="sec"><span class="n">04</span><h2>Gaps: how each one stands</h2></div>
+  <p class="lede" style="margin-bottom:6pt">The "what's missing on our side" list we put together after reading the PDF, with the result and where to see it in the mockup.</p>
+  <table class="tight"><tr><th>Gap</th><th>Status</th><th>How it stands / where to see it</th></tr>
+    <tr><td class="k">Dispatcher acceptance</td><td><span class="tag ok">Done</span></td><td>Patricia (Dispatcher) sees <i>Accept order</i> and <i>Reject</i> (with a reason); a rejection sends the order back to the coordinator. Order <span class="mono">ot_00008</span>.</td></tr>
+    <tr><td class="k">Pickup with count</td><td><span class="tag ok">Done</span></td><td>Héctor can add packages or mark one "not picked up" with a reason; new labels are printed and a count difference with an incident is left. Order <span class="mono">ot_00007</span>.</td></tr>
+    <tr><td class="k">Merchant signature at pickup</td><td><span class="tag ok">Done</span></td><td>Still mandatory: authorized person, verified RUT and signature.</td></tr>
+    <tr><td class="k">Leg from the bus to destination</td><td><span class="tag ok">Done</span></td><td>New states: destination-warehouse inbound, last mile assigned, or ready for pickup.</td></tr>
+    <tr><td class="k">2-hour rule</td><td><span class="tag ok">Done</span></td><td>The warehouse worker sees the route's services tagged "Suggested", "Within window" or "Risk &gt; 2 h". Order <span class="mono">ot_00006</span>.</td></tr>
+    <tr><td class="k">Service timetable</td><td><span class="tag ok">Done</span></td><td>Each operator carries its own timetable (origin, destination, departures). Seen under Coordinator → Operators.</td></tr>
+    <tr><td class="k">How a shipment connects to a bus</td><td><span class="tag part">Partial</span></td><td>Manual with a suggestion, as decided. The suggestion uses the browser's clock.</td></tr>
+    <tr><td class="k">Postal code / province</td><td><span class="tag part">Partial</span></td><td>Optional postal code on warehouses. Grouping by postal code in the panels is still missing.</td></tr>
+    <tr><td class="k">MPO / batch</td><td><span class="tag part">Partial</span></td><td>Optional field on the order plus a compliance KPI. MPO still needs to be defined with the consultant.</td></tr>
+    <tr><td class="k">Promised time</td><td><span class="tag part">Partial</span></td><td>A single 48 h value in config. Missing per route and per service.</td></tr>
+    <tr><td class="k">Fleet costs</td><td><span class="tag part">Partial</span></td><td>Daily cost per vehicle (demo data) feeding the cost-per-package KPI.</td></tr>
+    <tr><td class="k">Dispatcher: fleet and active/inactive</td><td><span class="tag part">Partial</span></td><td>Fleet and its cost come from Konnect; the active/inactive toggle is missing.</td></tr>
+    <tr><td class="k">Vehicle GPS</td><td><span class="tag no">Open</span></td><td>Integration pending on the business side.</td></tr>
+    <tr><td class="k">QR/DataMatrix labels, real printer</td><td><span class="tag part">Partial</span></td><td>Code 39 and a simulated portable printer.</td></tr>
+    <tr><td class="k">Control Tower</td><td><span class="tag ok">Done</span></td><td>Coordinator → Control Tower: 9 KPIs, at-risk orders and incidents.</td></tr>
+    <tr><td class="k">Audit / Reconciliation</td><td><span class="tag ok">Done</span></td><td>New role: reconciliation per checkpoint and incident cases.</td></tr>
+    <tr><td class="k">Finance</td><td><span class="tag ok">Done</span></td><td>New read-only role: shipments by client and period, CSV export, no prices.</td></tr>
+    <tr><td class="k">Infrastructure</td><td><span class="tag part">Partial</span></td><td>Inside the Coordinator: import operators and view their timetable and fleet. Editing the network is still missing.</td></tr>
+    <tr><td class="k">Merchant and operator onboarding</td><td><span class="tag ok">Done</span></td><td>Coordinator → Merchants (registration and warehouses) and Operators (import from Konnect).</td></tr>
+    <tr><td class="k">Flow diagram and scan nomenclature</td><td><span class="tag ok">Done</span></td><td>Sections 05 and 10 of this document.</td></tr>
+  </table>
+</section>
 
-<!-- ================= 5 FLUJO (landscape) ================= -->
-<section class="page">
+<!-- ================= 5 FLUJO / FLOW ================= -->
+<section class="page" lang="es">
   <div class="sec"><span class="n">05</span><h2>El nuevo flujo</h2></div>
   <p style="margin-bottom:6pt;color:#4F6078">Este es el diagrama que el consultor dejó vacío. Antes eran 8 estados y la orden saltaba de "cargada en bus" a "entregada"; ahora son 11.</p>
-  <!--FLOW_SVG-->
+  <!--FLOW_SVG_ES-->
   <p style="font-size:8.6pt;color:#4F6078;margin-top:4pt"><b>ESC</b> = escaneo de cada bulto (usuario + fecha/hora) · <b>FIRMA</b> = firma de una persona autorizada, RUT verificado visualmente · <b>10a</b> = última milla con el operador · <b>10b</b> = retiro del destinatario · la descarga del bus no se escanea · el merchant ve solo 5 estados (Creada, Asignada, En recolección, En tránsito, Entregada).</p>
   <table style="margin-top:6pt"><tr><th>Antes (8)</th><th>Ahora (11)</th></tr>
     <tr><td>creada → asignada_operador → recoleccion_asignada → recolectada → en_bodega_operador → asignada_transporte → cargada_bus → entregada</td>
     <td>creada → asignada_operador → <b>aceptada</b> → recoleccion_asignada → recolectada → en_bodega_operador → asignada_transporte → cargada_bus → <b>en_bodega_destino</b> → <b>(ultima_milla_asignada | lista_retiro)</b> → entregada</td></tr></table>
 </section>
+<section class="page" lang="en">
+  <div class="sec"><span class="n">05</span><h2>The new flow</h2></div>
+  <p style="margin-bottom:6pt;color:#4F6078">This is the diagram the consultant left blank. It used to be 8 states, jumping straight from "loaded on bus" to "delivered"; now it's 11.</p>
+  <!--FLOW_SVG_EN-->
+  <p style="font-size:8.6pt;color:#4F6078;margin-top:4pt"><b>SCAN</b> = per-package scan (user + timestamp) · <b>SIGN</b> = signature from an authorized person, RUT visually verified · <b>10a</b> = last mile with the operator · <b>10b</b> = recipient pickup · bus unloading is not scanned · the merchant only sees 5 states (Created, Assigned, In pickup, In transit, Delivered).</p>
+  <table style="margin-top:6pt"><tr><th>Before (8)</th><th>Now (11)</th></tr>
+    <tr><td>created → assigned_to_operator → pickup_assigned → picked_up → in_operator_warehouse → transport_assigned → loaded_on_bus → delivered</td>
+    <td>created → assigned_to_operator → <b>accepted</b> → pickup_assigned → picked_up → in_operator_warehouse → transport_assigned → loaded_on_bus → <b>in_destination_warehouse</b> → <b>(last_mile_assigned | ready_for_pickup)</b> → delivered</td></tr></table>
+</section>
 
 <!-- ================= 6 ROLES ================= -->
-<section class="page">
+<section class="page" lang="es">
   <div class="sec"><span class="n">06</span><h2>Cambios por rol</h2></div>
   <table><tr><th>Rol</th><th>Antes</th><th>Ahora</th></tr>
     <tr><td class="k">Merchant</td><td>Crear orden, ver avance.</td><td>Igual, más campo <b>MPO</b>, aviso de <b>retiro</b>, diferencia de conteo visible, incidencias y detalle operativo.</td></tr>
@@ -163,9 +298,24 @@
   </table>
   <div class="callout"><b>Nombres:</b> el "operador logístico" que mencionabas es en el sistema el <b>Coordinador / Control Tower</b> (tu equipo). El "Operador de transporte" es la empresa externa.</div>
 </section>
+<section class="page" lang="en">
+  <div class="sec"><span class="n">06</span><h2>Changes by role</h2></div>
+  <table><tr><th>Role</th><th>Before</th><th>Now</th></tr>
+    <tr><td class="k">Merchant</td><td>Create an order, view progress.</td><td>Same, plus an <b>MPO</b> field, a <b>pickup-ready</b> notice, a visible count difference, incidents and operational detail.</td></tr>
+    <tr><td class="k">Coordinator / Control Tower</td><td>Assign to an operator.</td><td>Assigns while <b>choosing the last mile</b>; sees KPIs and at-risk orders; <b>registers merchants</b> and their warehouses (KAM); <b>imports operators</b> from Konnect; resolves incidents.</td></tr>
+    <tr><td class="k">Audit / Reconciliation</td><td>Didn't exist.</td><td><b>New</b>, read-only: reconciliation per checkpoint, incident cases (can close them with a note).</td></tr>
+    <tr><td class="k">Finance</td><td>Didn't exist.</td><td><b>New</b>, read-only: shipments by client, operator and period; CSV; no prices.</td></tr>
+    <tr><td class="k">Dispatcher</td><td>Assign driver and vehicle.</td><td><b>Accepts or rejects</b> the assignment; assigns pickup; <b>assigns the last mile</b> when applicable.</td></tr>
+    <tr><td class="k">Pickup driver</td><td>Scan and sign.</td><td>Also <b>adjusts the package count</b> (with a reason), marks "not picked up", reprints labels and reports incidents.</td></tr>
+    <tr><td class="k">Warehouse worker</td><td>Scan inbound and assign a bus.</td><td>Bus with <b>suggestion and 2 h window</b>; <b>destination-warehouse inbound</b>; on pickup: <b>marks ready</b> and hands over with a scan and a signature.</td></tr>
+    <tr><td class="k">Bus driver</td><td>Scan the load.</td><td>Same (unloading is still not scanned).</td></tr>
+    <tr><td class="k">Delivery driver</td><td>Scan and sign at destination.</td><td>Now the <b>last-mile</b> driver, assigned by the dispatcher.</td></tr>
+  </table>
+  <div class="callout"><b>Naming:</b> the "logistics operator" you mentioned is, in the system, the <b>Coordinator / Control Tower</b> (your team). The "transport operator" is the external company.</div>
+</section>
 
-<!-- ================= 7 DATOS Y REGLAS ================= -->
-<section class="page">
+<!-- ================= 7 DATOS Y REGLAS / DATA AND RULES ================= -->
+<section class="page" lang="es">
   <div class="sec"><span class="n">07</span><h2>Cambios en datos y reglas</h2></div>
   <h3>Archivos de datos nuevos</h3>
   <table><tr><th>Archivo</th><th>Para qué sirve</th></tr>
@@ -193,9 +343,37 @@
     <tr><td class="k">Roles de solo lectura</td><td>Auditoría y Finanzas ven todas las órdenes pero no pueden modificar operaciones.</td></tr>
   </table>
 </section>
+<section class="page" lang="en">
+  <div class="sec"><span class="n">07</span><h2>Data and rule changes</h2></div>
+  <h3>New data files</h3>
+  <table><tr><th>File</th><th>What it's for</th></tr>
+    <tr><td class="k mono">konnect.json</td><td>Simulated catalog of Konnect operators (fleet, timetable, crew). Operators are imported from here.</td></tr>
+    <tr><td class="k mono">incidents.json</td><td>Incidents: count, damage, missing, other; open or resolved, with an optional photo and a resolution note.</td></tr>
+    <tr><td class="k mono">config.json</td><td>Business rules: promised hours (48) and the bus window (2).</td></tr>
+  </table>
+  <h3>New order fields</h3>
+  <ul>
+    <li><b>Count:</b> <span class="mono">bultos_declarados</span> (immutable), <span class="mono">bultos_total</span> (current), and <span class="mono">conteo</span> with the difference, reason, who and when.</li>
+    <li><b>Acceptance:</b> status (pending, accepted, rejected) and a list of rejections with their reason.</li>
+    <li><b>Transport:</b> service, departure, assignment time, load time, <span class="mono">riesgo_sla</span> and <span class="mono">ventana_ok</span>.</li>
+    <li><b>Last mile:</b> modality, driver, vehicle, pickup point and "ready" timestamp.</li>
+    <li><b>Destination warehouse:</b> inbound timestamp. Optional <b>MPO</b>. Warehouses with an optional postal code.</li>
+  </ul>
+  <h3>New rules the backend must enforce</h3>
+  <table><tr><th>Rule</th><th>Detail</th></tr>
+    <tr><td class="k">Accept before assigning a driver</td><td>A driver can't be assigned until the dispatcher accepts. A rejection requires a reason and sends the order back to "created".</td></tr>
+    <tr><td class="k">Count adjustment</td><td>Only during pickup, only by the assigned driver, always with a reason. An already-scanned package can't be removed. Every change leaves a count difference and opens an incident.</td></tr>
+    <tr><td class="k">Mandatory signature</td><td>Pickup and final delivery aren't confirmed without an authorized person, a verified RUT and a signature. Confirmed once the active packages are scanned.</td></tr>
+    <tr><td class="k">Bus</td><td>The service must cover the route and the departure must exist in the timetable. Departing more than 2 h after assignment is flagged as risk. Window compliance is measured at load time.</td></tr>
+    <tr><td class="k">Last-mile modality</td><td>Chosen by the coordinator at assignment. With the operator: the dispatcher assigns a driver. Pickup: the warehouse worker marks "ready" and hands over with a scan and signature.</td></tr>
+    <tr><td class="k">Incidents</td><td>Reported by the merchant and the crews; only the Coordinator and Audit can resolve them, with a note.</td></tr>
+    <tr><td class="k">Onboarding</td><td>Only the Coordinator registers merchants (valid, unique RUT) and imports operators (one-time).</td></tr>
+    <tr><td class="k">Read-only roles</td><td>Audit and Finance see all orders but can't modify operations.</td></tr>
+  </table>
+</section>
 
 <!-- ================= 8 KPIs ================= -->
-<section class="page">
+<section class="page" lang="es">
   <div class="sec"><span class="n">08</span><h2>Indicadores implementados</h2></div>
   <p class="lede">Se ven en Coordinador → Torre de control (y una parte en Auditoría). Todos se calculan con las marcas de tiempo del registro de eventos.</p>
   <table><tr><th>Indicador</th><th>Cómo se calcula en el mockup</th><th>Observación</th></tr>
@@ -211,9 +389,25 @@
   </table>
   <figure class="crop-fig"><div class="crop"><img src="img/09_torre.png" alt=""></div><figcaption>Torre de control: indicadores, órdenes en riesgo (ventana de 2 h vencida) e incidencias.</figcaption></figure>
 </section>
+<section class="page" lang="en">
+  <div class="sec"><span class="n">08</span><h2>Implemented KPIs</h2></div>
+  <p class="lede">Shown under Coordinator → Control Tower (partly in Audit as well). All are computed from the event log's timestamps.</p>
+  <table><tr><th>KPI</th><th>How it's computed in the mockup</th><th>Note</th></tr>
+    <tr><td class="k">SSP</td><td>Orders with pickup completed ÷ orders that ever had an operator.</td><td>Over the full period, not per day.</td></tr>
+    <tr><td class="k">Acceptance</td><td>Orders accepted ÷ assignments (orders with an operator + recorded rejections).</td><td>A rejection counts as an assignment.</td></tr>
+    <tr><td class="k">PTAT</td><td>Average of (operator-warehouse inbound − operator assignment), in hours.</td><td>Only orders that already arrived.</td></tr>
+    <tr><td class="k">Pickup adherence</td><td>Σ packages picked up ÷ Σ packages declared.</td><td>Above 100% = extra packages; below 100% = missing ones.</td></tr>
+    <tr><td class="k">Successful inbound</td><td>Origin-warehouse inbound scans ÷ packages picked up.</td><td>Anti-theft in transit.</td></tr>
+    <tr><td class="k">Service level</td><td>Deliveries with R ≤ 1 ÷ deliveries; R = (delivery − creation) ÷ 48 h.</td><td>We use R ≤ 1. Average R is also shown.</td></tr>
+    <tr><td class="k">Bus window</td><td>Orders loaded within 2 h of assignment ÷ orders loaded.</td><td>Our own KPI for the 2 h decision.</td></tr>
+    <tr><td class="k">MPO compliance</td><td>Batches with all their orders delivered ÷ batches with any order picked up.</td><td>Depends on defining MPO.</td></tr>
+    <tr><td class="k">Cost per package</td><td>Daily cost of the vehicles used in pickups ÷ packages picked up.</td><td><b>Framed as cost ÷ shipments</b> (fixes the consultant's error). Demo costs.</td></tr>
+  </table>
+  <figure class="crop-fig"><div class="crop"><img src="img/16_torre_en.png" alt=""></div><figcaption>Control Tower: KPIs, at-risk orders (2 h window overdue) and incidents.</figcaption></figure>
+</section>
 
-<!-- ================= 9 DIFERENCIAS ================= -->
-<section class="page">
+<!-- ================= 9 DIFERENCIAS / DIFFERENCES ================= -->
+<section class="page" lang="es">
   <div class="sec"><span class="n">09</span><h2>Diferencias con el consultor (a comunicarle)</h2></div>
   <table><tr><th>Tema</th><th>El consultor</th><th>Nosotros</th></tr>
     <tr><td class="k">Quién imprime las etiquetas</td><td>El conductor las imprime en la recolección con impresora portátil.</td><td>El <b>merchant imprime y pega</b> las etiquetas antes. El conductor solo imprime <b>etiquetas nuevas</b> si cambia la cantidad, y puede reimprimir.</td></tr>
@@ -225,9 +419,21 @@
   </table>
   <figure class="crop-fig"><div class="crop"><img src="img/06_pickup_ajuste.png" alt=""></div><figcaption>Recolección: escaneo por bulto, "No recolectado", tarjeta de cantidad de bultos y estado de la impresora.</figcaption></figure>
 </section>
+<section class="page" lang="en">
+  <div class="sec"><span class="n">09</span><h2>Differences from the consultant (to communicate to him)</h2></div>
+  <table><tr><th>Topic</th><th>The consultant</th><th>Us</th></tr>
+    <tr><td class="k">Who prints the labels</td><td>The driver prints them at pickup with a portable printer.</td><td>The <b>merchant prints and affixes</b> the labels beforehand. The driver only prints <b>new labels</b> if the count changes, and can reprint.</td></tr>
+    <tr><td class="k">Count change</td><td>The driver edits the count.</td><td>Same, but <b>always with a reason</b>; leaves a count difference and an incident.</td></tr>
+    <tr><td class="k">Identity verification</td><td>Merchant's signature.</td><td>Also: at least 2 <b>authorized people with a RUT</b>, visually checked against their ID, and a <b>signature at final delivery</b>.</td></tr>
+    <tr><td class="k">Last mile</td><td>Open (operator, pickup or third parties).</td><td>Operator or pickup; third parties out.</td></tr>
+    <tr><td class="k">Scan on bus unload</td><td>None.</td><td>None; the control point is the destination-warehouse inbound scan.</td></tr>
+    <tr><td class="k">Formulas</td><td>CPS inverted; R &lt; 1 and R ≤ 1.</td><td>CPS = cost ÷ packages; R ≤ 1.</td></tr>
+  </table>
+  <figure class="crop-fig"><div class="crop"><img src="img/06_pickup_ajuste.png" alt=""></div><figcaption>Pickup: per-package scan, "Not picked up", package-count card and printer status.</figcaption></figure>
+</section>
 
-<!-- ================= 10 NOMENCLATURA ================= -->
-<section class="page">
+<!-- ================= 10 NOMENCLATURA / NOMENCLATURE ================= -->
+<section class="page" lang="es">
   <div class="sec"><span class="n">10</span><h2>Nomenclatura de escaneos (propuesta)</h2></div>
   <p class="lede">Es la tabla que el consultor dejó vacía. Todo escaneo registra pieza, usuario, fecha y hora.</p>
   <table><tr><th>Escaneo</th><th>Código interno</th><th>Quién</th><th>Dónde</th><th>Firma</th></tr>
@@ -247,9 +453,29 @@
   </ul>
   <figure class="crop-fig"><div class="crop" style="height:78mm"><img src="img/14_etiquetas.png" alt=""></div><figcaption>Etiquetas de la orden ot_00007: un código por bulto con "i/n".</figcaption></figure>
 </section>
+<section class="page" lang="en">
+  <div class="sec"><span class="n">10</span><h2>Scan nomenclature (proposed)</h2></div>
+  <p class="lede">This is the table the consultant left blank. Every scan records the piece, the user, and the date/time.</p>
+  <table><tr><th>Scan</th><th>Internal code</th><th>Who</th><th>Where</th><th>Signature</th></tr>
+    <tr><td class="k">Pickup</td><td class="mono">recoleccion</td><td>Pickup driver</td><td>Merchant's warehouse</td><td><span class="tag sign">Yes</span></td></tr>
+    <tr><td class="k">Origin-warehouse inbound</td><td class="mono">ingreso_bodega_op</td><td>Warehouse worker</td><td>Operator's warehouse (origin)</td><td>No</td></tr>
+    <tr><td class="k">Loaded on bus</td><td class="mono">carga_bus</td><td>Bus driver or aide</td><td>Terminal / origin warehouse</td><td>No</td></tr>
+    <tr><td class="k">Destination-warehouse inbound</td><td class="mono">ingreso_bodega_destino</td><td>Warehouse worker</td><td>Operator's warehouse (destination)</td><td>No</td></tr>
+    <tr><td class="k">Delivery</td><td class="mono">entrega</td><td>Last-mile driver (or warehouse worker, for pickup)</td><td>Destination warehouse or pickup point</td><td><span class="tag sign">Yes</span></td></tr>
+  </table>
+  <p><b>Not scanned (out of scope):</b> bus unloading, staging and warehouse outbound.</p>
+  <h3>Label code</h3>
+  <ul>
+    <li>Format: <span class="mono">KARGO-&lt;5-digit order&gt;-&lt;3-digit package&gt;</span>, e.g. <span class="mono">KARGO-00007-002</span>.</li>
+    <li>The label also shows the human count <b>"i/n"</b> (e.g. 2/4) to catch missing boxes.</li>
+    <li>Packages added during pickup continue the numbering (e.g. 005) and are marked "Added".</li>
+    <li>The barcode is Code 39 today; the consultant's target is QR or DataMatrix.</li>
+  </ul>
+  <figure class="crop-fig"><div class="crop" style="height:78mm"><img src="img/14_etiquetas.png" alt=""></div><figcaption>Labels for order ot_00007: one code per package with "i/n".</figcaption></figure>
+</section>
 
-<!-- ================= 11 PENDIENTE ================= -->
-<section class="page">
+<!-- ================= 11 PENDIENTE / OPEN ================= -->
+<section class="page" lang="es">
   <div class="sec"><span class="n">11</span><h2>Pendiente y próximos pasos</h2></div>
   <table><tr><th>Tema</th><th>Quién decide</th><th>Nota</th></tr>
     <tr><td class="k">Facturación y precios</td><td>Negocio</td><td>En pausa; Finanzas ya entrega los datos para facturar.</td></tr>
@@ -265,9 +491,25 @@
   <h3>Próximos pasos sugeridos</h3>
   <ol class="steps"><li>Enviar al consultor las correcciones de su documento y la aclaración de "winery".</li><li>Validar con él el diagrama de flujo (sección 05) y la nomenclatura de escaneos (sección 10).</li><li>Decidir el tratamiento de la entrega fallida y del tiempo prometido por ruta.</li><li>Entregar al equipo de backend el repositorio: <span class="mono">web/store.js</span> es la especificación ejecutable y <span class="mono">web/data/*.json</span> el contrato de datos.</li></ol>
 </section>
+<section class="page" lang="en">
+  <div class="sec"><span class="n">11</span><h2>Open items and next steps</h2></div>
+  <table><tr><th>Topic</th><th>Who decides</th><th>Note</th></tr>
+    <tr><td class="k">Billing and pricing</td><td>Business</td><td>On hold; Finance already delivers the data needed for invoicing.</td></tr>
+    <tr><td class="k">Third parties in the last mile</td><td>Business</td><td>Who pays and how it's integrated.</td></tr>
+    <tr><td class="k">Real vehicle GPS</td><td>Konnect integration</td><td>Only a schematic map today.</td></tr>
+    <tr><td class="k">MPO definition and batch-reconciliation rules</td><td>Consultant</td><td>We assumed "master purchase order".</td></tr>
+    <tr><td class="k">Promised time per route and service</td><td>Consultant + business</td><td>A single 48 h value today.</td></tr>
+    <tr><td class="k">Failed or rescheduled delivery</td><td>Business</td><td>Assumed rare, but a minimal state is worth having.</td></tr>
+    <tr><td class="k">Scan on bus unload</td><td>Consultant</td><td>Revisit as volume grows.</td></tr>
+    <tr><td class="k">Dispatcher active/inactive toggle and network editing</td><td>Product</td><td>Still missing in the Infrastructure section.</td></tr>
+    <tr><td class="k">QR/DataMatrix and a real portable printer</td><td>Backend and hardware</td><td>Simulated in the mockup.</td></tr>
+  </table>
+  <h3>Suggested next steps</h3>
+  <ol class="steps"><li>Send the consultant the corrections to his document and the "winery" clarification.</li><li>Validate the flow diagram (section 05) and the scan nomenclature (section 10) with him.</li><li>Decide how to handle failed delivery and promised time per route.</li><li>Hand the backend team the repository: <span class="mono">web/store.js</span> is the executable spec and <span class="mono">web/data/*.json</span> is the data contract.</li></ol>
+</section>
 
-<!-- ================= 12 VERIFICACION ================= -->
-<section>
+<!-- ================= 12 VERIFICACION / VERIFICATION ================= -->
+<section lang="es">
   <div class="sec"><span class="n">12</span><h2>Verificación</h2></div>
   <ul>
     <li><b>17 pruebas automáticas</b> pasan: cadena completa con ambas modalidades, permisos, ajuste de cantidad, ventana de bus, incidencias, onboarding, KPIs, conciliación, finanzas y cobertura de traducciones (todas las claves, errores y eventos existen en español e inglés).</li>
@@ -275,5 +517,14 @@
     <li>Código publicado en <span class="mono">github.com/ref0612/kargo_final</span>, rama <span class="mono">main</span>, commit <span class="mono">7a0e3eb</span>.</li>
   </ul>
   <p class="foot">Guía detallada de cada pantalla y botón: documento "Guía completa del mockup".</p>
+</section>
+<section lang="en">
+  <div class="sec"><span class="n">12</span><h2>Verification</h2></div>
+  <ul>
+    <li><b>17 automated tests</b> pass: full chain with both modalities, permissions, count adjustment, bus window, incidents, onboarding, KPIs, reconciliation, finance, and translation coverage (every key, error and event exists in both Spanish and English).</li>
+    <li>The full flow was walked through the interface (merchant → coordinator → dispatcher with reject and reassign → pickup with adjustment → bus with risk → destination → pickup with signature) with no console errors.</li>
+    <li>Code published at <span class="mono">github.com/ref0612/kargo_final</span>, branch <span class="mono">main</span>, commit <span class="mono">7a0e3eb</span>.</li>
+  </ul>
+  <p class="foot">Detailed guide to every screen and button: the "Complete mockup guide" document.</p>
 </section>
 </body></html>

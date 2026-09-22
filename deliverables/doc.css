@@ -57,3 +57,9 @@ table.tight{font-size:8pt}table.tight th,table.tight td{padding:2.6pt 5pt}
 
 h3,h4{break-after:avoid;page-break-after:avoid}
 section{display:block}
+
+/* bilingual toggle */
+[data-lang="es"] [lang="en"]{display:none}
+[data-lang="en"] [lang="es"]{display:none}
+.langtoggle{position:fixed;top:10px;right:10px;z-index:50;font-family:'Fira Code',monospace;font-size:8.5pt;font-weight:600;background:var(--navy);color:#fff;border:none;border-radius:6pt;padding:6pt 11pt;cursor:pointer}
+@media print{.langtoggle{display:none}}
